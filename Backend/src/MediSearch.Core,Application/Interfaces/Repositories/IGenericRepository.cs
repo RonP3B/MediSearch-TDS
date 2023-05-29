@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MediSearch.Core_Application.Interfaces.Repositories
 {
-	public interface IGenericRepositoryAsync<Entity> where Entity : class
+	public interface IGenericRepository<Entity> where Entity : class
 	{
 		Task<Entity> AddAsync(Entity entity);
 		Task UpdateAsync(Entity entity, int id);
