@@ -1,25 +1,43 @@
-var builder = WebApplication.CreateBuilder(args);
+using MediSearch.Infrastructure.Identity.Entities;
+using MediSearch.Infrastructure.Identity.Seeds;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+namespace MediSearch.WebApi
 {
-	app.UseSwagger();
-	app.UseSwaggerUI();
+	public class Program
+	{
+		public static async Task Main(string[] args)
+		{
+			var host = CreateHostBuilder(args).Build();
+			using (var scope = host.Services.CreateScope())
+			{
+				var services = scope.ServiceProvider;
+
+				try
+				{
+					var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+					var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+					await DefaultRoles.SeedAsync(userManager, roleManager);
+				}
+				catch (Exception ex)
+				{
+
+				}
+			}
+			host.Run();
+		}
+
+		public static IHostBuilder CreateHostBuilder(string[] args) =>
+			Host.CreateDefaultBuilder(args)
+				.ConfigureWebHostDefaults(webBuilder =>
+				{
+					webBuilder.UseStartup<Startup>();
+				});
+	}
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
