@@ -1,5 +1,7 @@
 ﻿using MediSearch.Infrastructure.Identity.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +12,31 @@ namespace MediSearch.Infrastructure.Identity.Contexts
 {
 	public class IdentityContext : IdentityDbContext<ApplicationUser>
 	{
-		//Aquí van las configuraciones para el contexto de identity
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+			//FLUENT API
+			base.OnModelCreating(modelBuilder);
+
+			modelBuilder.Entity<ApplicationUser>(entity =>
+			{
+				entity.ToTable(name: "Users");
+			});
+
+			modelBuilder.Entity<IdentityRole>(entity =>
+			{
+				entity.ToTable(name: "Roles");
+			});
+
+			modelBuilder.Entity<IdentityUserRole<string>>(entity =>
+			{
+				entity.ToTable(name: "UserRoles");
+			});
+
+			modelBuilder.Entity<IdentityUserLogin<string>>(entity =>
+			{
+				entity.ToTable(name: "UserLogins");
+			});
+
+		}
 	}
 }

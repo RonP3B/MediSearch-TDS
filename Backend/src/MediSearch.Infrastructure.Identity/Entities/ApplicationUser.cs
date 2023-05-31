@@ -9,6 +9,11 @@ namespace MediSearch.Infrastructure.Identity.Entities
 {
 	public class ApplicationUser : IdentityUser
 	{
-		//Aquí van los campos que se quieren agregar al modelo de identity user
-	}
+		public string FirstName { get; set; }
+		public string LastName { get; set; }
+		public string urlImage { get; set; }
+		public string country { get; set; }
+        public string city { get; set; }
+        public string address { get; set; }
+    }
 }

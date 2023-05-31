@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace MediSearch.Core_Application.Enums
 {
-	public class Roles
+	public enum Roles
 	{
-		//Aquí van los roles que existirán en el sistema
+		Administrator,
+		Manager,
+		Doctor,
+		Client
 	}
 }

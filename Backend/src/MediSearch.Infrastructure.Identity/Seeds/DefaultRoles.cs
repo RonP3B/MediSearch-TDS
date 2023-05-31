@@ -1,4 +1,5 @@
-﻿using MediSearch.Infrastructure.Identity.Entities;
+﻿using MediSearch.Core_Application.Enums;
+using MediSearch.Infrastructure.Identity.Entities;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,10 @@ namespace MediSearch.Infrastructure.Identity.Seeds
 	{
 		public static async Task SeedAsync(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
 		{
-			//Aquí se van a insertar los roles del sistema la primera vez que se ejecute el programa
+			await roleManager.CreateAsync(new IdentityRole(Roles.Administrator.ToString()));
+			await roleManager.CreateAsync(new IdentityRole(Roles.Manager.ToString()));
+			await roleManager.CreateAsync(new IdentityRole(Roles.Doctor.ToString()));
+			await roleManager.CreateAsync(new IdentityRole(Roles.Client.ToString()));
 		}
 	}
 }
