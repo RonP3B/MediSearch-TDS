@@ -3,6 +3,8 @@ using MediSearch.Infrastructure.Persistence;
 using MediSearch.Infrastructure.Shared;
 using System.Text.Json.Serialization;
 using MediSearch.Core_Application;
+using MediSearch.Infrastructure.Identity;
+using MediSearch.WebApi.Extensions;
 
 namespace MediSearch.WebApi
 {
@@ -19,7 +21,7 @@ namespace MediSearch.WebApi
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddPersistenceInfrastructure(Configuration);
-			//services.AddIdentityInfrastructureWebAPI(Configuration);
+			services.AddIdentityInfrastructure(Configuration);
 			services.AddApplicationLayer(Configuration);
 			services.AddSharedInfrastructure(Configuration);
 			services.AddControllers(options =>
@@ -34,8 +36,8 @@ namespace MediSearch.WebApi
 					  x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
 
 			services.AddHealthChecks();
-			//services.AddSwaggerExtension();
-			//services.AddApiVersioningExtension();
+			services.AddSwaggerExtension();
+			services.AddApiVersioningExtension();
 			services.AddDistributedMemoryCache();
 			services.AddSession();
 
@@ -61,7 +63,7 @@ namespace MediSearch.WebApi
 
 			app.UseAuthentication();
 			app.UseAuthorization();
-			//app.UseSwaggerExtension();
+			app.UseSwaggerExtension();
 			app.UseHealthChecks("/health");
 			app.UseSession();
 
