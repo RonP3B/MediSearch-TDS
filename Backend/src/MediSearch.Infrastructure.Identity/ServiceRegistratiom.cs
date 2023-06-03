@@ -1,5 +1,6 @@
 ﻿using MediSearch.Core.Domain.Settings;
 using MediSearch.Core_Application.Dtos.Account;
+using MediSearch.Core_Application.Interfaces.Services;
 using MediSearch.Infrastructure.Identity.Contexts;
 using MediSearch.Infrastructure.Identity.Entities;
 using MediSearch.Infrastructure.Identity.Services;
