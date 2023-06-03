@@ -16,17 +16,23 @@ namespace MediSearch.Infrastructure.Persistence
 	{
 		public static void AddPersistenceInfrastructure(this IServiceCollection services, IConfiguration configuration)
 		{
+			var connection = configuration.GetConnectionString("PostgreSQL");
+			var password = Environment.GetEnvironmentVariable("PassCockroachDB");
+			var host = Environment.GetEnvironmentVariable("HostCockroachDB");
+			connection = connection.Replace("#", password);
+			connection = connection.Replace("ServerHost", host);
+
 			#region Contexts
 			if (configuration.GetValue<bool>("UseInMemoryDatabase"))
 			{
-				services.AddDbContext<ApplicationContext>(options => options.UseInMemoryDatabase("ApplicationDb"));
+				services.AddDbContext<ApplicationContext>(options => options.UseInMemoryDatabase("MediSearchDb"));
 			}
 			else
 			{
 				services.AddDbContext<ApplicationContext>(options =>
 				{
 					options.EnableSensitiveDataLogging();
-					options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"),
+					options.UseNpgsql(connection,
 					m => m.MigrationsAssembly(typeof(ApplicationContext).Assembly.FullName));
 				});
 			}
