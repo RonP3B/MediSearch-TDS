@@ -20,13 +20,13 @@ namespace MediSearch.WebApi.Extensions
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "RealtyApp API",
+                    Title = "MediSearch API",
                     Description = "This Api will be responsible for overall data distribution",
                     Contact = new OpenApiContact
                     {
-                        Name = "Grupo Prog. III (Alexander, Edwin, David)",
-                        Email = "progIII@itla.edu.do",
-                        Url = new Uri("https://www.itla.edu.do")
+                        Name = "MediSearch App",
+                        Email = "medicsearchfinal@gmail.com",
+                        Url = new Uri("")
                     }
                 });
                 options.EnableAnnotations();

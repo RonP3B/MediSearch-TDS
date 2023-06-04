@@ -10,7 +10,7 @@ namespace MediSearch.WebApi.Extensions
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "RealtyApp API");
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "MediSearch API");
                 options.DefaultModelRendering(ModelRendering.Model);
             });
         }
