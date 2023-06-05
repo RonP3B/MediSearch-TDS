@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace MediSearch.Core.Domain.Settings
 {
-	public class JWTSettings
+	public class RefreshJWTSettings
 	{
 		public string Key { get; set; }
 		public string Issuer { get; set; }
 		public string Audience { get; set; }
-		public int DurationInMinutes { get; set; }
+		public int DurationInDays { get; set; }
 	}
 }

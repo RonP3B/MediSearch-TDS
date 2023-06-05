@@ -57,6 +57,7 @@ namespace MediSearch.Infrastructure.Identity
 			});
 
 			services.Configure<JWTSettings>(configuration.GetSection("JWTSettings"));
+			services.Configure<RefreshJWTSettings>(configuration.GetSection("RefreshJWTSettings"));
 
 			services.AddAuthentication(options =>
 			{
