@@ -14,6 +14,9 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using MediSearch.Core.Application.Dtos.Email;
+using MediSearch.Core.Application.Enums;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace MediSearch.Infrastructure.Identity.Services
 {
@@ -66,6 +69,78 @@ namespace MediSearch.Infrastructure.Identity.Services
 			response.RefreshToken = GenerateRefreshToken(user.Id);
 
 			return response;
+		}
+
+		public async Task<RegisterResponse> RegisterClientUserAsync(RegisterRequest request, string origin)
+		{
+			RegisterResponse response = await ValidateUserBeforeRegistrationAsync(request);
+			if (response.HasError)
+			{
+				return response;
+			}
+
+			var user = new ApplicationUser
+			{
+				Email = request.Email,
+				FirstName = request.FirstName,
+				LastName = request.LastName,
+				UserName = request.UserName,
+				PhoneNumber = request.PhoneNumber,
+				UrlImage = request.UrlImage,
+				Country = request.Country,
+				City = request.City,
+				Address = request.Address
+			};
+
+			var result = await _userManager.CreateAsync(user, request.Password);
+			if (result.Succeeded)
+			{
+				await _userManager.AddToRoleAsync(user, Roles.Client.ToString());
+				var verificationUri = await SendVerificationEmailUri(user, origin);
+				await _emailService.SendAsync(new EmailRequest()
+				{
+					To = user.Email,
+					Body = MakeEmailForConfirm(verificationUri, user.FirstName + " " + user.LastName),
+					Subject = "Confirmar registro"
+				});
+			}
+			else
+			{
+				foreach (var error in result.Errors)
+				{
+					response.Error += $"{error.Description}";
+				}
+				response.HasError = true;
+				return response;
+			}
+
+			return response;
+		}
+
+		public async Task<string> ConfirmEmailAsync(string userId, string token)
+		{
+			var user = await _userManager.FindByIdAsync(userId);
+			if (user == null)
+			{
+				return $"No existe cuenta registrada con este usuario";
+			}
+
+			token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+			var result = await _userManager.ConfirmEmailAsync(user, token);
+			if (result.Succeeded)
+			{
+				await _emailService.SendAsync(new EmailRequest()
+				{
+					To = user.Email,
+					Body = MakeEmailForConfirmed(user.FirstName + " " + user.LastName),
+					Subject = "Cuenta confirmada"
+				});
+				return $"Cuenta confirmada para {user.Email}. Ahora puedes usar la app";
+			}
+			else
+			{
+				return $"Ocurrió un error mientras se confirmaba la cuenta para el correo: {user.Email}.";
+			}
 		}
 
 		public async Task<string> GenerateJWToken(string userId)
@@ -167,6 +242,150 @@ namespace MediSearch.Infrastructure.Identity.Services
 
 			return userId;
 		}
+
+		#region Private Methods
+		private async Task<RegisterResponse> ValidateUserBeforeRegistrationAsync(RegisterRequest request)
+		{
+			RegisterResponse response = new()
+			{
+				HasError = false
+			};
+			var user = _userManager.Users.ToList();
+
+			var userWithSameUserName = await _userManager.FindByNameAsync(request.UserName);
+			if (userWithSameUserName != null)
+			{
+				response.HasError = true;
+				response.Error = $"El nombre de usuario '{request.UserName}' ya está siendo usado.";
+				return response;
+			}
+
+			var userWithSameEmail = await _userManager.FindByEmailAsync(request.Email);
+			if (userWithSameEmail != null)
+			{
+				response.HasError = true;
+				response.Error = $"El correo '{request.Email}' ya está siendo usado.";
+				return response;
+			}
+
+			return response;
+		}
+
+		private async Task<string> SendVerificationEmailUri(ApplicationUser user, string origin)
+		{
+			var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+			code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+			var route = "api/v1/Account/ConfirmEmail";
+			var Uri = new Uri(string.Concat($"{origin}/", route));
+			var verificationUri = QueryHelpers.AddQueryString(Uri.ToString(), "userId", user.Id);
+			verificationUri = QueryHelpers.AddQueryString(verificationUri, "token", code);
+
+			return verificationUri;
+		}
+
+		private string MakeEmailForConfirm(string verificationUri, string user)
+		{
+			string htmlBody = @"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <title>Confirmación de correo</title>
+    <style>
+        /* Estilos adicionales */
+        .button {
+            display: inline-block;
+            font-weight: 400;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: 0.25rem;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>¡Bienvenid@ user!</h1>
+    <p>Confirme su cuenta, pulsando el siguiente botón:</p>
+    <a href='Uri'>
+        <button class='button'>Confirmar cuenta</button>
+    </a>
+</body>
+</html>
+";
+			string html = htmlBody.Replace("Uri", verificationUri);
+			html = html.Replace("user", user);
+			return html;
+		}
+
+		private string MakeEmailForConfirmed(string user)
+		{
+			string htmlBody = @"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <title>Cuenta confirmada</title>
+    <style>
+        /* Estilos adicionales */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .message {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1 class='title'>¡Cuenta Confirmada!</h1>
+        </div>
+        <div class='message'>
+            <p>Hola Nombre,</p>
+            <p>Te damos la bienvenida a nuestra comunidad. Gracias por confirmar tu cuenta.</p>
+            <p>Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos.</p>
+            <p>¡Disfruta de la aplicación y que tengas un gran día!</p>
+        </div>
+        <div class='footer'>
+            <p>Atentamente,</p>
+            <p>El equipo de MediSearch</p>
+        </div>
+    </div>
+</body>
+</html>
+";
+			string html = htmlBody.Replace("Nombre", user);
+			return html;
+		}
+		#endregion
 
 	}
 }

@@ -28,6 +28,7 @@ namespace MediSearch.WebApi.Controllers
 		[Consumes(MediaTypeNames.Application.Json)]
 		public async Task<IActionResult> Authenticate([FromBody] AuthenticateCommand command)
 		{
+			var origin = Request.Headers["origin"];
 			var response = await Mediator.Send(command);
 
 			if (!ModelState.IsValid)
@@ -61,7 +62,7 @@ namespace MediSearch.WebApi.Controllers
 
 			return Ok(response);
 		}
-		S
+
 		[HttpGet("refresh-access-token")]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthenticationResponse))]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(AuthenticationResponse))]
