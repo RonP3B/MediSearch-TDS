@@ -2,6 +2,7 @@ using MediatR;
 using MediSearch.Core.Application.Dtos.Account;
 using MediSearch.Core.Application.Features.Account.Commands.AuthenticateCommand;
 using MediSearch.Core.Application.Features.Account.Queries.RefreshAccessTokenQuery;
+using MediSearch.Core.Application.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net.Mime;
@@ -52,9 +53,15 @@ namespace MediSearch.WebApi.Controllers
 			};
 			Response.Cookies.Append("refreshToken", response.RefreshToken, cookieOptions);
 
+			HttpContext.Session.Set("user", response.UserId);
+			if(response.CompanyId != null)
+			{
+				HttpContext.Session.Set("company", response.CompanyId);
+			}
+
 			return Ok(response);
 		}
-
+		S
 		[HttpGet("refresh-access-token")]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthenticationResponse))]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(AuthenticationResponse))]
@@ -89,6 +96,8 @@ namespace MediSearch.WebApi.Controllers
 				Expires = DateTime.UtcNow.AddDays(5),
 				SameSite = SameSiteMode.None
 			});
+			HttpContext.Session.Remove("user");
+			HttpContext.Session.Remove("company");
 
 			return NoContent();
 		}
