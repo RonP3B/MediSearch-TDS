@@ -25,8 +25,7 @@ namespace MediSearch.WebApi.Extensions
                     Contact = new OpenApiContact
                     {
                         Name = "MediSearch App",
-                        Email = "medicsearchfinal@gmail.com",
-                        Url = new Uri("")
+                        Email = "medicsearchfinal@gmail.com"
                     }
                 });
                 options.EnableAnnotations();

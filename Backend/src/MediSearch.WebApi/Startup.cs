@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediSearch.Core.Application;
+using MediSearch.Infrastructure.Identity;
 using MediSearch.Infrastructure.Persistence;
 using MediSearch.Infrastructure.Shared;
-using System.Text.Json.Serialization;
-using MediSearch.Core_Application;
-using MediSearch.Infrastructure.Identity;
 using MediSearch.WebApi.Extensions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters.Xml;
+using System.Text.Json.Serialization;
 
 namespace MediSearch.WebApi
 {
@@ -20,10 +21,12 @@ namespace MediSearch.WebApi
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.AddApplicationLayer(Configuration);
 			services.AddPersistenceInfrastructure(Configuration);
 			services.AddIdentityInfrastructure(Configuration);
-			services.AddApplicationLayer(Configuration);
 			services.AddSharedInfrastructure(Configuration);
+			services.AddEndpointsApiExplorer();
+			services.AddSwaggerGen();
 			services.AddControllers(options =>
 			{
 				options.Filters.Add(new ProducesAttribute("application/json"));
@@ -40,7 +43,7 @@ namespace MediSearch.WebApi
 			services.AddApiVersioningExtension();
 			services.AddDistributedMemoryCache();
 			services.AddSession();
-
+			
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 		}
 

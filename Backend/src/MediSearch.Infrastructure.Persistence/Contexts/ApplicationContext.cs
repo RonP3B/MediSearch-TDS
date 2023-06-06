@@ -12,6 +12,8 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
 {
 	public class ApplicationContext : DbContext
 	{
+		public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
+
 		public DbSet<Company> Companies { get; set; }
 		public DbSet<CompanyType> CompanyTypes { get; set; }
 		public DbSet<CompanyUser> CompanyUsers { get; set; }

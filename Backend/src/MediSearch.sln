@@ -13,15 +13,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApi", "WebApi", "{CFB7FF51-92D4-47C1-A778-E1C92E1C1677}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediSearch.Core,Application", "MediSearch.Core,Application\MediSearch.Core,Application.csproj", "{18010BDB-D423-4FC9-939A-0CB2F46BCE91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediSearch.Core.Application", "MediSearch.Core,Application\MediSearch.Core.Application.csproj", "{18010BDB-D423-4FC9-939A-0CB2F46BCE91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediSearch.Infrastructure.Identity", "MediSearch.Infrastructure.Identity\MediSearch.Infrastructure.Identity.csproj", "{0ABDF52D-234D-4C13-BD65-78522C98C1F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediSearch.Infrastructure.Identity", "MediSearch.Infrastructure.Identity\MediSearch.Infrastructure.Identity.csproj", "{0ABDF52D-234D-4C13-BD65-78522C98C1F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediSearch.Infrastructure.Persistence", "MediSearch.Infrastructure.Persistence\MediSearch.Infrastructure.Persistence.csproj", "{31F3A6CD-B52C-44BE-969A-1364BB7BBC18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediSearch.Infrastructure.Persistence", "MediSearch.Infrastructure.Persistence\MediSearch.Infrastructure.Persistence.csproj", "{31F3A6CD-B52C-44BE-969A-1364BB7BBC18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediSearch.Infrastructure.Shared", "MediSearch.Infrastructure.Shared\MediSearch.Infrastructure.Shared.csproj", "{523FD73D-7F2C-45D3-813B-B8EFE5EA31CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediSearch.Infrastructure.Shared", "MediSearch.Infrastructure.Shared\MediSearch.Infrastructure.Shared.csproj", "{523FD73D-7F2C-45D3-813B-B8EFE5EA31CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediSearch.WebApi", "MediSearch.WebApi\MediSearch.WebApi.csproj", "{977A5010-5631-420D-B47C-572CCBD3DA1F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediSearch.WebApi", "MediSearch.WebApi\MediSearch.WebApi.csproj", "{8BC25648-1CC8-4C8B-B22D-A9E9FCD61832}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,10 +49,10 @@ Global
 		{523FD73D-7F2C-45D3-813B-B8EFE5EA31CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{523FD73D-7F2C-45D3-813B-B8EFE5EA31CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{523FD73D-7F2C-45D3-813B-B8EFE5EA31CC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{977A5010-5631-420D-B47C-572CCBD3DA1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{977A5010-5631-420D-B47C-572CCBD3DA1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{977A5010-5631-420D-B47C-572CCBD3DA1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{977A5010-5631-420D-B47C-572CCBD3DA1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BC25648-1CC8-4C8B-B22D-A9E9FCD61832}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BC25648-1CC8-4C8B-B22D-A9E9FCD61832}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BC25648-1CC8-4C8B-B22D-A9E9FCD61832}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BC25648-1CC8-4C8B-B22D-A9E9FCD61832}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,7 +66,7 @@ Global
 		{0ABDF52D-234D-4C13-BD65-78522C98C1F5} = {19FC1B1B-0CCF-49DA-A5A3-A702A82B39DE}
 		{31F3A6CD-B52C-44BE-969A-1364BB7BBC18} = {19FC1B1B-0CCF-49DA-A5A3-A702A82B39DE}
 		{523FD73D-7F2C-45D3-813B-B8EFE5EA31CC} = {19FC1B1B-0CCF-49DA-A5A3-A702A82B39DE}
-		{977A5010-5631-420D-B47C-572CCBD3DA1F} = {CFB7FF51-92D4-47C1-A778-E1C92E1C1677}
+		{8BC25648-1CC8-4C8B-B22D-A9E9FCD61832} = {CFB7FF51-92D4-47C1-A778-E1C92E1C1677}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {14333937-95DF-4447-AF19-4E54E16C0347}

@@ -7,18 +7,13 @@ using System.Threading.Tasks;
 
 namespace MediSearch.Core.Application.Dtos.Account
 {
-    public class AuthenticationResponse
-    {
+	public class RefreshTokenResponse
+	{
 		[JsonIgnore]
 		public bool HasError { get; set; }
 		[JsonIgnore]
 		public string Error { get; set; }
-        public string JWToken { get; set; }
-        [JsonIgnore]
-        public string RefreshToken { get; set; }
-		[JsonIgnore]
-		public string UserId { get; set; }
-		[JsonIgnore]
-		public string CompanyId { get; set; }
+		public string JWToken { get; set; }
+		
 	}
 }

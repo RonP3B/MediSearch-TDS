@@ -11,9 +11,9 @@ namespace MediSearch.Infrastructure.Identity.Entities
 	{
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
-		public string urlImage { get; set; }
-		public string country { get; set; }
-        public string city { get; set; }
-        public string address { get; set; }
+		public string UrlImage { get; set; }
+		public string Country { get; set; }
+        public string City { get; set; }
+        public string Address { get; set; }
     }
 }

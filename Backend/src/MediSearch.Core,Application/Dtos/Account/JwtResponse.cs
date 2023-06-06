@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MediSearch.Core_Application.Dtos.Account
+namespace MediSearch.Core.Application.Dtos.Account
 {
 	public class JwtResponse
 	{

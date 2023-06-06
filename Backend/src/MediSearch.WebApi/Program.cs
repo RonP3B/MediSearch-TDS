@@ -2,10 +2,6 @@ using MediSearch.Infrastructure.Identity.Entities;
 using MediSearch.Infrastructure.Identity.Seeds;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MediSearch.WebApi
 {
@@ -24,12 +20,14 @@ namespace MediSearch.WebApi
 					var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
 					await DefaultRoles.SeedAsync(userManager, roleManager);
+					await DefaultSuperAdminUser.SeedAsync(userManager, roleManager);
 				}
 				catch (Exception ex)
 				{
 
 				}
 			}
+			
 			host.Run();
 		}
 

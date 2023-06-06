@@ -1,4 +1,4 @@
-﻿using MediSearch.Core_Application.Enums;
+﻿using MediSearch.Core.Application.Enums;
 using MediSearch.Infrastructure.Identity.Entities;
 using Microsoft.AspNetCore.Identity;
 using System;

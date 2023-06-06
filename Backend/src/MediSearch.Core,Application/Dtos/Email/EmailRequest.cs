@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MediSearch.Core_Application.Dtos.Email
+namespace MediSearch.Core.Application.Dtos.Email
 {
 	public class EmailRequest
 	{

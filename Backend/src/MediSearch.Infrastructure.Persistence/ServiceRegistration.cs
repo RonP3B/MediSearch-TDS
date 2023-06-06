@@ -1,4 +1,4 @@
-﻿using MediSearch.Core_Application.Interfaces.Repositories;
+﻿using MediSearch.Core.Application.Interfaces.Repositories;
 using MediSearch.Infrastructure.Persistence.Contexts;
 using MediSearch.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;

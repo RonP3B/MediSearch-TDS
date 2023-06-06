@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MediSearch.Core,Application\MediSearch.Core,Application.csproj" />
+    <ProjectReference Include="..\MediSearch.Core,Application\MediSearch.Core.Application.csproj" />
     <ProjectReference Include="..\MediSearch.Infrastructure.Shared\MediSearch.Infrastructure.Shared.csproj" />
   </ItemGroup>
 

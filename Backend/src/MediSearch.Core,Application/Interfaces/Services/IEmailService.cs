@@ -1,12 +1,12 @@
 ﻿using MediSearch.Core.Domain.Settings;
-using MediSearch.Core_Application.Dtos.Email;
+using MediSearch.Core.Application.Dtos.Email;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MediSearch.Core_Application.Interfaces.Services
+namespace MediSearch.Core.Application.Interfaces.Services
 {
 	public interface IEmailService
 	{

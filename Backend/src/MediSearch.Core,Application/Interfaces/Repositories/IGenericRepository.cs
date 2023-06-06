@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MediSearch.Core_Application.Interfaces.Repositories
+namespace MediSearch.Core.Application.Interfaces.Repositories
 {
 	public interface IGenericRepository<Entity> where Entity : class
 	{

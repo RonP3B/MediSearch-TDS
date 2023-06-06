@@ -1,7 +1,7 @@
 ﻿using MediSearch.Core.Application.Dtos.Account;
 using MediSearch.Core.Domain.Settings;
-using MediSearch.Core_Application.Dtos.Account;
-using MediSearch.Core_Application.Interfaces.Services;
+using MediSearch.Core.Application.Dtos.Account;
+using MediSearch.Core.Application.Interfaces.Services;
 using MediSearch.Infrastructure.Identity.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -61,17 +61,14 @@ namespace MediSearch.Infrastructure.Identity.Services
 				return response;
 			}
 
-			var jwtSecurityToken = await GenerateJWToken(user.Id);
-			var refreshToken = GenerateRefreshToken(user.Id);
-
-			response.JWToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
-			response.UserId = user.Id;			
-			response.RefreshToken = new JwtSecurityTokenHandler().WriteToken(refreshToken);
+			response.JWToken = await GenerateJWToken(user.Id);
+			response.UserId = user.Id;
+			response.RefreshToken = GenerateRefreshToken(user.Id);
 
 			return response;
 		}
 
-		public async Task<JwtSecurityToken> GenerateJWToken(string userId)
+		public async Task<string> GenerateJWToken(string userId)
 		{
 			var user = await _userManager.FindByIdAsync(userId);
 			var userClaims = await _userManager.GetClaimsAsync(user);
@@ -104,10 +101,12 @@ namespace MediSearch.Infrastructure.Identity.Services
 				expires: DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes),
 				signingCredentials: signingCredetials);
 
-			return jwtSecurityToken;
+
+			string token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+			return token;
 		}
 
-		public JwtSecurityToken GenerateRefreshToken(string userId)
+		public string GenerateRefreshToken(string userId)
 		{
 			var claims = new[]
 			{
@@ -122,10 +121,12 @@ namespace MediSearch.Infrastructure.Identity.Services
 				issuer: _refreshSettings.Issuer,
 				audience: _refreshSettings.Audience,
 				claims: claims,
-				expires: DateTime.UtcNow.AddMinutes(_refreshSettings.DurationInDays),
+				expires: DateTime.UtcNow.AddDays(_refreshSettings.DurationInDays),
 				signingCredentials: signingCredetials);
 
-			return jwtSecurityToken;
+			string token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+
+			return token;
 		}
 
 		public string ValidateRefreshToken(string token)
@@ -148,16 +149,18 @@ namespace MediSearch.Infrastructure.Identity.Services
 			{
 				ClaimsPrincipal claimsPrincipal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
 
-                if (validatedToken != null)
-                {
-					var id = claimsPrincipal.FindFirst("uid");
-					userId = id.Value;
-                }
-            }
+				if (validatedToken == null)
+				{
+					return "Error: El token no es válido";
+				}
+				var id = claimsPrincipal.FindFirst("uid");
+				userId = id.Value;
+			}
 			catch (SecurityTokenValidationException ex)
 			{
 				return "Error de validación del token JWT: " + ex.Message;
-			}catch (Exception ex)
+			}
+			catch (Exception ex)
 			{
 				return "Error al decodificar el token JWT: " + ex.Message;
 			}

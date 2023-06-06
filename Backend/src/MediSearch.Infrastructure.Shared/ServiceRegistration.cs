@@ -1,5 +1,5 @@
 ﻿using MediSearch.Core.Domain.Settings;
-using MediSearch.Core_Application.Interfaces.Services;
+using MediSearch.Core.Application.Interfaces.Services;
 using MediSearch.Infrastructure.Shared.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,8 +1,8 @@
 ﻿using MailKit.Net.Smtp;
 using MailKit.Security;
 using MediSearch.Core.Domain.Settings;
-using MediSearch.Core_Application.Dtos.Email;
-using MediSearch.Core_Application.Interfaces.Services;
+using MediSearch.Core.Application.Dtos.Email;
+using MediSearch.Core.Application.Interfaces.Services;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using System;
