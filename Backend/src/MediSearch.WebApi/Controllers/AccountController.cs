@@ -1,8 +1,10 @@
 using MediatR;
 using MediSearch.Core.Application.Dtos.Account;
 using MediSearch.Core.Application.Features.Account.Commands.AuthenticateCommand;
+using MediSearch.Core.Application.Features.Account.Commands.ConfirmCodeCommand;
 using MediSearch.Core.Application.Features.Account.Commands.ConfirmEmailCommand;
 using MediSearch.Core.Application.Features.Account.Commands.RegisterClientCommand;
+using MediSearch.Core.Application.Features.Account.Commands.ResetPasswordCommand;
 using MediSearch.Core.Application.Features.Account.Queries.RefreshAccessTokenQuery;
 using MediSearch.Core.Application.Helpers;
 using Microsoft.AspNetCore.Mvc;
@@ -60,8 +62,8 @@ namespace MediSearch.WebApi.Controllers
 			};
 			Response.Cookies.Append("refreshToken", response.RefreshToken, cookieOptions);
 
-			HttpContext.Session.Set("user", response.UserId);
-			if(response.CompanyId != null)
+			HttpContext.Session.Set("userId", response.UserId);
+			if (response.CompanyId != null)
 			{
 				HttpContext.Session.Set("company", response.CompanyId);
 			}
@@ -109,7 +111,7 @@ namespace MediSearch.WebApi.Controllers
 				return BadRequest(response.Error);
 			}
 
-			return Ok(response);
+			return Ok(response.IsSuccess);
 		}
 
 		[HttpGet("confirm-email")]
@@ -117,12 +119,12 @@ namespace MediSearch.WebApi.Controllers
 		[ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ConfirmEmailResponse))]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ConfirmEmailResponse))]
 		[SwaggerOperation(
-		   Summary = "Registro de usuario cliente",
-		   Description = "Registra a un usuario de tipo cliente"
+		   Summary = "Comfirmar al usuario ",
+		   Description = "Confirma la cuenta del usuario"
 		)]
 		public async Task<IActionResult> ConfirmEmail(string userId, string token)
 		{
-			ConfirmEmailCommand command= new()
+			ConfirmEmailCommand command = new()
 			{
 				UserId = userId,
 				Token = token
@@ -184,6 +186,76 @@ namespace MediSearch.WebApi.Controllers
 			return Content(html, "text/html");
 		}
 
+		[HttpPost("reset-password")]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResetPasswordResponse))]
+		[ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResetPasswordResponse))]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ResetPasswordResponse))]
+		[SwaggerOperation(
+			Summary = "Restablecer contraseña",
+			Description = "Permite que el usuario cambie su contraseña si se le olvidó"
+			)]
+		public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command)
+		{
+			var response = await Mediator.Send(command);
+
+			if (response.HasError)
+			{
+				if (response.Error.Contains("error"))
+				{
+					return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
+				}
+				return NotFound(response.Error);
+			}
+
+			return Ok(response.IsSuccess);
+		}
+
+		[HttpPost("confirm-code")]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ConfirmCodeResponse))]
+		[ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ConfirmCodeResponse))]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ConfirmCodeResponse))]
+		[SwaggerOperation(
+			Summary = "Confirmar código",
+			Description = "Permite que el usuario ingrese el código de confirmación que se le envió por correo"
+			)]
+		public async Task<IActionResult> ConfirmCode([FromBody] ConfirmCodeCommand command)
+		{
+			var response = await Mediator.Send(command);
+
+			if (response.HasError)
+			{
+				if (response.Error.Contains("error"))
+				{
+					return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
+				}
+				return NotFound(response.Error);
+			}
+
+			return Ok(response.IsSuccess);
+		}
+
+		[HttpPost("change-password")]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResetPasswordResponse))]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ResetPasswordResponse))]
+		[SwaggerOperation(
+			Summary = "Restablecer contraseña",
+			Description = "Permite que el usuario cambie su contraseña si se le olvidó"
+			)]
+		public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordCommand command)
+		{
+			var response = await Mediator.Send(command);
+
+			if (response.HasError)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
+			}
+
+			HttpContext.Session.Remove("user");
+			HttpContext.Session.Remove("confirmCode");
+
+			return Ok(response.IsSuccess);
+		}
+
 		[HttpGet("logout")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[SwaggerOperation(
@@ -199,7 +271,7 @@ namespace MediSearch.WebApi.Controllers
 				Expires = DateTime.UtcNow.AddDays(5),
 				SameSite = SameSiteMode.None
 			});
-			HttpContext.Session.Remove("user");
+			HttpContext.Session.Remove("userId");
 			HttpContext.Session.Remove("company");
 
 			return NoContent();

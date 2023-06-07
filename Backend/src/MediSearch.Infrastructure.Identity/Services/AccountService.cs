@@ -17,6 +17,8 @@ using System.Threading.Tasks;
 using MediSearch.Core.Application.Dtos.Email;
 using MediSearch.Core.Application.Enums;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.AspNetCore.Http;
+using MediSearch.Core.Application.Helpers;
 
 namespace MediSearch.Infrastructure.Identity.Services
 {
@@ -28,13 +30,16 @@ namespace MediSearch.Infrastructure.Identity.Services
 		private readonly IEmailService _emailService;
 		private readonly JWTSettings _jwtSettings;
 		private readonly RefreshJWTSettings _refreshSettings;
+		IHttpContextAccessor _httpContextAccessor;
+
 
 		public AccountService(
 			  UserManager<ApplicationUser> userManager,
 			  SignInManager<ApplicationUser> signInManager,
 			  IEmailService emailService,
 			  IOptions<JWTSettings> jwtSettings,
-			  IOptions<RefreshJWTSettings> refreshSettings
+			  IOptions<RefreshJWTSettings> refreshSettings,
+			  IHttpContextAccessor httpContextAccessor
 			)
 		{
 			_userManager = userManager;
@@ -42,6 +47,8 @@ namespace MediSearch.Infrastructure.Identity.Services
 			_emailService = emailService;
 			_jwtSettings = jwtSettings.Value;
 			_refreshSettings = refreshSettings.Value;
+			_httpContextAccessor = httpContextAccessor;
+
 		}
 
 		public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request)
@@ -110,7 +117,7 @@ namespace MediSearch.Infrastructure.Identity.Services
 				{
 					To = user.Email,
 					Body = MakeEmailForConfirm(verificationUri, user.FirstName + " " + user.LastName),
-					Subject = "Confirmar registro"
+					Subject = "Confirmar Cuenta"
 				});
 			}
 			else
@@ -131,7 +138,7 @@ namespace MediSearch.Infrastructure.Identity.Services
 			ConfirmEmailResponse response = new()
 			{
 				HasError = false
-			}; 
+			};
 			var user = await _userManager.FindByIdAsync(userId);
 			if (user == null)
 			{
@@ -148,7 +155,7 @@ namespace MediSearch.Infrastructure.Identity.Services
 				{
 					To = user.Email,
 					Body = MakeEmailForConfirmed(user.FirstName + " " + user.LastName),
-					Subject = "Cuenta confirmada"
+					Subject = "Cuenta Confirmada"
 				});
 				return response;
 			}
@@ -158,6 +165,113 @@ namespace MediSearch.Infrastructure.Identity.Services
 				response.Error = $"Ocurrió un error mientras se confirmaba la cuenta para el correo: {user.Email}";
 				return response;
 			}
+		}
+
+		public async Task<ResetPasswordResponse> ResetPasswordAsync(string email)
+		{
+			ResetPasswordResponse response = new()
+			{
+				HasError = false
+			};
+
+			var user = await _userManager.FindByEmailAsync(email);
+			if (user == null)
+			{
+				response.HasError = true;
+				response.Error = "No existe cuenta registrada con este correo";
+				return response;
+			}
+
+			Guid guid = Guid.NewGuid();
+			string format = guid.ToString();
+			string code = format.Replace("-", "");
+			code = code.Substring(5, 6);
+
+			_httpContextAccessor.HttpContext.Session.Set<string>("confirmCode", code);
+			_httpContextAccessor.HttpContext.Session.Set<string>("user", user.Id);
+
+			response.IsSuccess = true;
+			await _emailService.SendAsync(new EmailRequest()
+			{
+				To = user.Email,
+				Body = MakeEmailForReset(user, code),
+				Subject = "Código de Confirmación"
+			});
+
+			return response;
+		}
+
+		public async Task<ResetPasswordResponse> ChangePasswordAsync(string password)
+		{
+			ResetPasswordResponse response = new()
+			{
+				HasError = false
+			};
+
+			var userId = _httpContextAccessor.HttpContext.Session.Get<string>("user");
+			if (userId == null)
+			{
+				response.HasError = true;
+				response.Error = "Sucedió un error en el sistema";
+				return response;
+			}
+
+			var user = await _userManager.FindByIdAsync(userId);
+			if (user == null)
+			{
+				response.HasError = true;
+				response.Error = "Sucedió un error en el sistema";
+				return response;
+			}
+			var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+			var result = await _userManager.ResetPasswordAsync(user, resetToken, password);
+
+			if (!result.Succeeded)
+			{
+				foreach(var error in result.Errors)
+				{
+					response.Error += $"{error.Description}";
+				}
+				response.HasError = true;
+				
+				return response;
+			}
+
+			response.IsSuccess = true;
+			await _emailService.SendAsync(new EmailRequest()
+			{
+				To = user.Email,
+				Body = MakeEmailForChange(user),
+				Subject = "Cambio de Contraseña"
+			});
+
+			return response;
+		}
+
+		public ConfirmCodeResponse ConfirmCode(string code)
+		{
+			ConfirmCodeResponse response = new()
+			{
+				HasError = false
+			};
+
+			var confirm = _httpContextAccessor.HttpContext.Session.Get<string>("confirmCode");
+			if (confirm == null) { 
+				response.HasError = true;
+				response.Error = "Ocurrió un error confirmando el código";
+				return response;
+			}
+
+			if(!confirm.Equals(code))
+			{
+				response.HasError = true;
+				response.Error = "El código de confirmación no es correcto";
+				return response;
+			}
+
+			response.IsSuccess = true;
+			return response;
 		}
 
 		public async Task<string> GenerateJWToken(string userId)
@@ -307,9 +421,31 @@ namespace MediSearch.Infrastructure.Identity.Services
 <html>
 <head>
     <meta charset='UTF-8'>
-    <title>Confirmación de correo</title>
+    <title>Confirmar Cuenta</title>
     <style>
         /* Estilos adicionales */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .message {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
         .button {
             display: inline-block;
             font-weight: 400;
@@ -328,19 +464,33 @@ namespace MediSearch.Infrastructure.Identity.Services
             border-color: #007bff;
             text-decoration: none;
         }
+        .footer {
+            text-align: center;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
-    <h1>¡Bienvenid@ name!</h1>
-    <p>Confirme su cuenta, pulsando el siguiente botón:</p>
-    <a href='Uri'>
-        <button class='button'>Confirmar cuenta</button>
-    </a>
+    <div class='container'>
+        <div class='header'>
+            <h1 class='title'>Confirmar Cuenta</h1>
+        </div>
+        <div class='message'>
+            <p>Hola [Nombre],</p>
+            <p>Gracias por registrarte en nuestro sitio. Para completar el proceso de registro, por favor, haz clic en el siguiente botón:</p>
+            <p><a href='[URL]' class='button'>Confirmar Cuenta</a></p>
+        </div>
+        <div class='footer'>
+            <p>Atentamente,</p>
+            <p>El equipo de MediSearch</p>
+        </div>
+    </div>
 </body>
 </html>
 ";
-			string html = htmlBody.Replace("Uri", verificationUri);
-			html = html.Replace("name", user);
+
+			string html = htmlBody.Replace("[URL]", verificationUri);
+			html = html.Replace("[Nombre]", user);
 			return html;
 		}
 
@@ -351,16 +501,18 @@ namespace MediSearch.Infrastructure.Identity.Services
 <html>
 <head>
     <meta charset='UTF-8'>
-    <title>Cuenta confirmada</title>
+    <title>Cuenta Confirmada</title>
     <style>
         /* Estilos adicionales */
         body {
             font-family: Arial, sans-serif;
         }
         .container {
-            max-width: 600px;
+            max-width: 400px;
             margin: 0 auto;
             padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
         }
         .header {
             text-align: center;
@@ -400,6 +552,138 @@ namespace MediSearch.Infrastructure.Identity.Services
 </html>
 ";
 			string html = htmlBody.Replace("Nombre", user);
+			return html;
+		}
+
+		private string MakeEmailForReset(ApplicationUser user, string code)
+		{
+			string htmlBody = @"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <title>Código de Confirmación</title>
+    <style>
+        /* Estilos adicionales */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .message {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .code {
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1 class='title'>Código de Confirmación</h1>
+        </div>
+        <div class='message'>
+            <p>Hola [Nombre],</p>
+            <p>Aquí tienes tu código de confirmación:</p>
+        </div>
+        <div class='code'>
+            <p>[Código]</p>
+        </div>
+        <div class='footer'>
+            <p>Por favor, ingresa este código para poder continuar con el proceso de restablecer la contraseña.</p>
+			<p>Si no fuiste tú quien solicitó esta acción, revisa tu cuenta</p>
+            <p>Atentamente,</p>
+            <p>El equipo de MediSearch</p>
+        </div>
+    </div>
+</body>
+</html>
+";
+
+			string html = htmlBody.Replace("[Nombre]", user.FirstName + " " + user.LastName);
+			html = html.Replace("[Código]", code);
+			return html;
+		}
+
+		private string MakeEmailForChange(ApplicationUser user)
+		{
+			string htmlBody = @"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <title>Cambio de Contraseña</title>
+    <style>
+        /* Estilos adicionales */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .message {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1 class='title'>Cambio de Contraseña</h1>
+        </div>
+        <div class='message'>
+            <p>Hola [Nombre],</p>
+            <p>Tu contraseña ha sido cambiada correctamente.</p>
+            <p>Si no realizaste este cambio, por favor, ponte en contacto con nosotros lo antes posible.</p>
+        </div>
+        <div class='footer'>
+            <p>Atentamente,</p>
+            <p>El equipo de MediSearch</p>
+        </div>
+    </div>
+</body>
+</html>
+";
+
+			string html = htmlBody.Replace("[Nombre]", user.FirstName + " " + user.LastName);
 			return html;
 		}
 
