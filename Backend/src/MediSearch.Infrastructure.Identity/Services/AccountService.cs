@@ -57,6 +57,14 @@ namespace MediSearch.Infrastructure.Identity.Services
 				return response;
 			}
 
+			var isConfirmed = await _userManager.IsEmailConfirmedAsync(user);
+			if (!isConfirmed)
+			{
+				response.HasError = true;
+				response.Error = "El usuario no ha confirmado su cuenta. Revise su correo electrónico";
+				return response;
+			}
+
 			var result = await _signInManager.PasswordSignInAsync(user.UserName, request.Password, false, lockoutOnFailure: false);
 			if (!result.Succeeded)
 			{

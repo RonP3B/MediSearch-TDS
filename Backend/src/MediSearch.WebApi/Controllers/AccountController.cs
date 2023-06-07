@@ -23,6 +23,7 @@ namespace MediSearch.WebApi.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthenticationResponse))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(AuthenticationResponse))]
 		[ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(AuthenticationResponse))]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(AuthenticationResponse))]
 		[SwaggerOperation(
 		   Summary = "Iniciar sesión",
 		   Description = "Autentica al usuario y devuelve un JWT Token"
@@ -42,6 +43,10 @@ namespace MediSearch.WebApi.Controllers
 				if (response.Error.Contains("No existe una cuenta registrada con este usuario"))
 				{
 					return NotFound(response.Error);
+				}
+				if (response.Error.Contains("correo"))
+				{
+					return StatusCode(StatusCodes.Status401Unauthorized, response.Error);
 				}
 				return BadRequest(response.Error);
 			}

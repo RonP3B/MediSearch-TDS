@@ -83,7 +83,7 @@ namespace MediSearch.Core.Application.Features.Account.Commands.RegisterClientCo
 			}
 			catch (Exception)
 			{
-				throw new Exception("Ocurrió un error tratando de crear autenticar el usuario.");
+				throw new Exception("Ocurrió un error tratando de registrar el usuario.");
 			}
 		}
 
