@@ -43,7 +43,7 @@ namespace MediSearch.WebApi
 			services.AddApiVersioningExtension();
 			services.AddDistributedMemoryCache();
 			services.AddSession();
-			
+
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 		}
 

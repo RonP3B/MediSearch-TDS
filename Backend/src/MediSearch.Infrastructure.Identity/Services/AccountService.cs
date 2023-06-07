@@ -114,7 +114,7 @@ namespace MediSearch.Infrastructure.Identity.Services
 				response.HasError = true;
 				return response;
 			}
-
+			response.IsSuccess = true;
 			return response;
 		}
 

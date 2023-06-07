@@ -10,5 +10,6 @@ namespace MediSearch.Core.Application.Dtos.Account
 	{
         public bool HasError { get; set; }
 		public string Error { get; set; }
+		public bool IsSuccess { get; set; }
     }
 }

@@ -84,7 +84,7 @@ namespace MediSearch.WebApi.Controllers
 		}
 
 		[HttpPost("register-client")]
-		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RegisterResponse))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(RegisterResponse))]
 		[SwaggerOperation(
 		   Summary = "Registro de usuario cliente",
@@ -104,10 +104,10 @@ namespace MediSearch.WebApi.Controllers
 				return BadRequest(response.Error);
 			}
 
-			return NoContent();
+			return Ok(response);
 		}
 
-		[HttpPost("confirm-email")]
+		[HttpGet("confirm-email")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ConfirmEmailResponse))]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ConfirmEmailResponse))]
@@ -133,7 +133,50 @@ namespace MediSearch.WebApi.Controllers
 				return NotFound(response.Error);
 			}
 
-			return NoContent();
+			return Redirect("thanks");
+		}
+
+		[HttpGet("thanks")]
+		public IActionResult Thanks()
+		{
+			string html = @"<!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Gracias por confirmar</title>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                background-color: #f5f5f5;
+                                text-align: center;
+                                padding: 50px;
+                            }
+
+                            h1 {
+                                color: #333;
+                            }
+
+                            p {
+                                color: #666;
+                            }
+
+                            .container {
+                                max-width: 400px;
+                                margin: 0 auto;
+                                background-color: #fff;
+                                padding: 20px;
+                                border-radius: 8px;
+                                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class='container'>
+                            <h1>¡Gracias por confirmar tu cuenta!</h1>
+                            <p>Tu cuenta ha sido confirmada exitosamente. Ahora puedes acceder a todas las funcionalidades de nuestro sitio.</p>
+                        </div>
+                    </body>
+                    </html>";
+			return Content(html, "text/html");
 		}
 
 		[HttpGet("logout")]
