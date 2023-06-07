@@ -11,7 +11,7 @@ namespace MediSearch.Core.Application.Interfaces.Services
 	{
 		Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request);
 		Task<RegisterResponse> RegisterClientUserAsync(RegisterRequest request, string origin);
-		Task<string> ConfirmEmailAsync(string userId, string token);
+		Task<ConfirmEmailResponse> ConfirmEmailAsync(string userId, string token);
 		Task<string> GenerateJWToken(string userId);
 		string GenerateRefreshToken(string userId);
 		string ValidateRefreshToken(string token);

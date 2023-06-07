@@ -47,6 +47,7 @@ namespace MediSearch.Infrastructure.Identity.Services
 		public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request)
 		{
 			AuthenticationResponse response = new();
+			var users = GetAllUsers();
 
 			var user = await _userManager.FindByNameAsync(request.UserName);
 			if (user == null)
@@ -117,12 +118,18 @@ namespace MediSearch.Infrastructure.Identity.Services
 			return response;
 		}
 
-		public async Task<string> ConfirmEmailAsync(string userId, string token)
+		public async Task<ConfirmEmailResponse> ConfirmEmailAsync(string userId, string token)
 		{
+			ConfirmEmailResponse response = new()
+			{
+				HasError = false
+			}; 
 			var user = await _userManager.FindByIdAsync(userId);
 			if (user == null)
 			{
-				return $"No existe cuenta registrada con este usuario";
+				response.HasError = true;
+				response.Error = "No existe cuenta registrada con este usuario";
+				return response;
 			}
 
 			token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
@@ -135,11 +142,13 @@ namespace MediSearch.Infrastructure.Identity.Services
 					Body = MakeEmailForConfirmed(user.FirstName + " " + user.LastName),
 					Subject = "Cuenta confirmada"
 				});
-				return $"Cuenta confirmada para {user.Email}. Ahora puedes usar la app";
+				return response;
 			}
 			else
 			{
-				return $"Ocurrió un error mientras se confirmaba la cuenta para el correo: {user.Email}.";
+				response.HasError = true;
+				response.Error = $"Ocurrió un error mientras se confirmaba la cuenta para el correo: {user.Email}";
+				return response;
 			}
 		}
 
@@ -275,7 +284,7 @@ namespace MediSearch.Infrastructure.Identity.Services
 		{
 			var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 			code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-			var route = "api/v1/Account/ConfirmEmail";
+			var route = "api/v1/Account/confirm-email";
 			var Uri = new Uri(string.Concat($"{origin}/", route));
 			var verificationUri = QueryHelpers.AddQueryString(Uri.ToString(), "userId", user.Id);
 			verificationUri = QueryHelpers.AddQueryString(verificationUri, "token", code);
@@ -314,7 +323,7 @@ namespace MediSearch.Infrastructure.Identity.Services
     </style>
 </head>
 <body>
-    <h1>¡Bienvenid@ user!</h1>
+    <h1>¡Bienvenid@ name!</h1>
     <p>Confirme su cuenta, pulsando el siguiente botón:</p>
     <a href='Uri'>
         <button class='button'>Confirmar cuenta</button>
@@ -323,7 +332,7 @@ namespace MediSearch.Infrastructure.Identity.Services
 </html>
 ";
 			string html = htmlBody.Replace("Uri", verificationUri);
-			html = html.Replace("user", user);
+			html = html.Replace("name", user);
 			return html;
 		}
 
@@ -384,6 +393,13 @@ namespace MediSearch.Infrastructure.Identity.Services
 ";
 			string html = htmlBody.Replace("Nombre", user);
 			return html;
+		}
+
+		private async Task<List<ApplicationUser>> GetAllUsers()
+		{
+			var list = _userManager.Users.ToList();
+
+			return list;
 		}
 		#endregion
 

@@ -1,6 +1,8 @@
 using MediatR;
 using MediSearch.Core.Application.Dtos.Account;
 using MediSearch.Core.Application.Features.Account.Commands.AuthenticateCommand;
+using MediSearch.Core.Application.Features.Account.Commands.ConfirmEmailCommand;
+using MediSearch.Core.Application.Features.Account.Commands.RegisterClientCommand;
 using MediSearch.Core.Application.Features.Account.Queries.RefreshAccessTokenQuery;
 using MediSearch.Core.Application.Helpers;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +30,6 @@ namespace MediSearch.WebApi.Controllers
 		[Consumes(MediaTypeNames.Application.Json)]
 		public async Task<IActionResult> Authenticate([FromBody] AuthenticateCommand command)
 		{
-			var origin = Request.Headers["origin"];
 			var response = await Mediator.Send(command);
 
 			if (!ModelState.IsValid)
@@ -80,6 +81,59 @@ namespace MediSearch.WebApi.Controllers
 			}
 
 			return Ok(response);
+		}
+
+		[HttpPost("register-client")]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(RegisterResponse))]
+		[SwaggerOperation(
+		   Summary = "Registro de usuario cliente",
+		   Description = "Registra a un usuario de tipo cliente"
+		)]
+		public async Task<IActionResult> RegisterClient([FromForm] RegisterClientCommand command)
+		{
+			var response = await Mediator.Send(command);
+
+			if (!ModelState.IsValid)
+			{
+				return BadRequest();
+			}
+
+			if (response.HasError)
+			{
+				return BadRequest(response.Error);
+			}
+
+			return NoContent();
+		}
+
+		[HttpPost("confirm-email")]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ConfirmEmailResponse))]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ConfirmEmailResponse))]
+		[SwaggerOperation(
+		   Summary = "Registro de usuario cliente",
+		   Description = "Registra a un usuario de tipo cliente"
+		)]
+		public async Task<IActionResult> ConfirmEmail(string userId, string token)
+		{
+			ConfirmEmailCommand command= new()
+			{
+				UserId = userId,
+				Token = token
+			};
+			var response = await Mediator.Send(command);
+
+			if (response.HasError)
+			{
+				if (response.Error.Contains("error"))
+				{
+					return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
+				}
+				return NotFound(response.Error);
+			}
+
+			return NoContent();
 		}
 
 		[HttpGet("logout")]
