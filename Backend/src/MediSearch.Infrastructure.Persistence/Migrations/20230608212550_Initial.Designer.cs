@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MediSearch.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20230608171249_Initial")]
+    [Migration("20230608212550_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,7 +42,7 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("CompanyId")
+                    b.Property<string>("CompanyTypeId")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -93,7 +93,7 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompanyId");
+                    b.HasIndex("CompanyTypeId");
 
                     b.ToTable("Companies", (string)null);
                 });
@@ -352,7 +352,7 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("MediSearch.Core.Domain.Entities.CompanyType", "CompanyType")
                         .WithMany("Companies")
-                        .HasForeignKey("CompanyId")
+                        .HasForeignKey("CompanyTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -40,7 +40,7 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("CompanyId")
+                    b.Property<string>("CompanyTypeId")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -91,7 +91,7 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompanyId");
+                    b.HasIndex("CompanyTypeId");
 
                     b.ToTable("Companies", (string)null);
                 });
@@ -350,7 +350,7 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("MediSearch.Core.Domain.Entities.CompanyType", "CompanyType")
                         .WithMany("Companies")
-                        .HasForeignKey("CompanyId")
+                        .HasForeignKey("CompanyTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

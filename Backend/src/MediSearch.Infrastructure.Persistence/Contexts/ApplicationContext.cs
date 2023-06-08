@@ -107,7 +107,7 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
 			modelBuilder.Entity<Company>()
 				.HasOne<CompanyType>(x => x.CompanyType)
 				.WithMany(x => x.Companies)
-				.HasForeignKey(x => x.CompanyId)
+				.HasForeignKey(x => x.CompanyTypeId)
 				.OnDelete(DeleteBehavior.Cascade);
 
 			modelBuilder.Entity<CompanyUser>()

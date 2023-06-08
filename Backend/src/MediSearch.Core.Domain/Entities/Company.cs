@@ -24,7 +24,7 @@ namespace MediSearch.Core.Domain.Entities
 
         //Navigation Properties
         public CompanyType CompanyType { get; set; }
-		public string CompanyId { get; set;}
+		public string CompanyTypeId { get; set;}
         public ICollection<Product> Products { get; set; }
         public ICollection<CompanyUser>  CompanyUsers { get; set; }
 

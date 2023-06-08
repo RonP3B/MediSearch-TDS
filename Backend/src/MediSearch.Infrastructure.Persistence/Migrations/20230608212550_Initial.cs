@@ -75,7 +75,7 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                     Facebook = table.Column<string>(type: "text", nullable: true),
                     Instagram = table.Column<string>(type: "text", nullable: true),
                     Twitter = table.Column<string>(type: "text", nullable: true),
-                    CompanyId = table.Column<string>(type: "text", nullable: false),
+                    CompanyTypeId = table.Column<string>(type: "text", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: false),
                     Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastModifiedBy = table.Column<string>(type: "text", nullable: true),
@@ -85,8 +85,8 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Companies", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Companies_Company_Types_CompanyId",
-                        column: x => x.CompanyId,
+                        name: "FK_Companies_Company_Types_CompanyTypeId",
+                        column: x => x.CompanyTypeId,
                         principalTable: "Company_Types",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -201,9 +201,9 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Companies_CompanyId",
+                name: "IX_Companies_CompanyTypeId",
                 table: "Companies",
-                column: "CompanyId");
+                column: "CompanyTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Company_Users_CompanyId",
