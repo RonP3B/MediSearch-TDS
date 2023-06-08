@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MediSearch.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20230606131249_Initial")]
+    [Migration("20230608171249_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -71,7 +71,6 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LastModifiedBy")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -115,7 +114,6 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LastModifiedBy")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -147,7 +145,6 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LastModifiedBy")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserId")
@@ -176,50 +173,15 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("HallTypeId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LastModifiedBy")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("HallTypeId");
 
                     b.ToTable("Halls", (string)null);
-                });
-
-            modelBuilder.Entity("MediSearch.Core.Domain.Entities.HallType", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("LastModifiedBy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Hall_Types", (string)null);
                 });
 
             modelBuilder.Entity("MediSearch.Core.Domain.Entities.HallUser", b =>
@@ -242,7 +204,6 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LastModifiedBy")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserId")
@@ -283,7 +244,6 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LastModifiedBy")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("MessageTypeId")
@@ -322,7 +282,6 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LastModifiedBy")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -366,7 +325,6 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LastModifiedBy")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -410,17 +368,6 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Company");
-                });
-
-            modelBuilder.Entity("MediSearch.Core.Domain.Entities.Hall", b =>
-                {
-                    b.HasOne("MediSearch.Core.Domain.Entities.HallType", "HallType")
-                        .WithMany("Halls")
-                        .HasForeignKey("HallTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("HallType");
                 });
 
             modelBuilder.Entity("MediSearch.Core.Domain.Entities.HallUser", b =>
@@ -481,11 +428,6 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                     b.Navigation("HallUsers");
 
                     b.Navigation("Messages");
-                });
-
-            modelBuilder.Entity("MediSearch.Core.Domain.Entities.HallType", b =>
-                {
-                    b.Navigation("Halls");
                 });
 
             modelBuilder.Entity("MediSearch.Core.Domain.Entities.MessageType", b =>
