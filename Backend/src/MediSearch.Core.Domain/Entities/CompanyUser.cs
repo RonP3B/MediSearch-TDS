@@ -15,5 +15,10 @@ namespace MediSearch.Core.Domain.Entities
         public Company Company { get; set; }
         public string CompanyId { get; set; }
 
+        public CompanyUser()
+        {
+            this.Id = "";
+        }
+
     }
 }

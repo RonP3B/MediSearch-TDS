@@ -12,9 +12,12 @@ namespace MediSearch.Core.Domain.Entities
         public DateTime Date { get; set; }
 
         //Navigation Properties
-        public HallType HallType { get; set; }
-        public string HallTypeId { get; set; }
         public ICollection<Message> Messages { get; set; }
         public ICollection<HallUser> HallUsers { get; set; }
+
+        public Hall()
+        {
+            this.Id = "";
+        }
     }
 }

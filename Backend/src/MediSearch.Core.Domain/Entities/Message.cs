@@ -19,5 +19,10 @@ namespace MediSearch.Core.Domain.Entities
         public string HallId { get; set; }
         public MessageType MessageType { get; set; }
         public string MessageTypeId { get; set; }
+
+        public Message()
+        {
+            this.Id = "";
+        }
     }
 }

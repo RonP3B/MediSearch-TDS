@@ -14,5 +14,10 @@ namespace MediSearch.Core.Domain.Entities
 		//Navigation Properties
 		public Hall Hall { get; set; }
 		public string HallId { get; set; }
-	}
+
+        public HallUser()
+        {
+            this.Id = "";
+        }
+    }
 }

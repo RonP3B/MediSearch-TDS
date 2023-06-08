@@ -13,5 +13,10 @@ namespace MediSearch.Core.Domain.Entities
 
         //Navigation Properties
         public ICollection<Message> Messages { get; set; }
+
+        public MessageType()
+        {
+            this.Id = "";
+        }
     }
 }

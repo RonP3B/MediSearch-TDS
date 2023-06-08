@@ -13,5 +13,10 @@ namespace MediSearch.Core.Domain.Entities
 
         //Navigation Properties
         public ICollection<Company> Companies { get; set; }
+
+        public CompanyType()
+        {
+            this.Id = "";
+        }
     }
 }

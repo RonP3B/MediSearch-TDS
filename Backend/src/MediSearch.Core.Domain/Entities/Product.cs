@@ -20,5 +20,10 @@ namespace MediSearch.Core.Domain.Entities
         //Navigation Properties
         public Company Company { get; set; }
         public string CompanyId { get; set; }
+
+        public Product()
+        {
+            this.Id = "";
+        }
     }
 }

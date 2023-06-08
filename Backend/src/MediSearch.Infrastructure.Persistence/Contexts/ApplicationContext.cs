@@ -18,7 +18,6 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
 		public DbSet<CompanyType> CompanyTypes { get; set; }
 		public DbSet<CompanyUser> CompanyUsers { get; set; }
 		public DbSet<Hall> Halls { get; set; }
-		public DbSet<HallType> HallTypes { get; set; }
 		public DbSet<HallUser> HallUsers { get; set; }
 		public DbSet<Message> Messages { get; set; }
 		public DbSet<MessageType> MessagTypes { get; set; }
@@ -64,9 +63,6 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
 			modelBuilder.Entity<Hall>()
 				.ToTable("Halls");
 
-			modelBuilder.Entity<HallType>()
-				.ToTable("Hall_Types");
-
 			modelBuilder.Entity<HallUser>()
 				.ToTable("Hall_Users");
 
@@ -91,9 +87,6 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
 				.HasKey(x => x.Id);
 
 			modelBuilder.Entity<Hall>()
-				.HasKey(x => x.Id);
-
-			modelBuilder.Entity<HallType>()
 				.HasKey(x => x.Id);
 
 			modelBuilder.Entity<HallUser>()
@@ -121,12 +114,6 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
 				.HasOne<Company>(x => x.Company)
 				.WithMany(x => x.CompanyUsers)
 				.HasForeignKey(x => x.CompanyId)
-				.OnDelete(DeleteBehavior.Cascade);
-
-			modelBuilder.Entity<Hall>()
-				.HasOne<HallType>(x => x.HallType)
-				.WithMany(x => x.Halls)
-				.HasForeignKey(x => x.HallTypeId)
 				.OnDelete(DeleteBehavior.Cascade);
 
 			modelBuilder.Entity<HallUser>()
