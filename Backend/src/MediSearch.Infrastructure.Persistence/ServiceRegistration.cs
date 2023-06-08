@@ -39,8 +39,10 @@ namespace MediSearch.Infrastructure.Persistence
 			#endregion
 
 			#region Repositories
-
 			services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+			services.AddTransient<ICompanyRepository, CompanyRepository>();
+			services.AddTransient<ICompanyTypeRepository, CompanyTypeRepository>();
+			services.AddTransient<ICompanyUserRepository, CompanyUserRepository>();
 			#endregion
 		}
 	}

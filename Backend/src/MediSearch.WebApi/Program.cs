@@ -1,3 +1,5 @@
+using MediSearch.Core.Application.Interfaces.Repositories;
+using MediSearch.Core.Application.Seeds;
 using MediSearch.Infrastructure.Identity.Entities;
 using MediSearch.Infrastructure.Identity.Seeds;
 using Microsoft.AspNetCore.Hosting;
@@ -16,13 +18,21 @@ namespace MediSearch.WebApi
 
 				try
 				{
-					var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+                    #region Identity
+                    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
 					var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
 					await DefaultRoles.SeedAsync(userManager, roleManager);
 					await DefaultSuperAdminUser.SeedAsync(userManager, roleManager);
-				}
-				catch (Exception ex)
+					#endregion
+
+					#region Application
+					var typeRepository = services.GetRequiredService<ICompanyTypeRepository>();
+
+					await DefaultCompanyType.SeedAsync(typeRepository);
+                    #endregion
+                }
+                catch (Exception ex)
 				{
 
 				}
