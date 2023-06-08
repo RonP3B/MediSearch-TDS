@@ -313,7 +313,23 @@ namespace MediSearch.Core.Application.Helpers
 
 
         //Helpful when we wan to delete the entire entity e.g: User and his/her image profile.
-        public static void DeleteFile(int ItemId, string ContainerName = "Item")
+        public static void DeleteFile(string id, string ContainerName)
+        {
+
+            //Get current directory
+            string basePath = $"/{ContainerName}/{id}";
+
+            string servePath = Directory.GetCurrentDirectory();
+
+            string path = Path.Combine(servePath, $"Public{basePath}");
+
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
+
+        public static void DeleteFiles(int ItemId, string ContainerName = "Item")
         {
 
             //Get current directory
@@ -343,7 +359,6 @@ namespace MediSearch.Core.Application.Helpers
 
 
         }
-
 
     }
 }
