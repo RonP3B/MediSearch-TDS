@@ -1,28 +1,24 @@
 ﻿using MediSearch.Core.Application.Dtos.Account;
-using MediSearch.Core.Domain.Settings;
-using MediSearch.Core.Application.Dtos.Account;
-using MediSearch.Core.Application.Interfaces.Services;
-using MediSearch.Infrastructure.Identity.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using MediSearch.Core.Application.Dtos.Email;
 using MediSearch.Core.Application.Enums;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.AspNetCore.Http;
 using MediSearch.Core.Application.Helpers;
+using MediSearch.Core.Application.Interfaces.Repositories;
+using MediSearch.Core.Application.Interfaces.Services;
+using MediSearch.Core.Domain.Entities;
+using MediSearch.Core.Domain.Settings;
+using MediSearch.Infrastructure.Identity.Entities;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace MediSearch.Infrastructure.Identity.Services
 {
-	public class AccountService : IAccountService
+    public class AccountService : IAccountService
 	{
 
 		private readonly UserManager<ApplicationUser> _userManager;
@@ -31,6 +27,8 @@ namespace MediSearch.Infrastructure.Identity.Services
 		private readonly JWTSettings _jwtSettings;
 		private readonly RefreshJWTSettings _refreshSettings;
 		IHttpContextAccessor _httpContextAccessor;
+		private readonly ICompanyRepository _companyRepository;
+		private readonly ICompanyUserRepository _companyUserRepository;
 
 
 		public AccountService(
@@ -39,7 +37,9 @@ namespace MediSearch.Infrastructure.Identity.Services
 			  IEmailService emailService,
 			  IOptions<JWTSettings> jwtSettings,
 			  IOptions<RefreshJWTSettings> refreshSettings,
-			  IHttpContextAccessor httpContextAccessor
+			  IHttpContextAccessor httpContextAccessor,
+			  ICompanyRepository companyRepository,
+			  ICompanyUserRepository companyUserRepository
 			)
 		{
 			_userManager = userManager;
@@ -48,6 +48,8 @@ namespace MediSearch.Infrastructure.Identity.Services
 			_jwtSettings = jwtSettings.Value;
 			_refreshSettings = refreshSettings.Value;
 			_httpContextAccessor = httpContextAccessor;
+			_companyRepository = companyRepository;
+			_companyUserRepository = companyUserRepository;
 
 		}
 
@@ -124,7 +126,7 @@ namespace MediSearch.Infrastructure.Identity.Services
 			{
 				foreach (var error in result.Errors)
 				{
-					response.Error += $"{error.Description}";
+					response.Error += $"Error: {error.Description}";
 				}
 				response.HasError = true;
 				return response;
@@ -133,7 +135,102 @@ namespace MediSearch.Infrastructure.Identity.Services
 			return response;
 		}
 
-		public async Task<ConfirmEmailResponse> ConfirmEmailAsync(string userId, string token)
+        public async Task<RegisterResponse> RegisterCompanyAsync(RegisterCompanyRequest request, string origin)
+        {
+            RegisterResponse response = await ValidateUserBeforeRegistrationAsync(request);
+            if (response.HasError)
+            {
+                return response;
+            }
+
+			var result = await _companyRepository.GetByNameAsync(request.NameCompany);
+			if(result != null)
+			{
+				response.HasError = true;
+				response.Error = $"El nombre de empresa '{request.NameCompany}' ya está siendo usado.";
+            }
+
+            result = await _companyRepository.GetByEmailAsync(request.EmailCompany);
+            if (result != null)
+            {
+                response.HasError = true;
+                response.Error = $"El correo '{request.EmailCompany}' ya está siendo usado.";
+            }
+
+			var user = new ApplicationUser
+			{
+				Email = request.Email,
+				FirstName = request.FirstName,
+				LastName = request.LastName,
+				UserName = request.UserName,
+				PhoneNumber = request.PhoneNumber,
+				UrlImage = request.UrlImage,
+				Country = request.Country,
+				City = request.City,
+				Address = request.Address
+            };
+
+			var company = new Company()
+			{
+				Ceo = request.Ceo,
+                Email = request.Email,
+                Name = request.NameCompany,
+                UrlImage = request.UrlImageLogo,
+                Facebook = request.UserName,
+                Twitter = request.PhoneNumber,
+                Instagram = request.UrlImage,
+                Country = request.Country,
+                City = request.City,
+                Address = request.Address,
+				Phone = request.PhoneCompany,
+				WebSite = request.WebSite,
+				CompanyTypeId = request.CompanyTypeId
+            };
+
+            var success = await _userManager.CreateAsync(user, request.Password);
+            if (success.Succeeded)
+            {
+				try
+				{
+                    await _userManager.AddToRoleAsync(user, Roles.Administrator.ToString());
+                    var entity = await _companyRepository.AddAsync(company);
+                    var companyUser = new CompanyUser()
+                    {
+                        UserId = user.Id,
+                        CompanyId = entity.Id
+                    };
+                    await _companyUserRepository.AddAsync(companyUser);
+
+                    var verificationUri = await SendVerificationEmailUri(user, origin);
+                    await _emailService.SendAsync(new EmailRequest()
+                    {
+                        To = user.Email,
+                        Body = MakeEmailForConfirm(verificationUri, user.FirstName + " " + user.LastName),
+                        Subject = "Confirmar Cuenta"
+                    });
+                }
+                catch(Exception ex)
+				{
+					response.HasError = true;
+					response.Error = "Error: " + ex.Message;
+					return response;
+				}
+            }
+            else
+            {
+                foreach (var error in success.Errors)
+                {
+                    response.Error += $"{error.Description}";
+                }
+                response.HasError = true;
+
+                return response;
+            }
+            response.IsSuccess = true;
+            return response;
+        }
+
+        public async Task<ConfirmEmailResponse> ConfirmEmailAsync(string userId, string token)
 		{
 			ConfirmEmailResponse response = new()
 			{
@@ -157,6 +254,7 @@ namespace MediSearch.Infrastructure.Identity.Services
 					Body = MakeEmailForConfirmed(user.FirstName + " " + user.LastName),
 					Subject = "Cuenta Confirmada"
 				});
+				response.NameUser = user.FirstName + " " + user.LastName;
 				return response;
 			}
 			else

@@ -4,6 +4,7 @@ using MediSearch.Core.Application.Features.Account.Commands.AuthenticateCommand;
 using MediSearch.Core.Application.Features.Account.Commands.ConfirmCodeCommand;
 using MediSearch.Core.Application.Features.Account.Commands.ConfirmEmailCommand;
 using MediSearch.Core.Application.Features.Account.Commands.RegisterClientCommand;
+using MediSearch.Core.Application.Features.Account.Commands.RegisterCompanyCommand;
 using MediSearch.Core.Application.Features.Account.Commands.ResetPasswordCommand;
 using MediSearch.Core.Application.Features.Account.Queries.RefreshAccessTokenQuery;
 using MediSearch.Core.Application.Helpers;
@@ -93,7 +94,8 @@ namespace MediSearch.WebApi.Controllers
 		[HttpPost("register-client")]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RegisterResponse))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(RegisterResponse))]
-		[SwaggerOperation(
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(RegisterResponse))]
+        [SwaggerOperation(
 		   Summary = "Registro de usuario cliente",
 		   Description = "Registra a un usuario de tipo cliente"
 		)]
@@ -108,13 +110,46 @@ namespace MediSearch.WebApi.Controllers
 
 			if (response.HasError)
 			{
+				if (response.Error.Contains("Error"))
+				{
+					return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
+				}
 				return BadRequest(response.Error);
 			}
 
 			return Ok(response.IsSuccess);
 		}
 
-		[HttpGet("confirm-email")]
+        [HttpPost("register-company")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RegisterResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(RegisterResponse))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(RegisterResponse))]
+        [SwaggerOperation(
+			Summary = "Registro de empresa",
+			Description = "Registra a un usuario de tipo administrador junto con su empresa"
+			)]
+        public async Task<IActionResult> RegisterCompany([FromForm] RegisterCompanyCommand command)
+        {
+            var response = await Mediator.Send(command);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            if (response.HasError)
+            {
+                if (response.Error.Contains("Error"))
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
+                }
+                return BadRequest(response.Error);
+            }
+
+            return Ok(response.IsSuccess);
+        }
+
+        [HttpGet("confirm-email")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ConfirmEmailResponse))]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ConfirmEmailResponse))]
@@ -140,50 +175,88 @@ namespace MediSearch.WebApi.Controllers
 				return NotFound(response.Error);
 			}
 
-			return Redirect("thanks");
+			return RedirectToAction("thanks", new { name = response.NameUser });
 		}
 
 		[HttpGet("thanks")]
-		public IActionResult Thanks()
+		public IActionResult Thanks(string name)
 		{
-			string html = @"<!DOCTYPE html>
-                    <html>
-                    <head>
-                        <title>Gracias por confirmar</title>
-                        <style>
-                            body {
-                                font-family: Arial, sans-serif;
-                                background-color: #f5f5f5;
-                                text-align: center;
-                                padding: 50px;
-                            }
+            string htmlBody = @"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <title>Bienvenido/a al Sistema</title>
+    <style>
+        /* Estilos adicionales */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f8f8;
+            border-radius: 10px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .message {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .button {
+            display: inline-block;
+            font-weight: 400;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: 0.25rem;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
+            text-decoration: none;
+        }
+        .footer {
+            text-align: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1 class='title'>¡Bienvenido/a al Sistema!</h1>
+        </div>
+        <div class='message'>
+            <p>Hola [Nombre],</p>
+            <p>Gracias por confirmar tu cuenta. Ahora tienes acceso completo a todas las funcionalidades del sistema.</p>
+            <p>Disfruta de todas las características y no dudes en ponerte en contacto con nosotros si tienes alguna pregunta o necesitas asistencia.</p>
+            <p><a href='[URL]' class='button'>Acceder al Sistema</a></p>
+        </div>
+        <div class='footer'>
+            <p>Atentamente,</p>
+            <p>El equipo de MediSearch</p>
+        </div>
+    </div>
+</body>
+</html>
+";
 
-                            h1 {
-                                color: #333;
-                            }
-
-                            p {
-                                color: #666;
-                            }
-
-                            .container {
-                                max-width: 400px;
-                                margin: 0 auto;
-                                background-color: #fff;
-                                padding: 20px;
-                                border-radius: 8px;
-                                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        <div class='container'>
-                            <h1>¡Gracias por confirmar tu cuenta!</h1>
-                            <p>Tu cuenta ha sido confirmada exitosamente. Ahora puedes acceder a todas las funcionalidades de nuestro sitio.</p>
-                        </div>
-                    </body>
-                    </html>";
-			return Content(html, "text/html");
+			string html = htmlBody.Replace("[Nombre]", name);
+            return Content(html, "text/html");
 		}
 
 		[HttpPost("reset-password")]

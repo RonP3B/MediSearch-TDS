@@ -11,7 +11,9 @@ namespace MediSearch.Core.Application.Interfaces.Services
 	{
 		Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request);
 		Task<RegisterResponse> RegisterClientUserAsync(RegisterRequest request, string origin);
-		Task<ConfirmEmailResponse> ConfirmEmailAsync(string userId, string token);
+		Task<RegisterResponse> RegisterCompanyAsync(RegisterCompanyRequest request, string origin);
+
+        Task<ConfirmEmailResponse> ConfirmEmailAsync(string userId, string token);
 		Task<ResetPasswordResponse> ResetPasswordAsync(string email);
 		ConfirmCodeResponse ConfirmCode(string code);
 		Task<ResetPasswordResponse> ChangePasswordAsync(string password);

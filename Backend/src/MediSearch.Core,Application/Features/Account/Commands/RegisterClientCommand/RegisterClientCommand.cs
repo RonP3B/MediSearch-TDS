@@ -79,7 +79,12 @@ namespace MediSearch.Core.Application.Features.Account.Commands.RegisterClientCo
 				var request = _mapper.Map<RegisterRequest>(command);
 				request.UrlImage = ImageUpload.UploadImageUser(command.Image);
 				var response = await _accountService.RegisterClientUserAsync(request, origin);
-				return response;
+				if (response.HasError)
+				{
+                    ImageUpload.DeleteFile(request.UrlImage);
+                }
+
+                return response;
 			}
 			catch (Exception)
 			{

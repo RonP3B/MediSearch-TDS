@@ -11,7 +11,7 @@ namespace MediSearch.Core.Domain.Entities
 	{
 		public string Ceo { get; set; }
 		public string Name { get; set; }
-		public string urlImage { get; set; }
+		public string UrlImage { get; set; }
 		public string Country { get; set; }
 		public string City { get; set; }
 		public string Address { get; set; }
