@@ -82,11 +82,11 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                     b.Property<string>("Twitter")
                         .HasColumnType("text");
 
-                    b.Property<string>("WebSite")
+                    b.Property<string>("UrlImage")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("urlImage")
-                        .IsRequired()
+                    b.Property<string>("WebSite")
                         .HasColumnType("text");
 
                     b.HasKey("Id");

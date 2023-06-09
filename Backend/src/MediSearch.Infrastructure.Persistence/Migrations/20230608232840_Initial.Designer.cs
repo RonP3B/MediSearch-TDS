@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MediSearch.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20230608212550_Initial")]
+    [Migration("20230608232840_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -84,11 +84,11 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                     b.Property<string>("Twitter")
                         .HasColumnType("text");
 
-                    b.Property<string>("WebSite")
+                    b.Property<string>("UrlImage")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("urlImage")
-                        .IsRequired()
+                    b.Property<string>("WebSite")
                         .HasColumnType("text");
 
                     b.HasKey("Id");

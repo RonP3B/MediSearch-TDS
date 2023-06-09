@@ -65,7 +65,7 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                     Id = table.Column<string>(type: "text", nullable: false),
                     Ceo = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    urlImage = table.Column<string>(type: "text", nullable: false),
+                    UrlImage = table.Column<string>(type: "text", nullable: false),
                     Country = table.Column<string>(type: "text", nullable: false),
                     City = table.Column<string>(type: "text", nullable: false),
                     Address = table.Column<string>(type: "text", nullable: false),
