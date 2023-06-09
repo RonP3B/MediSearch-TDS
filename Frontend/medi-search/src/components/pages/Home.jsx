@@ -1,12 +1,15 @@
 import ResponsiveHeader from "../scenes/ResponsiveHeader";
 
-const pages = ["Products", "Pricing", "Blog"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const pages = ["opcion a", "opcion b", "opcion c"];
+const options = [
+  { option: "Iniciar sesión", route: "/login" },
+  { option: "Registrarse", route: "/signup" },
+];
 
 const Home = () => {
   return (
     <>
-      <ResponsiveHeader pages={pages} settings={settings} />
+      <ResponsiveHeader pages={pages} settings={options} />
       <h2>Home</h2>
     </>
   );
