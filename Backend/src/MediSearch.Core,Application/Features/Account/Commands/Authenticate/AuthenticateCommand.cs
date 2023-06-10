@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MediSearch.Core.Application.Features.Account.Commands.AuthenticateCommand
+namespace MediSearch.Core.Application.Features.Account.Commands.Authenticate
 {
 	public class AuthenticateCommand : IRequest<AuthenticationResponse>
 	{

@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MediSearch.Core.Application.Features.Account.Commands.RegisterCompanyCommand
+namespace MediSearch.Core.Application.Features.Account.Commands.RegisterCompany
 {
 	public class RegisterCompanyCommand : IRequest<RegisterResponse>
 	{

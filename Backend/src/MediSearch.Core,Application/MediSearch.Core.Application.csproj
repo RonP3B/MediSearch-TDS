@@ -28,4 +28,9 @@
     <ProjectReference Include="..\MediSearch.Core.Domain\MediSearch.Core.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Admin\Commands\" />
+    <Folder Include="Features\Admin\Queries\GetUsersByCompanyQuey\" />
+  </ItemGroup>
+
 </Project>

@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MediSearch.Core.Application.Features.Account.Commands.ResetPasswordCommand
+namespace MediSearch.Core.Application.Features.Account.Commands.ResetPassword
 {
 	public class ResetPasswordCommand : IRequest<ResetPasswordResponse>
 	{

@@ -232,6 +232,101 @@ namespace MediSearch.Infrastructure.Identity.Services
             return response;
         }
 
+        public async Task<RegisterResponse> RegisterUserAsync(RegisterCompanyRequest request, string origin)
+        {
+            RegisterResponse response = await ValidateUserBeforeRegistrationAsync(request);
+            if (response.HasError)
+            {
+                return response;
+            }
+
+            var result = await _companyRepository.GetByNameAsync(request.NameCompany);
+            if (result != null)
+            {
+                response.HasError = true;
+                response.Error = $"El nombre de empresa '{request.NameCompany}' ya está siendo usado.";
+            }
+
+            result = await _companyRepository.GetByEmailAsync(request.EmailCompany);
+            if (result != null)
+            {
+                response.HasError = true;
+                response.Error = $"El correo '{request.EmailCompany}' ya está siendo usado.";
+            }
+
+            var user = new ApplicationUser
+            {
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                UserName = request.UserName,
+                PhoneNumber = request.PhoneNumber,
+                UrlImage = request.UrlImage,
+                Country = request.Country,
+                City = request.City,
+                Address = request.Address
+            };
+
+            var company = new Company()
+            {
+                Ceo = request.Ceo,
+                Email = request.EmailCompany,
+                Name = request.NameCompany,
+                UrlImage = request.UrlImageLogo,
+                Facebook = request.Facebook,
+                Twitter = request.Twitter,
+                Instagram = request.Instagram,
+                Country = request.CountryCompany,
+                City = request.CityCompany,
+                Address = request.AddressCompany,
+                Phone = request.PhoneCompany,
+                WebSite = request.WebSite,
+                CompanyTypeId = request.CompanyTypeId
+            };
+
+            var success = await _userManager.CreateAsync(user, request.Password);
+            if (success.Succeeded)
+            {
+                try
+                {
+                    await _userManager.AddToRoleAsync(user, Roles.Administrator.ToString());
+                    var entity = await _companyRepository.AddAsync(company);
+                    var companyUser = new CompanyUser()
+                    {
+                        UserId = user.Id,
+                        CompanyId = entity.Id
+                    };
+                    await _companyUserRepository.AddAsync(companyUser);
+
+                    var verificationUri = await SendVerificationEmailUri(user, origin);
+                    await _emailService.SendAsync(new EmailRequest()
+                    {
+                        To = user.Email,
+                        Body = MakeEmailForConfirm(verificationUri, user.FirstName + " " + user.LastName),
+                        Subject = "Confirmar Cuenta"
+                    });
+                }
+                catch (Exception ex)
+                {
+                    response.HasError = true;
+                    response.Error = "Error: " + ex.Message;
+                    return response;
+                }
+            }
+            else
+            {
+                foreach (var error in success.Errors)
+                {
+                    response.Error += $"{error.Description}";
+                }
+                response.HasError = true;
+
+                return response;
+            }
+            response.IsSuccess = true;
+            return response;
+        }
+
         public async Task<ConfirmEmailResponse> ConfirmEmailAsync(string userId, string token)
 		{
 			ConfirmEmailResponse response = new()
@@ -473,6 +568,8 @@ namespace MediSearch.Infrastructure.Identity.Services
 
 			return userId;
 		}
+
+		public async 
 
 		#region Private Methods
 		private async Task<RegisterResponse> ValidateUserBeforeRegistrationAsync(RegisterRequest request)

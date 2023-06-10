@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MediSearch.Core.Application.Features.Account.Commands.ConfirmEmailCommand
+namespace MediSearch.Core.Application.Features.Account.Commands.ConfirmEmail
 {
     public class ConfirmEmailCommand : IRequest<ConfirmEmailResponse>
     {

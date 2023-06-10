@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MediSearch.Core.Application.Features.Account.Queries.RefreshAccessTokenQuery
+namespace MediSearch.Core.Application.Features.Account.Queries.GetRefreshAccessToken
 {
 	public class GetRefreshAccessTokenQuery : IRequest<RefreshTokenResponse>
 	{

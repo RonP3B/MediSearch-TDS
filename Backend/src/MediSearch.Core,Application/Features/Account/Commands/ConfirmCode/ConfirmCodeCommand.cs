@@ -11,7 +11,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MediSearch.Core.Application.Features.Account.Commands.ConfirmCodeCommand
+namespace MediSearch.Core.Application.Features.Account.Commands.ConfirmCode
+
 {
 	public class ConfirmCodeCommand : IRequest<ConfirmCodeResponse>
 	{
