@@ -81,9 +81,11 @@ namespace MediSearch.Infrastructure.Identity.Services
 				response.Error = $"Credenciales invalidas para el usuario: {request.UserName}";
 				return response;
 			}
+			var company = await _companyUserRepository.GetByUserAsync(user.Id);
 
 			response.JWToken = await GenerateJWToken(user.Id);
 			response.UserId = user.Id;
+			response.CompanyId = company.CompanyId;
 			response.RefreshToken = GenerateRefreshToken(user.Id);
 
 			return response;
@@ -173,15 +175,15 @@ namespace MediSearch.Infrastructure.Identity.Services
 			var company = new Company()
 			{
 				Ceo = request.Ceo,
-                Email = request.Email,
+                Email = request.EmailCompany,
                 Name = request.NameCompany,
                 UrlImage = request.UrlImageLogo,
-                Facebook = request.UserName,
-                Twitter = request.PhoneNumber,
-                Instagram = request.UrlImage,
-                Country = request.Country,
-                City = request.City,
-                Address = request.Address,
+                Facebook = request.Facebook,
+                Twitter = request.Twitter,
+                Instagram = request.Instagram,
+                Country = request.CountryCompany,
+                City = request.CityCompany,
+                Address = request.AddressCompany,
 				Phone = request.PhoneCompany,
 				WebSite = request.WebSite,
 				CompanyTypeId = request.CompanyTypeId

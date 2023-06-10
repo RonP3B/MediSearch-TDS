@@ -16,5 +16,14 @@ namespace MediSearch.Infrastructure.Persistence.Repositories
             _dbContext = dbContext;
         }
 
+        public async Task<CompanyUser> GetByUserAsync(string user)
+        {
+            var users = await GetAllAsync();
+
+            CompanyUser companyUser = users.FirstOrDefault(x => x.UserId == user);
+
+            return companyUser;
+        }
+
     }
 }
