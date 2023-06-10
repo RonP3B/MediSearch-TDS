@@ -18,7 +18,7 @@ namespace MediSearch.Infrastructure.Persistence.Repositories
 
         public async Task<CompanyUser> GetByUserAsync(string user)
         {
-            var users = await GetAllAsync();
+            var users = await GetAllWithIncludeAsync(new List<string> { "Company"});
 
             CompanyUser companyUser = users.FirstOrDefault(x => x.UserId == user);
 
