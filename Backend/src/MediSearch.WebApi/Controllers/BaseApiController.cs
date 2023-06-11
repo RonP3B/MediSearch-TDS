@@ -5,8 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace MediSearch.WebApi.Controllers
 {
     [ApiController]
-    [Route("api/v{version:apiVersion}/[controller]")]
-    [ApiVersion(version: "1.0")]
+    [Route("api/v1/[controller]")]
     public abstract class BaseApiController : ControllerBase
     {
         private IMediator _mediator;

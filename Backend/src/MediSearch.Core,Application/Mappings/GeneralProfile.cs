@@ -3,6 +3,7 @@ using MediSearch.Core.Application.Dtos.Account;
 using MediSearch.Core.Application.Features.Account.Commands.Authenticate;
 using MediSearch.Core.Application.Features.Account.Commands.RegisterClient;
 using MediSearch.Core.Application.Features.Account.Commands.RegisterCompany;
+using MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,9 @@ namespace MediSearch.Core.Application.Mappings
                 .ForMember(x => x.UrlImage, opt => opt.Ignore())
 				.ForMember(x => x.UrlImageLogo, opt => opt.Ignore())
 				.ForMember(x => x.CompanyTypeId, opt => opt.Ignore());
+
+            CreateMap<RegisterEmployeeRequest, RegisterEmployeeCommand>()
+                .ReverseMap();
             #endregion
         }
 

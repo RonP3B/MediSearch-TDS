@@ -28,8 +28,4 @@
     <ProjectReference Include="..\MediSearch.Core.Domain\MediSearch.Core.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\Admin\Commands\" />
-  </ItemGroup>
-
 </Project>

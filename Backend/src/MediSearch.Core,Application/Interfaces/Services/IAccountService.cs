@@ -12,7 +12,7 @@ namespace MediSearch.Core.Application.Interfaces.Services
 		Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request);
 		Task<RegisterResponse> RegisterClientUserAsync(RegisterRequest request, string origin);
 		Task<RegisterResponse> RegisterCompanyAsync(RegisterCompanyRequest request, string origin);
-
+		Task<RegisterResponse> RegisterEmployeeAsync(RegisterEmployeeRequest request);
         Task<ConfirmEmailResponse> ConfirmEmailAsync(string userId, string token);
 		Task<ResetPasswordResponse> ResetPasswordAsync(string email);
 		ConfirmCodeResponse ConfirmCode(string code);

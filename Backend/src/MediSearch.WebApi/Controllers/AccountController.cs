@@ -69,14 +69,17 @@ namespace MediSearch.WebApi.Controllers
                 Expires = DateTime.UtcNow.AddDays(5),
                 SameSite = SameSiteMode.None
             });
-			Response.Cookies.Append("company", response.CompanyId, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                Expires = DateTime.UtcNow.AddDays(5),
-                SameSite = SameSiteMode.None
-            });
-
+			if(response.CompanyId != null)
+			{
+                Response.Cookies.Append("company", response.CompanyId, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    Expires = DateTime.UtcNow.AddDays(5),
+                    SameSite = SameSiteMode.None
+                });
+            }
+			
 			return Ok(response);
 		}
 
@@ -118,9 +121,9 @@ namespace MediSearch.WebApi.Controllers
 
 			if (response.HasError)
 			{
-				if (response.Error.Contains("Error"))
-				{
-					return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
+                if (response.Error.Contains("Error") && !response.Error.Contains("password"))
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
 				}
 				return BadRequest(response.Error);
 			}
@@ -147,7 +150,7 @@ namespace MediSearch.WebApi.Controllers
 
             if (response.HasError)
             {
-                if (response.Error.Contains("Error"))
+                if (response.Error.Contains("Error") && !response.Error.Contains("password"))
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
                 }

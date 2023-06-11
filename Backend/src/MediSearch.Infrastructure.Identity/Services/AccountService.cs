@@ -86,8 +86,11 @@ namespace MediSearch.Infrastructure.Identity.Services
 
 			response.JWToken = await GenerateJWToken(user.Id);
 			response.UserId = user.Id;
-			response.CompanyId = company.CompanyId;
-			response.RefreshToken = GenerateRefreshToken(user.Id);
+			if(company != null)
+			{
+                response.CompanyId = company.CompanyId;
+            }
+            response.RefreshToken = GenerateRefreshToken(user.Id);
 
 			return response;
 		}
@@ -233,95 +236,66 @@ namespace MediSearch.Infrastructure.Identity.Services
             return response;
         }
 
-        public async Task<RegisterResponse> RegisterUserAsync(RegisterCompanyRequest request, string origin)
+        public async Task<RegisterResponse> RegisterEmployeeAsync(RegisterEmployeeRequest request)
         {
-            RegisterResponse response = await ValidateUserBeforeRegistrationAsync(request);
-            if (response.HasError)
+			RegisterResponse response = new()
+			{
+				HasError = false
+			};
+
+            var userWithSameEmail = await _userManager.FindByEmailAsync(request.Email);
+            if (userWithSameEmail != null)
             {
+                response.HasError = true;
+                response.Error = $"El correo '{request.Email}' ya está siendo usado.";
                 return response;
             }
 
-            var result = await _companyRepository.GetByNameAsync(request.NameCompany);
-            if (result != null)
-            {
-                response.HasError = true;
-                response.Error = $"El nombre de empresa '{request.NameCompany}' ya está siendo usado.";
-            }
+            var value = _httpContextAccessor.HttpContext.Request.Cookies["company"];
+            var company = await _companyRepository.GetByIdAsync(value);
+			string userName = request.FirstName + company.Created.Day;
+			string password = $"M{company.Created.Day}#{company.Name.Substring(0, 5)}";
 
-            result = await _companyRepository.GetByEmailAsync(request.EmailCompany);
-            if (result != null)
-            {
-                response.HasError = true;
-                response.Error = $"El correo '{request.EmailCompany}' ya está siendo usado.";
-            }
-
-            var user = new ApplicationUser
-            {
-                Email = request.Email,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                UserName = request.UserName,
-                PhoneNumber = request.PhoneNumber,
-                UrlImage = request.UrlImage,
-                Country = request.Country,
-                City = request.City,
-                Address = request.Address
+			var user = new ApplicationUser
+			{
+				Email = request.Email,
+				FirstName = request.FirstName,
+				LastName = request.LastName,
+				UserName = userName,
+				PhoneNumber = request.PhoneNumber,
+				UrlImage = "/Assets/Images/default.jpg",
+				Country = request.Country,
+				City = request.City,
+				Address = request.Address,
+				EmailConfirmed = true
             };
 
-            var company = new Company()
+            var result = await _userManager.CreateAsync(user, password);
+            if (result.Succeeded)
             {
-                Ceo = request.Ceo,
-                Email = request.EmailCompany,
-                Name = request.NameCompany,
-                UrlImage = request.UrlImageLogo,
-                Facebook = request.Facebook,
-                Twitter = request.Twitter,
-                Instagram = request.Instagram,
-                Country = request.CountryCompany,
-                City = request.CityCompany,
-                Address = request.AddressCompany,
-                Phone = request.PhoneCompany,
-                WebSite = request.WebSite,
-                CompanyTypeId = request.CompanyTypeId
-            };
+                await _userManager.AddToRoleAsync(user, request.Role);
 
-            var success = await _userManager.CreateAsync(user, request.Password);
-            if (success.Succeeded)
-            {
-                try
+                var companyUser = new CompanyUser()
                 {
-                    await _userManager.AddToRoleAsync(user, Roles.Administrator.ToString());
-                    var entity = await _companyRepository.AddAsync(company);
-                    var companyUser = new CompanyUser()
-                    {
-                        UserId = user.Id,
-                        CompanyId = entity.Id
-                    };
-                    await _companyUserRepository.AddAsync(companyUser);
+                    UserId = user.Id,
+                    CompanyId = company.Id
+                };
+                await _companyUserRepository.AddAsync(companyUser);
 
-                    var verificationUri = await SendVerificationEmailUri(user, origin);
-                    await _emailService.SendAsync(new EmailRequest()
-                    {
-                        To = user.Email,
-                        Body = MakeEmailForConfirm(verificationUri, user.FirstName + " " + user.LastName),
-                        Subject = "Confirmar Cuenta"
-                    });
-                }
-                catch (Exception ex)
+                await _emailService.SendAsync(new EmailRequest()
                 {
-                    response.HasError = true;
-                    response.Error = "Error: " + ex.Message;
-                    return response;
-                }
+                    To = user.Email,
+                    Body = MakeEmailForEmployee(new List<string> { user.FirstName + " " + user.LastName, userName, password, company.Name, request.Role}),
+                    Subject = "Registro Exitoso"
+                });
             }
             else
             {
-                foreach (var error in success.Errors)
+                foreach (var error in result.Errors)
                 {
-                    response.Error += $"{error.Description}";
+                    response.Error += $"Error: {error.Description}";
                 }
                 response.HasError = true;
-
                 return response;
             }
             response.IsSuccess = true;
@@ -573,10 +547,10 @@ namespace MediSearch.Infrastructure.Identity.Services
 		public async Task<List<UserDTO>> GetUsersByCompany()
 		{
 			List<UserDTO> userDTOs = new();
-			var company = _httpContextAccessor.HttpContext.Session.Get<string>("company");
+			var company = _httpContextAccessor.HttpContext.Request.Cookies["company"];
 			var users = await _companyUserRepository.GetByCompanyAsync(company);
 
-			if (users == null)
+			if (users == null || users.Count == 0)
 			{
 				return null;
 			}
@@ -918,7 +892,111 @@ namespace MediSearch.Infrastructure.Identity.Services
 			return html;
 		}
 
-		private async Task<List<ApplicationUser>> GetAllUsers()
+        private string MakeEmailForEmployee(List<string> requirements)
+        {
+            string htmlBody = @"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <title>Registro Exitoso</title>
+    <style>
+        /* Estilos adicionales */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 10px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .message {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .details {
+            margin-bottom: 10px;
+        }
+        .details p {
+            margin: 5px 0;
+        }
+        .password {
+            font-weight: bold;
+        }
+        .warning {
+            font-style: italic;
+            color: red;
+        }
+        .button {
+            display: inline-block;
+            font-weight: 400;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: 0.25rem;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
+            text-decoration: none;
+        }
+        .footer {
+            text-align: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1 class='title'>¡Registro Exitoso!</h1>
+        </div>
+        <div class='message'>
+            <p>Estimado/a [Nombre],</p>
+            <p>Te informamos que has sido registrado/a correctamente en [Empresa].</p>
+            <div class='details'>
+                <p><strong>Empresa:</strong> [Empresa]</p>
+                <p><strong>Rol:</strong> [Rol]</p>
+                <p><strong>Nombre de Usuario:</strong> [Usuario]</p>
+                <p><strong>Contraseña por Defecto:</strong> <span class='password'>[Contraseña]</span></p>
+            </div>
+            <p class='warning'>Es importante que cambies tu contraseña por defecto lo antes posible por motivos de seguridad.</p>
+            <p>Ya puedes acceder al sistema y disfrutar de todas sus funcionalidades:</p>
+            <p><a href='[URL]' class='button'>Ir al Sistema</a></p>
+        </div>
+        <div class='footer'>
+            <p>Atentamente,</p>
+            <p>El equipo de MediSearch</p>
+        </div>
+    </div>
+</body>
+</html>
+";
+
+            string html = htmlBody.Replace("[Nombre]", requirements[0]);
+            html = html.Replace("[Usuario]", requirements[1]);
+            html = html.Replace("[Contraseña]", requirements[2]);
+            html = html.Replace("[Empresa]", requirements[3]);
+            html = html.Replace("[Rol]", requirements[4]);
+            return html;
+        }
+
+        private async Task<List<ApplicationUser>> GetAllUsers()
 		{
 			var list = _userManager.Users.ToList();
 
