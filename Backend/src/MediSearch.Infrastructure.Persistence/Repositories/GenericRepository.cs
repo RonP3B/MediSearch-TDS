@@ -25,7 +25,7 @@ namespace MediSearch.Infrastructure.Persistence.Repositories
 			return entity;
 		}
 
-		public virtual async Task UpdateAsync(Entity entity, int id)
+		public virtual async Task UpdateAsync(Entity entity, string id)
 		{
 			var entry = await _dbContext.Set<Entity>().FindAsync(id);
 			_dbContext.Entry(entry).CurrentValues.SetValues(entity);
@@ -55,7 +55,7 @@ namespace MediSearch.Infrastructure.Persistence.Repositories
 			return await query.ToListAsync();
 		}
 
-		public virtual async Task<Entity> GetByIdAsync(int id)
+		public virtual async Task<Entity> GetByIdAsync(string id)
 		{
 			return await _dbContext.Set<Entity>().FindAsync(id);
 		}
