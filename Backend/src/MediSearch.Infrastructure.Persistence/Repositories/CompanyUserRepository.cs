@@ -25,13 +25,13 @@ namespace MediSearch.Infrastructure.Persistence.Repositories
             return companyUser;
         }
         
-        public async Task<CompanyUser> GetByCompanyAsync(string company)
+        public async Task<List<CompanyUser>> GetByCompanyAsync(string company)
         {
             var users = await GetAllAsync();
 
-            CompanyUser companyUser = users.FirstOrDefault(x => x.CompanyId == company);
+            var companies = users.Where(x => x.CompanyId == company);
 
-            return companyUser;
+            return companies.ToList();
         }
     }
 }

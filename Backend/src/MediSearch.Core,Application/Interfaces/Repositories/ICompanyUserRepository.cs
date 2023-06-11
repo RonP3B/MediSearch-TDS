@@ -7,6 +7,6 @@ namespace MediSearch.Core.Application.Interfaces.Repositories
     public interface ICompanyUserRepository : IGenericRepository<CompanyUser>
     {
         Task<CompanyUser> GetByUserAsync(string user);
-        Task<CompanyUser> GetByCompanyAsync(string company);
+        Task<List<CompanyUser>> GetByCompanyAsync(string company);
     }
 }

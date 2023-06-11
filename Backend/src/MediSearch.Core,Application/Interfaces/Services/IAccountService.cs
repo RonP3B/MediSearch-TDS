@@ -20,5 +20,7 @@ namespace MediSearch.Core.Application.Interfaces.Services
 		Task<string> GenerateJWToken(string userId);
 		string GenerateRefreshToken(string userId);
 		string ValidateRefreshToken(string token);
-	}
+		Task<List<UserDTO>> GetUsersByCompany();
+
+    }
 }

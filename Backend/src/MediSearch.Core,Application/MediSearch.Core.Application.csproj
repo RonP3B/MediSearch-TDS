@@ -30,7 +30,6 @@
 
   <ItemGroup>
     <Folder Include="Features\Admin\Commands\" />
-    <Folder Include="Features\Admin\Queries\GetUsersByCompanyQuey\" />
   </ItemGroup>
 
 </Project>

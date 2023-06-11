@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.Collections.Specialized;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -569,7 +570,40 @@ namespace MediSearch.Infrastructure.Identity.Services
 			return userId;
 		}
 
-		public async 
+		public async Task<List<UserDTO>> GetUsersByCompany()
+		{
+			List<UserDTO> userDTOs = new();
+			var company = _httpContextAccessor.HttpContext.Session.Get<string>("company");
+			var users = await _companyUserRepository.GetByCompanyAsync(company);
+
+			if (users == null)
+			{
+				return null;
+			}
+
+			foreach(var item in users)
+			{
+				var user = await _userManager.FindByIdAsync(item.UserId);
+				var roles = await _userManager.GetRolesAsync(user);
+
+                UserDTO dto = new()
+				{
+					FirstName = user.FirstName,
+					LastName = user.LastName,
+					Email = user.Email,
+					PhoneNumber = user.PhoneNumber,
+					UrlImage = user.UrlImage,
+					Address = user.Address,
+					City = user.City,
+					Country = user.Country,
+					Role = roles.First()
+				};
+
+				userDTOs.Add(dto);
+			}
+
+			return userDTOs;
+		}
 
 		#region Private Methods
 		private async Task<RegisterResponse> ValidateUserBeforeRegistrationAsync(RegisterRequest request)
