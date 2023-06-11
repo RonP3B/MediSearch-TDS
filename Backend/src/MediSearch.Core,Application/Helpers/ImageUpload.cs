@@ -59,7 +59,7 @@ namespace MediSearch.Core.Application.Helpers
 					}
 
 				}
-				return $"{basePath}/{fileName}";
+				return $"{basePath}{fileName}";
 			}
 			return null;
 		}
@@ -111,7 +111,7 @@ namespace MediSearch.Core.Application.Helpers
                     }
 
                 }
-                return $"{basePath}/{fileName}";
+                return $"{basePath}{fileName}";
             }
             return null;
         }
