@@ -55,20 +55,27 @@ namespace MediSearch.WebApi.Controllers
 				return BadRequest(response.Error);
 			}
 
-			var cookieOptions = new CookieOptions
-			{
-				HttpOnly = true,
-				Secure = true,
-				Expires = DateTime.UtcNow.AddDays(5),
-				SameSite = SameSiteMode.None
-			};
-			Response.Cookies.Append("refreshToken", response.RefreshToken, cookieOptions);
-
-			HttpContext.Session.Set("userId", response.UserId);
-			if (response.CompanyId != null)
-			{
-				HttpContext.Session.Set("company", response.CompanyId);
-			}
+			Response.Cookies.Append("refreshToken", response.RefreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                Expires = DateTime.UtcNow.AddDays(5),
+                SameSite = SameSiteMode.None
+            });
+			Response.Cookies.Append("userId", response.UserId, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                Expires = DateTime.UtcNow.AddDays(5),
+                SameSite = SameSiteMode.None
+            });
+			Response.Cookies.Append("company", response.CompanyId, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                Expires = DateTime.UtcNow.AddDays(5),
+                SameSite = SameSiteMode.None
+            });
 
 			return Ok(response);
 		}
@@ -345,8 +352,20 @@ namespace MediSearch.WebApi.Controllers
 				Expires = DateTime.UtcNow.AddDays(5),
 				SameSite = SameSiteMode.None
 			});
-			HttpContext.Session.Remove("userId");
-			HttpContext.Session.Remove("company");
+			Response.Cookies.Delete("userId", new CookieOptions
+			{
+				HttpOnly = true,
+				Secure = true,
+				Expires = DateTime.UtcNow.AddDays(5),
+				SameSite = SameSiteMode.None
+			});
+			Response.Cookies.Delete("company", new CookieOptions
+			{
+				HttpOnly = true,
+				Secure = true,
+				Expires = DateTime.UtcNow.AddDays(5),
+				SameSite = SameSiteMode.None
+			});
 
 			return NoContent();
 		}

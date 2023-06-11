@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using MediSearch.Core.Application.Dtos.Account;
-using MediSearch.Core.Application.Features.Account.Commands.AuthenticateCommand;
-using MediSearch.Core.Application.Features.Account.Commands.RegisterClientCommand;
-using MediSearch.Core.Application.Features.Account.Commands.RegisterCompanyCommand;
+using MediSearch.Core.Application.Features.Account.Commands.Authenticate;
+using MediSearch.Core.Application.Features.Account.Commands.RegisterClient;
+using MediSearch.Core.Application.Features.Account.Commands.RegisterCompany;
 using System;
 using System.Collections.Generic;
 using System.Linq;
