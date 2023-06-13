@@ -1,3 +1,4 @@
+import { useState } from "react";
 import MultiStepForm, { FormStep } from "../MultiForm/MultiStepForm";
 import InputField from "../InputFields/InputField";
 import Grid from "@mui/material/Grid";
@@ -8,6 +9,11 @@ import ImageInput from "../InputFields/ImageInput";
 import SelectInputField from "../InputFields/SelectInputField";
 
 const CompanyForm = () => {
+  const [companyImage, setCompanyImage] = useState(null);
+  const [companyImgName, setCompanyImgName] = useState("");
+  const [userImage, setUserImage] = useState(null);
+  const [userImgName, setUserImgName] = useState("");
+
   const { validationUserSchema, initialUserValues } = useUserSignupFormik();
   const {
     validationCompanySchema,
@@ -24,13 +30,28 @@ const CompanyForm = () => {
         stepName="Información del administrador"
         validationSchema={validationUserSchema}
       >
+        <ImageInput
+          name="userImg"
+          label="Imagen del usuario"
+          fileName={userImgName}
+          setFileName={setUserImgName}
+          avatarImage={userImage}
+          setAvatarImage={setUserImage}
+        />
         <UserFormContent />
       </FormStep>
       <FormStep
         stepName="Información de la empresa"
         validationSchema={validationCompanySchema}
       >
-        <ImageInput name="companyImg" label="Logo de la empresa" />
+        <ImageInput
+          name="companyImg"
+          label="Logo de la empresa"
+          fileName={companyImgName}
+          setFileName={setCompanyImgName}
+          avatarImage={companyImage}
+          setAvatarImage={setCompanyImage}
+        />
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <InputField

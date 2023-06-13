@@ -60,7 +60,7 @@ const useUserSignupFormik = () => {
 
   const onSubmitUser = async (values) => {
     console.log(values);
-    alert("me mandaron");
+    alert(JSON.stringify(values, null, 2));
   };
 
   return { validationUserSchema, initialUserValues, onSubmitUser };

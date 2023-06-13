@@ -11,7 +11,7 @@ const useCompanyFormik = () => {
     emailCompany: "",
     phoneCompany: "",
     companyTypeId: "",
-    webSite: "",
+    website: "",
     facebook: "",
     instagram: "",
     twitter: "",
@@ -36,7 +36,7 @@ const useCompanyFormik = () => {
   });
 
   const validationCompanySocialsSchema = Yup.object({
-    webSite: Yup.string().trim().url("URL del sitio web inválida").nullable(),
+    website: Yup.string().trim().url("URL del sitio web inválida").nullable(),
     facebook: Yup.string().trim().url("URL de Facebook inválida").nullable(),
     instagram: Yup.string().trim().url("URL de Instagram inválida").nullable(),
     twitter: Yup.string().trim().url("URL de Twitter inválida").nullable(),
