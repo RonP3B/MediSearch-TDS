@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using MediSearch.Core.Application.Interfaces.Services;
 using MediatR;
+using MediSearch.Core.Application.Services;
+using MediSearch.Core.Application.Services.Product;
 
 namespace MediSearch.Core.Application
 {
@@ -18,6 +20,8 @@ namespace MediSearch.Core.Application
 			services.AddAutoMapper(Assembly.GetExecutingAssembly());
 			services.AddMediatR(Assembly.GetExecutingAssembly());
 			#region Services
+			services.AddTransient(typeof(IGenericServices<,>), typeof(GenericServices<,,>));
+			services.AddScoped<IProductService, ProductServices>();
 			#endregion
 		}
 	}
