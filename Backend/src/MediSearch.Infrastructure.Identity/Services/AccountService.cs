@@ -419,7 +419,46 @@ namespace MediSearch.Infrastructure.Identity.Services
 			return response;
 		}
 
-		public ConfirmCodeResponse ConfirmCode(string code)
+        public async Task<UserDTO> ValidateEmployee(string id)
+        {
+            var company = _httpContextAccessor.HttpContext.Request.Cookies["company"];
+            var user = await _companyUserRepository.ValidateEmployeAsync(company, id);
+
+			if (!user)
+			{
+				return null;
+			}
+
+            var appUser = await _userManager.FindByIdAsync(id);
+            var roles = await _userManager.GetRolesAsync(appUser);
+
+            UserDTO dto = new()
+            {
+                Id = appUser.Id,
+                FirstName = appUser.FirstName,
+                LastName = appUser.LastName,
+                Email = appUser.Email,
+                PhoneNumber = appUser.PhoneNumber,
+                UrlImage = appUser.UrlImage,
+                Address = appUser.Address,
+                Province = appUser.Province,
+                Municipality = appUser.Municipality,
+                Role = roles.First()
+            };
+
+            return dto;
+        }
+
+		public async Task DeleteUserAsync(string id)
+		{
+            ApplicationUser user = await _userManager.FindByIdAsync(id);
+            await _userManager.DeleteAsync(user);
+
+			var company = await _companyUserRepository.GetByUserAsync(id);
+			await _companyUserRepository.DeleteAsync(company);
+        }
+
+        public ConfirmCodeResponse ConfirmCode(string code)
 		{
 			ConfirmCodeResponse response = new()
 			{
@@ -562,6 +601,7 @@ namespace MediSearch.Infrastructure.Identity.Services
 
                 UserDTO dto = new()
 				{
+					Id = user.Id,
 					FirstName = user.FirstName,
 					LastName = user.LastName,
 					Email = user.Email,

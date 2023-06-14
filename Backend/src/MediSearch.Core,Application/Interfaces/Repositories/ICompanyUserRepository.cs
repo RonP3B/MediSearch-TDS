@@ -8,5 +8,6 @@ namespace MediSearch.Core.Application.Interfaces.Repositories
     {
         Task<CompanyUser> GetByUserAsync(string user);
         Task<List<CompanyUser>> GetByCompanyAsync(string company);
+        Task<bool> ValidateEmployeAsync(string company, string user);
     }
 }

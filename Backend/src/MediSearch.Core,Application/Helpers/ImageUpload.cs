@@ -10,59 +10,59 @@ namespace MediSearch.Core.Application.Helpers
 {
     public static class ImageUpload
     {
-		//I hope this will be usuful for you guys. Code with 🎯
+        //I hope this will be usuful for you guys. Code with 🎯
 
-		public static string UploadImageUser(IFormFile file, bool isEditMode = false, string imagePath = "")
-		{
-			if (isEditMode)
-			{
-				if (file == null)
-				{
-					return imagePath;
-				}
-			}
-			string basePath = $"/Assets/Images/Users/";
-			string path = Path.Combine(Directory.GetCurrentDirectory(), $"Public{basePath}");
+        public static string UploadImageUser(IFormFile file, bool isEditMode = false, string imagePath = "")
+        {
+            if (isEditMode)
+            {
+                if (file == null)
+                {
+                    return imagePath;
+                }
+            }
+            string basePath = $"/Assets/Images/Users/";
+            string path = Path.Combine(Directory.GetCurrentDirectory(), $"Public{basePath}");
 
-			//create folder if not exist
-			if (!Directory.Exists(path))
-			{
-				Directory.CreateDirectory(path);
-			}
+            //create folder if not exist
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
 
-			//get file extension
-			if (file != null)
-			{
-				Guid guid = Guid.NewGuid();
-				FileInfo fileInfo = new(file.FileName);
-				string fileName = guid + fileInfo.Extension;
+            //get file extension
+            if (file != null)
+            {
+                Guid guid = Guid.NewGuid();
+                FileInfo fileInfo = new(file.FileName);
+                string fileName = guid + fileInfo.Extension;
 
-				string fileNameWithPath = Path.Combine(path, fileName);
+                string fileNameWithPath = Path.Combine(path, fileName);
 
-				using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
-				{
-					file.CopyTo(stream);
-				}
+                using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
 
-				if (isEditMode)
-				{
-					if (imagePath != null)
-					{
-						string[] oldImagePart = imagePath.Split("/");
-						string oldImagePath = oldImagePart[^1];
-						string completeImageOldPath = Path.Combine(path, oldImagePath);
+                if (isEditMode)
+                {
+                    if (imagePath != null)
+                    {
+                        string[] oldImagePart = imagePath.Split("/");
+                        string oldImagePath = oldImagePart[^1];
+                        string completeImageOldPath = Path.Combine(path, oldImagePath);
 
-						if (System.IO.File.Exists(completeImageOldPath))
-						{
-							System.IO.File.Delete(completeImageOldPath);
-						}
-					}
+                        if (System.IO.File.Exists(completeImageOldPath))
+                        {
+                            System.IO.File.Delete(completeImageOldPath);
+                        }
+                    }
 
-				}
-				return $"{basePath}{fileName}";
-			}
-			return null;
-		}
+                }
+                return $"{basePath}{fileName}";
+            }
+            return null;
+        }
 
         public static string UploadImageCompany(IFormFile file, bool isEditMode = false, string imagePath = "")
         {
@@ -198,7 +198,7 @@ namespace MediSearch.Core.Application.Helpers
 
         public static async Task<string> FileUpload(IFormFile fileForm, string currentsImgUrl, string ItemId, string ContainerName = "Item", bool IsUpdateMode = false)
         {
-            
+
             if (fileForm == null)
                 throw new NullReferenceException();
 
@@ -368,13 +368,16 @@ namespace MediSearch.Core.Application.Helpers
             //Get current directory
             string basePath = url;
 
-            string servePath = Directory.GetCurrentDirectory();
-
-            string path = Path.Combine(servePath, $"Public{basePath}");
-
-            if (File.Exists(path))
+            if (basePath != "/Assets/Images/default.jpg")
             {
-                File.Delete(path);
+                string servePath = Directory.GetCurrentDirectory();
+
+                string path = Path.Combine(servePath, $"Public{basePath}");
+
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
             }
         }
 
