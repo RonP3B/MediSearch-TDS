@@ -45,15 +45,15 @@ namespace MediSearch.Core.Application.Features.Account.Commands.RegisterCompany
 		[Required(ErrorMessage = "Debe de subir una foto suya")]
 		public IFormFile Image { get; set; }
 
-		[SwaggerParameter(Description = "País")]
-		[Required(ErrorMessage = "Debe de ingresar su país")]
-		public string Country { get; set; }
+        [SwaggerParameter(Description = "Provincia")]
+        [Required(ErrorMessage = "Debe de ingresar su provincia")]
+        public string Province { get; set; }
 
-		[SwaggerParameter(Description = "Ciudad")]
-		[Required(ErrorMessage = "Debe de ingresar su ciudad")]
-		public string City { get; set; }
+        [SwaggerParameter(Description = "Municìpio")]
+        [Required(ErrorMessage = "Debe de ingresar su municipio")]
+        public string Municipality { get; set; }
 
-		[SwaggerParameter(Description = "Dirección")]
+        [SwaggerParameter(Description = "Dirección")]
 		[Required(ErrorMessage = "Debe de ingresar su dirección")]
 		public string Address { get; set; }
 
@@ -69,13 +69,13 @@ namespace MediSearch.Core.Application.Features.Account.Commands.RegisterCompany
         [Required(ErrorMessage = "Debe de ingresar su logo")]
         public IFormFile ImageLogo { get; set; }
 
-        [SwaggerParameter(Description = "País de la empresa")]
-        [Required(ErrorMessage = "Debe de ingresar el país donde está la empresa")]
-        public string CountryCompany { get; set; }
+        [SwaggerParameter(Description = "Provincia de la empresa")]
+        [Required(ErrorMessage = "Debe de ingresar la provincia donde está la empresa")]
+        public string ProvinceCompany { get; set; }
 
-        [SwaggerParameter(Description = "Ciudad de la empresa")]
-        [Required(ErrorMessage = "Debe de ingresar la ciudad donde está la empresa")]
-        public string CityCompany { get; set; }
+        [SwaggerParameter(Description = "Municipio de la empresa")]
+        [Required(ErrorMessage = "Debe de ingresar el municipio donde está la empresa")]
+        public string MunicipalityCompany { get; set; }
 
         [SwaggerParameter(Description = "Dirección de la empresa")]
         [Required(ErrorMessage = "Debe de ingresar la dirección de la empresa")]
