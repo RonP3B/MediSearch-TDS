@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MediSearch.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20230608232840_Initial")]
+    [Migration("20230614003659_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,15 +38,7 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("CompanyTypeId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Country")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -73,11 +65,19 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("text");
 
+                    b.Property<string>("Municipality")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Province")
                         .IsRequired()
                         .HasColumnType("text");
 

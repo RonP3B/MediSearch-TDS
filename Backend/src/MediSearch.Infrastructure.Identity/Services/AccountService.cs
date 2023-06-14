@@ -111,8 +111,8 @@ namespace MediSearch.Infrastructure.Identity.Services
 				UserName = request.UserName,
 				PhoneNumber = request.PhoneNumber,
 				UrlImage = request.UrlImage,
-				Country = request.Country,
-				City = request.City,
+				Province = request.Province,
+				Municipality = request.Municipality,
 				Address = request.Address
 			};
 
@@ -171,8 +171,8 @@ namespace MediSearch.Infrastructure.Identity.Services
 				UserName = request.UserName,
 				PhoneNumber = request.PhoneNumber,
 				UrlImage = request.UrlImage,
-				Country = request.Country,
-				City = request.City,
+				Province = request.Province,
+				Municipality = request.Municipality,
 				Address = request.Address
             };
 
@@ -185,8 +185,8 @@ namespace MediSearch.Infrastructure.Identity.Services
                 Facebook = request.Facebook,
                 Twitter = request.Twitter,
                 Instagram = request.Instagram,
-                Country = request.CountryCompany,
-                City = request.CityCompany,
+                Province = request.ProvinceCompany,
+                Municipality = request.MunicipalityCompany,
                 Address = request.AddressCompany,
 				Phone = request.PhoneCompany,
 				WebSite = request.WebSite,
@@ -264,8 +264,8 @@ namespace MediSearch.Infrastructure.Identity.Services
 				UserName = userName,
 				PhoneNumber = request.PhoneNumber,
 				UrlImage = "/Assets/Images/default.jpg",
-				Country = request.Country,
-				City = request.City,
+				Province = request.Province,
+				Municipality = request.Municipality,
 				Address = request.Address,
 				EmailConfirmed = true
             };
@@ -568,8 +568,8 @@ namespace MediSearch.Infrastructure.Identity.Services
 					PhoneNumber = user.PhoneNumber,
 					UrlImage = user.UrlImage,
 					Address = user.Address,
-					City = user.City,
-					Country = user.Country,
+					Province = user.Province,
+					Municipality = user.Municipality,
 					Role = roles.First()
 				};
 

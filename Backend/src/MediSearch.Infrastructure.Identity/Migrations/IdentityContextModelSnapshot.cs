@@ -34,16 +34,8 @@ namespace MediSearch.Infrastructure.Identity.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Country")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
@@ -67,6 +59,10 @@ namespace MediSearch.Infrastructure.Identity.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Municipality")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -83,6 +79,10 @@ namespace MediSearch.Infrastructure.Identity.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("Province")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
