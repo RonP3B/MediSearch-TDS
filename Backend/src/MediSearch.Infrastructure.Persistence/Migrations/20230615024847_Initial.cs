@@ -182,7 +182,7 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                     Components = table.Column<List<string>>(type: "text[]", nullable: false),
                     Price = table.Column<double>(type: "double precision", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
-                    UrlImages = table.Column<List<string>>(type: "text[]", nullable: false),
+                    UrlImages = table.Column<List<string>>(type: "text[]", nullable: true),
                     CompanyId = table.Column<string>(type: "text", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: false),
                     Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),

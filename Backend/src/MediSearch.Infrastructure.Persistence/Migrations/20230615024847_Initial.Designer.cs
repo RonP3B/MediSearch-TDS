@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MediSearch.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20230614003659_Initial")]
+    [Migration("20230615024847_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -338,7 +338,6 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                         .HasColumnType("integer");
 
                     b.Property<List<string>>("UrlImages")
-                        .IsRequired()
                         .HasColumnType("text[]");
 
                     b.HasKey("Id");

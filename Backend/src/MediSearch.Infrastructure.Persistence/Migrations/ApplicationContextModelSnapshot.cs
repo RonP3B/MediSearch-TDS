@@ -336,7 +336,6 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                         .HasColumnType("integer");
 
                     b.Property<List<string>>("UrlImages")
-                        .IsRequired()
                         .HasColumnType("text[]");
 
                     b.HasKey("Id");
