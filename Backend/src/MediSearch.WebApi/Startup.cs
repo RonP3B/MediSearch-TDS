@@ -54,7 +54,7 @@ namespace MediSearch.WebApi
 							.AllowCredentials();
                     });
             });
-
+			
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 		}
 
@@ -74,13 +74,14 @@ namespace MediSearch.WebApi
 			app.UseHttpsRedirection();
 
 			app.UseRouting();
-
+			
 			app.UseAuthentication();
 			app.UseAuthorization();
 			app.UseSwaggerExtension();
 			app.UseHealthChecks("/health");
 			app.UseSession();
             app.UseCors("AllowSpecificDomain");
+			app.UseStaticFiles();
 
             app.UseEndpoints(endpoints =>
 			{
