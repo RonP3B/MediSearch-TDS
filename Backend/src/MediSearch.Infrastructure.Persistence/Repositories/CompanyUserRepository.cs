@@ -40,7 +40,7 @@ namespace MediSearch.Infrastructure.Persistence.Repositories
 
             var validation = users.FirstOrDefault(x => x.CompanyId == company && x.UserId == user);
 
-            if(validation != null)
+            if (validation != null)
             {
                 return true;
             }

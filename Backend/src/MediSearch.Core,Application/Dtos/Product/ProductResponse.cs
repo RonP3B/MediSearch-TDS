@@ -6,10 +6,14 @@ using System.Threading.Tasks;
 
 namespace MediSearch.Core.Application.Dtos.Product
 {
-    public class ProductResponse
-    {
-        public bool HasError { get; set; }
-        public string Error { get; set; }
-        public bool IsSuccess { get; set; }
-    }
+    public record ProductResponse(
+         string Name,
+         string Description,
+         List<string> Categories,
+         List<string> Components,
+         double Price,
+         int Quantity,
+         List<string> UrlImages,
+         string CompanyId
+        );
 }
