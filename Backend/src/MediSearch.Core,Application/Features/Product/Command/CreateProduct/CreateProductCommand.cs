@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace MediSearch.Core.Application.Features.Product.CreateProduct
 {
-    public class CreateProductCommand : IRequest<ProductResponse>
+    public class CreateProductCommand : IRequest<ProductResponseMessage>
     {
         [SwaggerParameter(Description = "Nombre que deseas destinar para el producto.")]
         [Required(ErrorMessage = "Debe de especificar un nombre para este producto.")]
@@ -45,7 +45,7 @@ namespace MediSearch.Core.Application.Features.Product.CreateProduct
         public IFormFile[] Images { get; set; }
     }
 
-    public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, ProductResponse>
+    public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, ProductResponseMessage>
     {
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
@@ -57,9 +57,9 @@ namespace MediSearch.Core.Application.Features.Product.CreateProduct
         }
 
 
-        public async Task<ProductResponse> Handle(CreateProductCommand command, CancellationToken cancellationToken)
+        public async Task<ProductResponseMessage> Handle(CreateProductCommand command, CancellationToken cancellationToken)
         {
-            ProductResponse response = new()
+            ProductResponseMessage response = new()
             {
                 HasError = false
             };

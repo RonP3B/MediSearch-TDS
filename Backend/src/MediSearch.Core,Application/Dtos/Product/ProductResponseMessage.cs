@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MediSearch.Core.Application.Dtos.Product
 {
-    public class ProductResponse
+    public class ProductResponseMessage
     {
         public bool HasError { get; set; }
         public string Error { get; set; }

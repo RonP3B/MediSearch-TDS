@@ -20,9 +20,9 @@ namespace MediSearch.WebApi.Controllers.v1
            Summary = "Registra un producto.",
             Description = "Al especificar las propiedades nos permite llevar acabo el registro de un producto."
         )]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductResponse))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductResponseMessage))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProductResponse))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProductResponseMessage))]
         public async Task<IActionResult> CreateProduct([FromForm] CreateProductCommand command)
         {
 
