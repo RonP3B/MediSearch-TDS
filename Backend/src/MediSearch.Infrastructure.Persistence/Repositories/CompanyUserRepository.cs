@@ -33,5 +33,19 @@ namespace MediSearch.Infrastructure.Persistence.Repositories
 
             return companies.ToList();
         }
+
+        public async Task<bool> ValidateEmployeAsync(string company, string user)
+        {
+            var users = await GetAllAsync();
+
+            var validation = users.FirstOrDefault(x => x.CompanyId == company && x.UserId == user);
+
+            if(validation != null)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }

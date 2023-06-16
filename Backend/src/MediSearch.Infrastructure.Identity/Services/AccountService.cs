@@ -111,8 +111,8 @@ namespace MediSearch.Infrastructure.Identity.Services
 				UserName = request.UserName,
 				PhoneNumber = request.PhoneNumber,
 				UrlImage = request.UrlImage,
-				Country = request.Country,
-				City = request.City,
+				Province = request.Province,
+				Municipality = request.Municipality,
 				Address = request.Address
 			};
 
@@ -171,8 +171,8 @@ namespace MediSearch.Infrastructure.Identity.Services
 				UserName = request.UserName,
 				PhoneNumber = request.PhoneNumber,
 				UrlImage = request.UrlImage,
-				Country = request.Country,
-				City = request.City,
+				Province = request.Province,
+				Municipality = request.Municipality,
 				Address = request.Address
             };
 
@@ -185,8 +185,8 @@ namespace MediSearch.Infrastructure.Identity.Services
                 Facebook = request.Facebook,
                 Twitter = request.Twitter,
                 Instagram = request.Instagram,
-                Country = request.CountryCompany,
-                City = request.CityCompany,
+                Province = request.ProvinceCompany,
+                Municipality = request.MunicipalityCompany,
                 Address = request.AddressCompany,
 				Phone = request.PhoneCompany,
 				WebSite = request.WebSite,
@@ -264,8 +264,8 @@ namespace MediSearch.Infrastructure.Identity.Services
 				UserName = userName,
 				PhoneNumber = request.PhoneNumber,
 				UrlImage = "/Assets/Images/default.jpg",
-				Country = request.Country,
-				City = request.City,
+				Province = request.Province,
+				Municipality = request.Municipality,
 				Address = request.Address,
 				EmailConfirmed = true
             };
@@ -419,7 +419,46 @@ namespace MediSearch.Infrastructure.Identity.Services
 			return response;
 		}
 
-		public ConfirmCodeResponse ConfirmCode(string code)
+        public async Task<UserDTO> ValidateEmployee(string id)
+        {
+            var company = _httpContextAccessor.HttpContext.Request.Cookies["company"];
+            var user = await _companyUserRepository.ValidateEmployeAsync(company, id);
+
+			if (!user)
+			{
+				return null;
+			}
+
+            var appUser = await _userManager.FindByIdAsync(id);
+            var roles = await _userManager.GetRolesAsync(appUser);
+
+            UserDTO dto = new()
+            {
+                Id = appUser.Id,
+                FirstName = appUser.FirstName,
+                LastName = appUser.LastName,
+                Email = appUser.Email,
+                PhoneNumber = appUser.PhoneNumber,
+                UrlImage = appUser.UrlImage,
+                Address = appUser.Address,
+                Province = appUser.Province,
+                Municipality = appUser.Municipality,
+                Role = roles.First()
+            };
+
+            return dto;
+        }
+
+		public async Task DeleteUserAsync(string id)
+		{
+            ApplicationUser user = await _userManager.FindByIdAsync(id);
+            await _userManager.DeleteAsync(user);
+
+			var company = await _companyUserRepository.GetByUserAsync(id);
+			await _companyUserRepository.DeleteAsync(company);
+        }
+
+        public ConfirmCodeResponse ConfirmCode(string code)
 		{
 			ConfirmCodeResponse response = new()
 			{
@@ -562,14 +601,15 @@ namespace MediSearch.Infrastructure.Identity.Services
 
                 UserDTO dto = new()
 				{
+					Id = user.Id,
 					FirstName = user.FirstName,
 					LastName = user.LastName,
 					Email = user.Email,
 					PhoneNumber = user.PhoneNumber,
 					UrlImage = user.UrlImage,
 					Address = user.Address,
-					City = user.City,
-					Country = user.Country,
+					Province = user.Province,
+					Municipality = user.Municipality,
 					Role = roles.First()
 				};
 

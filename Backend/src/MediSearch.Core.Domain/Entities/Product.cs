@@ -15,7 +15,7 @@ namespace MediSearch.Core.Domain.Entities
         public List<string> Components { get; set; }
         public double Price { get; set; }
         public int Quantity { get; set; }
-        public List<string> UrlImages { get; set; }
+        public List<string>? UrlImages { get; set; }
 
         //Navigation Properties
         public Company Company { get; set; }

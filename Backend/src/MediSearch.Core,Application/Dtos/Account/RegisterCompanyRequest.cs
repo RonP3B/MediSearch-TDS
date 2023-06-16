@@ -11,8 +11,8 @@ namespace MediSearch.Core.Application.Dtos.Account
         public string Ceo { get; set; }
         public string NameCompany { get; set; }
         public string UrlImageLogo { get; set; }
-        public string CountryCompany { get; set; }
-        public string CityCompany { get; set; }
+        public string ProvinceCompany { get; set; }
+        public string MunicipalityCompany { get; set; }
         public string AddressCompany { get; set; }
         public string EmailCompany { get; set; }
         public string PhoneCompany { get; set; }

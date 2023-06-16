@@ -18,8 +18,8 @@ namespace MediSearch.Infrastructure.Identity.Seeds
             defaultUser.Email = "superadminuser@email.com";
             defaultUser.FirstName = "David";
             defaultUser.LastName = "de la Rosa";
-            defaultUser.Country = "República Dominicana";
-            defaultUser.City = "Santo Domingo";
+            defaultUser.Province = "Santo Domingo";
+            defaultUser.Municipality = "Santo Domingo Este";
             defaultUser.Address = "Brisas del Este";
             defaultUser.UrlImage = "no hay por ahora";
             defaultUser.EmailConfirmed = true;

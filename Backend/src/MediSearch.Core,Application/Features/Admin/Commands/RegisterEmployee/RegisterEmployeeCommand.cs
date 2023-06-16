@@ -32,17 +32,17 @@ namespace MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee
         [Required(ErrorMessage = "Debe de ingresar su correo")]
         public string Email { get; set; }
 
-        [SwaggerParameter(Description = "País")]
-        [Required(ErrorMessage = "Debe de ingresar su país")]
-        public string Country { get; set; }
-
         [SwaggerParameter(Description = "Rol")]
         [Required(ErrorMessage = "Debe de ingresar el rol")]
         public string Role { get; set; }
 
-        [SwaggerParameter(Description = "Ciudad")]
-        [Required(ErrorMessage = "Debe de ingresar su ciudad")]
-        public string City { get; set; }
+        [SwaggerParameter(Description = "Provincia")]
+        [Required(ErrorMessage = "Debe de ingresar su provincia")]
+        public string Province { get; set; }
+
+        [SwaggerParameter(Description = "Municìpio")]
+        [Required(ErrorMessage = "Debe de ingresar su municipio")]
+        public string Municipality { get; set; }
 
         [SwaggerParameter(Description = "Dirección")]
         [Required(ErrorMessage = "Debe de ingresar su dirección")]

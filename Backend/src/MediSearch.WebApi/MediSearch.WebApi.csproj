@@ -29,6 +29,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Public\Assets\Images\Companies\" />
+	  <Folder Include="Public\Assets\Images\Products\" />
 	  <Folder Include="Public\Assets\Images\Users\" />
 	</ItemGroup>
 

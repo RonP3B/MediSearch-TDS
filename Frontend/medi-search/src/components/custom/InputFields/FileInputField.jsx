@@ -1,23 +1,25 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import PropTypes from "prop-types";
-import { useField } from "formik";
+import { useField, useFormikContext } from "formik";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 
-const FileInputTextField = ({ onChange, accept, label, id, name }) => {
+const FileInputField = (props) => {
+  const { onChange, accept, label, name, fileName, setFileName } = props;
+
   const inputRef = useRef(null);
-  const [fileName, setFileName] = useState("");
-  const [field, meta, helpers] = useField(name);
+  const [field, meta] = useField(name);
+  const formik = useFormikContext();
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
 
     if (file) {
       onChange(file);
-      helpers.setValue(file);
+      formik.handleChange(event);
       setFileName(file.name);
     }
   };
@@ -25,7 +27,7 @@ const FileInputTextField = ({ onChange, accept, label, id, name }) => {
   return (
     <>
       <input
-        id={id}
+        id={name}
         type="file"
         name={name}
         ref={inputRef}
@@ -57,12 +59,13 @@ const FileInputTextField = ({ onChange, accept, label, id, name }) => {
   );
 };
 
-FileInputTextField.propTypes = {
+FileInputField.propTypes = {
   onChange: PropTypes.func.isRequired,
   accept: PropTypes.string,
   label: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
+  fileName: PropTypes.string.isRequired,
+  setFileName: PropTypes.func.isRequired,
 };
 
-export default FileInputTextField;
+export default FileInputField;

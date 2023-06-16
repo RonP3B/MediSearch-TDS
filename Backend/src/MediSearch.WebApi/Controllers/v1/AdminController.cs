@@ -1,5 +1,6 @@
 ﻿using MediSearch.Core.Application.Dtos.Account;
 using MediSearch.Core.Application.Features.Account.Commands.RegisterClient;
+using MediSearch.Core.Application.Features.Admin.Commands.DeleteEmployee;
 using MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee;
 using MediSearch.Core.Application.Features.Admin.Queries.GetUsersCompany;
 using Microsoft.AspNetCore.Authorization;
@@ -71,5 +72,31 @@ namespace MediSearch.WebApi.Controllers.v1
             return Ok(response.IsSuccess);
         }
 
+        [HttpDelete("delete-employee/{id}")]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [SwaggerOperation(
+            Summary = "Permite eliminar un empleado.",
+            Description = "Maneja el apartado de eliminación, debe de especificar los parametros correspondientes."
+        )]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteEmployee(string id)
+        {
+            try
+            {
+                var result = await Mediator.Send(new DeleteEmployeeCommand() { Id = id });
+
+                if (result == 0)
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+
+                return NoContent();
+
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
+        }
     }
 }

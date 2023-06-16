@@ -1,16 +1,16 @@
-import { useState } from "react";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import DefaultAvatar from "../../../assets/images/DefaultAvatar.jpg";
-import FileInputTextField from "./FileInputTextField";
+import FileInputField from "./FileInputField";
 
-const ImageInput = ({ name, label }) => {
-  const [avatarImage, setAvatarImage] = useState(null);
+const ImageInput = (props) => {
+  const { name, label, avatarImage, setAvatarImage, fileName, setFileName } =
+    props;
 
   const handleFileChange = (file) => {
     const reader = new FileReader();
     reader.onload = (e) => setAvatarImage(e.target.result);
-    setAvatarImage(reader.readAsDataURL(file));
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -44,12 +44,13 @@ const ImageInput = ({ name, label }) => {
           src={avatarImage || DefaultAvatar}
         />
       </Box>
-      <FileInputTextField
+      <FileInputField
         onChange={handleFileChange}
         accept="image/*"
         label={label}
-        id={name}
         name={name}
+        fileName={fileName}
+        setFileName={setFileName}
       />
     </Box>
   );
@@ -58,6 +59,10 @@ const ImageInput = ({ name, label }) => {
 ImageInput.propTypes = {
   name: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
+  avatarImage: PropTypes.any,
+  setAvatarImage: PropTypes.func.isRequired,
+  fileName: PropTypes.string.isRequired,
+  setFileName: PropTypes.func.isRequired,
 };
 
 export default ImageInput;

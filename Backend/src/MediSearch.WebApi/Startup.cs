@@ -43,8 +43,19 @@ namespace MediSearch.WebApi
 			services.AddApiVersioningExtension();
 			services.AddDistributedMemoryCache();
 			services.AddSession();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificDomain",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:5173")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+							.AllowCredentials();
+                    });
+            });
 
-			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -69,8 +80,9 @@ namespace MediSearch.WebApi
 			app.UseSwaggerExtension();
 			app.UseHealthChecks("/health");
 			app.UseSession();
+            app.UseCors("AllowSpecificDomain");
 
-			app.UseEndpoints(endpoints =>
+            app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllers();
 			});

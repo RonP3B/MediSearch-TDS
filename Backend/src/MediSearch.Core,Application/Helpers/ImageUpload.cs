@@ -10,59 +10,59 @@ namespace MediSearch.Core.Application.Helpers
 {
     public static class ImageUpload
     {
-		//I hope this will be usuful for you guys. Code with 🎯
+        //I hope this will be usuful for you guys. Code with 🎯
 
-		public static string UploadImageUser(IFormFile file, bool isEditMode = false, string imagePath = "")
-		{
-			if (isEditMode)
-			{
-				if (file == null)
-				{
-					return imagePath;
-				}
-			}
-			string basePath = $"/Assets/Images/Users/";
-			string path = Path.Combine(Directory.GetCurrentDirectory(), $"Public{basePath}");
+        public static string UploadImageUser(IFormFile file, bool isEditMode = false, string imagePath = "")
+        {
+            if (isEditMode)
+            {
+                if (file == null)
+                {
+                    return imagePath;
+                }
+            }
+            string basePath = $"/Assets/Images/Users/";
+            string path = Path.Combine(Directory.GetCurrentDirectory(), $"Public{basePath}");
 
-			//create folder if not exist
-			if (!Directory.Exists(path))
-			{
-				Directory.CreateDirectory(path);
-			}
+            //create folder if not exist
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
 
-			//get file extension
-			if (file != null)
-			{
-				Guid guid = Guid.NewGuid();
-				FileInfo fileInfo = new(file.FileName);
-				string fileName = guid + fileInfo.Extension;
+            //get file extension
+            if (file != null)
+            {
+                Guid guid = Guid.NewGuid();
+                FileInfo fileInfo = new(file.FileName);
+                string fileName = guid + fileInfo.Extension;
 
-				string fileNameWithPath = Path.Combine(path, fileName);
+                string fileNameWithPath = Path.Combine(path, fileName);
 
-				using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
-				{
-					file.CopyTo(stream);
-				}
+                using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
 
-				if (isEditMode)
-				{
-					if (imagePath != null)
-					{
-						string[] oldImagePart = imagePath.Split("/");
-						string oldImagePath = oldImagePart[^1];
-						string completeImageOldPath = Path.Combine(path, oldImagePath);
+                if (isEditMode)
+                {
+                    if (imagePath != null)
+                    {
+                        string[] oldImagePart = imagePath.Split("/");
+                        string oldImagePath = oldImagePart[^1];
+                        string completeImageOldPath = Path.Combine(path, oldImagePath);
 
-						if (System.IO.File.Exists(completeImageOldPath))
-						{
-							System.IO.File.Delete(completeImageOldPath);
-						}
-					}
+                        if (System.IO.File.Exists(completeImageOldPath))
+                        {
+                            System.IO.File.Delete(completeImageOldPath);
+                        }
+                    }
 
-				}
-				return $"{basePath}{fileName}";
-			}
-			return null;
-		}
+                }
+                return $"{basePath}{fileName}";
+            }
+            return null;
+        }
 
         public static string UploadImageCompany(IFormFile file, bool isEditMode = false, string imagePath = "")
         {
@@ -114,6 +114,75 @@ namespace MediSearch.Core.Application.Helpers
                 return $"{basePath}{fileName}";
             }
             return null;
+        }
+
+        public static async Task<List<string>> UploadImagesProduct(IFormFile[] fileForms, string ItemId, bool IsUpdateMode = false, List<string> currentsImgUrl = null)
+        {
+            List<string> imgUrl = new List<string>();
+
+            //Get current directory
+            string basePath = $"/Assets/Images/Products/{ItemId}";
+
+            string servePath = Directory.GetCurrentDirectory();
+
+            string ServerAndBasePath = Path.Combine(servePath, $"Public{basePath}");
+
+            if (!Directory.Exists(ServerAndBasePath))
+            {
+                Directory.CreateDirectory(ServerAndBasePath);
+            }
+
+            int index = 0;
+
+            foreach (var fileForm in fileForms)
+            {
+
+                if (IsUpdateMode)
+                {
+
+                    if (fileForm != null)
+                    {
+                        FileInfo fileInfo = new FileInfo(fileForm.FileName);
+                        Guid guid = Guid.NewGuid();
+
+                        string uniqueFileName = guid + fileInfo.Extension;
+
+                        string uniqueFileWithBaseServePath = Path.Combine(ServerAndBasePath, uniqueFileName);
+
+                        using (FileStream stream = new FileStream(uniqueFileWithBaseServePath, FileMode.Create))
+                        {
+                            await fileForm.CopyToAsync(stream);
+                        }
+
+                        //DELETE THE OLD IMAGE
+                        if (IsUpdateMode && !string.IsNullOrWhiteSpace(currentsImgUrl[index]))
+                        {
+                            string[] oldImagePart = currentsImgUrl[index].Split("/");
+                            string oldImageFileName = oldImagePart[^1];
+                            string completeOldImagePath = Path.Combine(ServerAndBasePath, oldImageFileName);
+
+                            if (File.Exists(completeOldImagePath))
+                            {
+                                File.Delete(completeOldImagePath);
+                            }
+
+                        }
+
+                        imgUrl.Insert(index, $"{basePath}/{uniqueFileName}");
+
+                    }
+                    else
+                    {
+                        imgUrl.Insert(index, currentsImgUrl[index]);
+                    }
+
+
+                }
+
+                index++;
+            }
+
+            return imgUrl;
         }
 
         public static async Task<string> FileUpload(IFormFile fileForm, int ItemId, string ContainerName = "Item")
@@ -198,7 +267,7 @@ namespace MediSearch.Core.Application.Helpers
 
         public static async Task<string> FileUpload(IFormFile fileForm, string currentsImgUrl, string ItemId, string ContainerName = "Item", bool IsUpdateMode = false)
         {
-            
+
             if (fileForm == null)
                 throw new NullReferenceException();
 
@@ -241,51 +310,6 @@ namespace MediSearch.Core.Application.Helpers
             }
 
             return $"{basePath}/{uniqueFileName}"; //The new image url :)!
-        }
-
-        public static async Task<List<string>> FileUpload(IFormFile[] fileForms, int ItemId, string ContainerName = "Item")
-        {
-            List<string> imgUrl = new List<string>();
-
-            //Get current directory
-            string basePath = $"/{ContainerName}/{ItemId}";
-
-            string servePath = Directory.GetCurrentDirectory();
-
-            string ServerAndBasePath = Path.Combine(servePath, $"wwwroot{basePath}");
-
-            if (!Directory.Exists(ServerAndBasePath))
-            {
-                Directory.CreateDirectory(ServerAndBasePath);
-            }
-
-            foreach (var fileForm in fileForms)
-            {
-                if (fileForm != null)
-                {
-                    FileInfo fileInfo = new FileInfo(fileForm.FileName);
-                    Guid guid = Guid.NewGuid();
-
-                    string uniqueFileName = guid + fileInfo.Extension;
-
-                    string uniqueFileWithBaseServePath = Path.Combine(ServerAndBasePath, uniqueFileName);
-
-                    using (FileStream stream = new FileStream(uniqueFileWithBaseServePath, FileMode.Create))
-                    {
-                        await fileForm.CopyToAsync(stream);
-                    }
-
-                    imgUrl.Add($"{basePath}/{uniqueFileName}");
-                }
-                else
-                {
-                    imgUrl.Add("");
-                }
-
-            }
-
-            return imgUrl;
-
         }
 
         public static async Task<List<string>> FileUpload(IFormFile[] fileForms, int ItemId, bool IsUpdateMode = false, string ContainerName = "Item", List<string> currentsImgUrl = null)
@@ -368,13 +392,16 @@ namespace MediSearch.Core.Application.Helpers
             //Get current directory
             string basePath = url;
 
-            string servePath = Directory.GetCurrentDirectory();
-
-            string path = Path.Combine(servePath, $"Public{basePath}");
-
-            if (File.Exists(path))
+            if (basePath != "/Assets/Images/default.jpg")
             {
-                File.Delete(path);
+                string servePath = Directory.GetCurrentDirectory();
+
+                string path = Path.Combine(servePath, $"Public{basePath}");
+
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
             }
         }
 

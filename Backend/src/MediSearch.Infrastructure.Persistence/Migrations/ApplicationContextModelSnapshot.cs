@@ -36,15 +36,7 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("CompanyTypeId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Country")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -71,11 +63,19 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("text");
 
+                    b.Property<string>("Municipality")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Province")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -336,7 +336,6 @@ namespace MediSearch.Infrastructure.Persistence.Migrations
                         .HasColumnType("integer");
 
                     b.Property<List<string>>("UrlImages")
-                        .IsRequired()
                         .HasColumnType("text[]");
 
                     b.HasKey("Id");
