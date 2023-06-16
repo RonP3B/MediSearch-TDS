@@ -50,7 +50,8 @@ namespace MediSearch.WebApi
                     {
                         builder.WithOrigins("http://localhost:5173")
                             .AllowAnyHeader()
-                            .AllowAnyMethod();
+                            .AllowAnyMethod()
+							.AllowCredentials();
                     });
             });
 

@@ -75,8 +75,8 @@ namespace MediSearch.Core.Application.Features.Account.Commands.RegisterClient
 		{
 			try
 			{
-				var origin = _httpContextAccessor.HttpContext.Request.Headers["origin"];
-				var request = _mapper.Map<RegisterRequest>(command);
+				var origin = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}";
+                var request = _mapper.Map<RegisterRequest>(command);
 				request.UrlImage = ImageUpload.UploadImageUser(command.Image);
 				var response = await _accountService.RegisterClientUserAsync(request, origin);
 				if (response.HasError)

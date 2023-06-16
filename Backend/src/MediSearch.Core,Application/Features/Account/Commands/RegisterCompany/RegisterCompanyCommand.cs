@@ -126,7 +126,7 @@ namespace MediSearch.Core.Application.Features.Account.Commands.RegisterCompany
 		{
 			try
 			{
-				var origin = _httpContextAccessor.HttpContext.Request.Headers["origin"];
+				var origin = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}";
 				var request = _mapper.Map<RegisterCompanyRequest>(command);
 				var type = await _companyTypeRepository.GetByNameAsync(command.CompanyType);
 
