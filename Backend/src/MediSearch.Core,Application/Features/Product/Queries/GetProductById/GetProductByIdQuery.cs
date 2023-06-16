@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace MediSearch.Core.Application.Features.Product.Queries.GetProductById
 {
-    public record GetProductByIdQuery(string Id) : IRequest<ProductResponse>;
+    public record GetProductByIdQuery(string Id) : IRequest<ProductDTO>;
 }

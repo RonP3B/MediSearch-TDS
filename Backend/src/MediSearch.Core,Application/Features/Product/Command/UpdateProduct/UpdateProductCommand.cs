@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MediSearch.Core.Application.Features.Product.Command.UpdateProduct
 {
-    public record UpdateProductCommand : IRequest<ProductResponseMessage>
+    public record UpdateProductCommand : IRequest<ProductResponse>
     {
         [SwaggerParameter(Description = "El id del producto a actualizar")]
         [Required(ErrorMessage = "El id es requerido para actualizarlo")]

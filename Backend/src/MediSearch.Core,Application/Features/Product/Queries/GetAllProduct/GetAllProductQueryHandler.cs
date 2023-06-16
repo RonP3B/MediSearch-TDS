@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MediSearch.Core.Application.Features.Product.Queries.GetAllProduct
 {
-    internal class GetAllProductQueryHandler : IRequestHandler<GetAllProductQuery, IList<ProductResponse>>
+    internal class GetAllProductQueryHandler : IRequestHandler<GetAllProductQuery, IList<ProductDTO>>
     {
         private readonly IProductRepository _productRepository;
 
@@ -18,11 +18,11 @@ namespace MediSearch.Core.Application.Features.Product.Queries.GetAllProduct
             _productRepository = productRepository;
         }
 
-        public async Task<IList<ProductResponse>> Handle(GetAllProductQuery request, CancellationToken cancellationToken)
+        public async Task<IList<ProductDTO>> Handle(GetAllProductQuery request, CancellationToken cancellationToken)
         {
             var response = await _productRepository.GetAllAsync();
 
-            return response.Select(x => new ProductResponse(
+            return response.Select(x => new ProductDTO(
                 x.Name,
                 x.Description,
                 x.Categories,

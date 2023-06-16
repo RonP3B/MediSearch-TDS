@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MediSearch.Core.Application.Features.Product.Command.DeleteProduct
 {
-    internal class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand, ProductResponseMessage>
+    internal class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand, ProductResponse>
     {
 
         private readonly IProductRepository _productRepository;
@@ -19,7 +19,7 @@ namespace MediSearch.Core.Application.Features.Product.Command.DeleteProduct
             _productRepository = productRepository;
         }
 
-        public async Task<ProductResponseMessage> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
+        public async Task<ProductResponse> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace MediSearch.Core.Application.Features.Product.Command.DeleteProduct
 
                 await _productRepository.DeleteAsync(entityToDelete);
 
-                return new ProductResponseMessage()
+                return new ProductResponse()
                 {
                     IsSuccess = true
                 };
@@ -35,7 +35,7 @@ namespace MediSearch.Core.Application.Features.Product.Command.DeleteProduct
             }
             catch (Exception ex)
             {
-                return new ProductResponseMessage()
+                return new ProductResponse()
                 {
                     HasError = true,
                     Error = ex.Message

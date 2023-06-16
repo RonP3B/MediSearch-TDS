@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MediSearch.Core.Application.Features.Product.Queries.GetProductById
 {
-    internal class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, ProductResponse>
+    internal class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, ProductDTO>
     {
         private readonly IProductRepository _productRepository;
 
@@ -18,14 +18,14 @@ namespace MediSearch.Core.Application.Features.Product.Queries.GetProductById
             _productRepository = productRepository;
         }
 
-        public async Task<ProductResponse> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ProductDTO> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
         {
             var response = await _productRepository.GetByIdAsync(request.Id);
 
             if (response is null)
                 throw new Exception("El producto no existe");
 
-            return new ProductResponse(
+            return new ProductDTO(
                 response.Name,
                 response.Description,
                 response.Categories,

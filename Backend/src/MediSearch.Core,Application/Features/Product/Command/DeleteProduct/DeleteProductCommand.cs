@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace MediSearch.Core.Application.Features.Product.Command.DeleteProduct
 {
-    public record DeleteProductCommand(string Id) : IRequest<ProductResponseMessage>;
+    public record DeleteProductCommand(string Id) : IRequest<ProductResponse>;
 }

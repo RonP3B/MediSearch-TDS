@@ -12,7 +12,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace MediSearch.Core.Application.Features.Product.Command.UpdateProduct
 {
-    internal class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, ProductResponseMessage>
+    internal class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, ProductResponse>
     {
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
@@ -23,7 +23,7 @@ namespace MediSearch.Core.Application.Features.Product.Command.UpdateProduct
             _mapper = mapper;
         }
 
-        public async Task<ProductResponseMessage> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
+        public async Task<ProductResponse> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -33,14 +33,14 @@ namespace MediSearch.Core.Application.Features.Product.Command.UpdateProduct
                 if (request.Images.Length> 0)
                     valueToAdd.UrlImages = await ImageUpload.UploadImagesProduct(request.Images, valueToAdd.Id);
 
-                return new ProductResponseMessage()
+                return new ProductResponse()
                 {
                     IsSuccess = true
                 };
             }
             catch (Exception ex)
             {
-                return new ProductResponseMessage()
+                return new ProductResponse()
                 {
                     Error = ex.Message,
                     HasError = true
