@@ -25,8 +25,8 @@ namespace MediSearch.Infrastructure.Identity
 		public static void AddIdentityInfrastructure(this IServiceCollection services, IConfiguration configuration)
 		{
 			var connection = configuration.GetConnectionString("PostgreSQL");
-			var password = Environment.GetEnvironmentVariable("PassCockroachDB");
-			var host = Environment.GetEnvironmentVariable("HostCockroachDB");
+			var password = configuration["PASSWORD"];
+			var host = configuration["HOST"];
 			connection = connection.Replace("#", password);
 			connection = connection.Replace("ServerHost", host);
 
@@ -92,7 +92,7 @@ namespace MediSearch.Infrastructure.Identity
 						c.HandleResponse();
 						c.Response.StatusCode = 401;
 						c.Response.ContentType = "application/json";
-						var result = JsonConvert.SerializeObject(new JwtResponse { HasError = true, Error = "Usted no se ha logueado" });
+						var result = JsonConvert.SerializeObject(new JwtResponse { HasError = true, Error = "ERR_JWT" });
 						return c.Response.WriteAsync(result);
 					},
 					OnForbidden = c =>

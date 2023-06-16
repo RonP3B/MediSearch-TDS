@@ -11,7 +11,15 @@ namespace MediSearch.WebApi
 	{
 		public static async Task Main(string[] args)
 		{
-			var host = CreateHostBuilder(args).Build();
+            DotNetEnv.Env.Load();
+			var app = CreateHostBuilder(args);
+
+            app.ConfigureAppConfiguration((hostingContext, config) =>
+            {
+                config.AddEnvironmentVariables();
+            });
+
+            var host = app.Build();
 			using (var scope = host.Services.CreateScope())
 			{
 				var services = scope.ServiceProvider;
