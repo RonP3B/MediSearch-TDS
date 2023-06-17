@@ -48,7 +48,7 @@ namespace MediSearch.WebApi
                 options.Cookie.Name = "MiSesion";
                 options.Cookie.HttpOnly = true; 
                 options.Cookie.SameSite = SameSiteMode.None;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
             services.AddCors(options =>
             {

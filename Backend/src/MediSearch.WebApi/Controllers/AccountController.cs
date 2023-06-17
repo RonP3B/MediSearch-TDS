@@ -36,7 +36,7 @@ namespace MediSearch.WebApi.Controllers
 		[ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(AuthenticationResponse))]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(AuthenticationResponse))]
 		[SwaggerOperation(
-		   Summary = "Iniciar sesión",
+		   Summary = "Iniciar sesiï¿½n",
 		   Description = "Autentica al usuario y devuelve un JWT Token"
 		)]
 		[Consumes(MediaTypeNames.Application.Json)]
@@ -65,14 +65,14 @@ namespace MediSearch.WebApi.Controllers
 			Response.Cookies.Append("refreshToken", response.RefreshToken, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = !env.IsDevelopment(),
+                Secure = true,
                 Expires = DateTime.UtcNow.AddDays(5),
                 SameSite = SameSiteMode.None
             });
 			Response.Cookies.Append("userId", response.UserId, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = !env.IsDevelopment(),
+                Secure = true,
                 Expires = DateTime.UtcNow.AddDays(5),
                 SameSite = SameSiteMode.None
             });
@@ -81,7 +81,7 @@ namespace MediSearch.WebApi.Controllers
                 Response.Cookies.Append("company", response.CompanyId, new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = !env.IsDevelopment(),
+                    Secure = true,
                     Expires = DateTime.UtcNow.AddDays(5),
                     SameSite = SameSiteMode.None
                 });
@@ -256,12 +256,12 @@ namespace MediSearch.WebApi.Controllers
 <body>
     <div class='container'>
         <div class='header'>
-            <h1 class='title'>¡Bienvenido/a al Sistema!</h1>
+            <h1 class='title'>ï¿½Bienvenido/a al Sistema!</h1>
         </div>
         <div class='message'>
             <p>Hola [Nombre],</p>
             <p>Gracias por confirmar tu cuenta. Ahora tienes acceso completo a todas las funcionalidades del sistema.</p>
-            <p>Disfruta de todas las características y no dudes en ponerte en contacto con nosotros si tienes alguna pregunta o necesitas asistencia.</p>
+            <p>Disfruta de todas las caracterï¿½sticas y no dudes en ponerte en contacto con nosotros si tienes alguna pregunta o necesitas asistencia.</p>
             <p><a href='[URL]' class='button'>Acceder al Sistema</a></p>
         </div>
         <div class='footer'>
@@ -282,8 +282,8 @@ namespace MediSearch.WebApi.Controllers
 		[ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResetPasswordResponse))]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ResetPasswordResponse))]
 		[SwaggerOperation(
-			Summary = "Restablecer contraseña",
-			Description = "Permite que el usuario cambie su contraseña si se le olvidó"
+			Summary = "Restablecer contraseï¿½a",
+			Description = "Permite que el usuario cambie su contraseï¿½a si se le olvidï¿½"
 			)]
 		public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command)
 		{
@@ -306,8 +306,8 @@ namespace MediSearch.WebApi.Controllers
 		[ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ConfirmCodeResponse))]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ConfirmCodeResponse))]
 		[SwaggerOperation(
-			Summary = "Confirmar código",
-			Description = "Permite que el usuario ingrese el código de confirmación que se le envió por correo"
+			Summary = "Confirmar cï¿½digo",
+			Description = "Permite que el usuario ingrese el cï¿½digo de confirmaciï¿½n que se le enviï¿½ por correo"
 			)]
 		public async Task<IActionResult> ConfirmCode([FromBody] ConfirmCodeCommand command)
 		{
@@ -329,8 +329,8 @@ namespace MediSearch.WebApi.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResetPasswordResponse))]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ResetPasswordResponse))]
 		[SwaggerOperation(
-			Summary = "Restablecer contraseña",
-			Description = "Permite que el usuario cambie su contraseña si se le olvidó"
+			Summary = "Restablecer contraseï¿½a",
+			Description = "Permite que el usuario cambie su contraseï¿½a si se le olvidï¿½"
 			)]
 		public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordCommand command)
 		{
@@ -350,7 +350,7 @@ namespace MediSearch.WebApi.Controllers
 		[HttpGet("logout")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[SwaggerOperation(
-		   Summary = "Salir de sesión",
+		   Summary = "Salir de sesiï¿½n",
 		   Description = "Borra el refresh token"
 		)]
 		public async Task<IActionResult> Logout()
@@ -358,21 +358,21 @@ namespace MediSearch.WebApi.Controllers
 			Response.Cookies.Delete("refreshToken", new CookieOptions
 			{
 				HttpOnly = true,
-				Secure = !env.IsDevelopment(),
+				Secure = true,
 				Expires = DateTime.UtcNow.AddDays(5),
 				SameSite = SameSiteMode.None
 			});
 			Response.Cookies.Delete("userId", new CookieOptions
 			{
 				HttpOnly = true,
-				Secure = !env.IsDevelopment(),
+				Secure = true,
 				Expires = DateTime.UtcNow.AddDays(5),
 				SameSite = SameSiteMode.None
 			});
 			Response.Cookies.Delete("company", new CookieOptions
 			{
 				HttpOnly = true,
-				Secure = !env.IsDevelopment(),
+				Secure = true,
 				Expires = DateTime.UtcNow.AddDays(5),
 				SameSite = SameSiteMode.None
 			});
