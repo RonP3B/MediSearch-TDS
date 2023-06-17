@@ -17,6 +17,7 @@ namespace MediSearch.WebApi
 		}
 
 		public IConfiguration Configuration { get; }
+		public IWebHostEnvironment Environment { get; }
 
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
@@ -42,7 +43,13 @@ namespace MediSearch.WebApi
 			services.AddSwaggerExtension();
 			services.AddApiVersioningExtension();
 			services.AddDistributedMemoryCache();
-			services.AddSession();
+			services.AddSession(options =>
+            {
+                options.Cookie.Name = "MiSesion";
+                options.Cookie.HttpOnly = true; 
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+            });
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowSpecificDomain",

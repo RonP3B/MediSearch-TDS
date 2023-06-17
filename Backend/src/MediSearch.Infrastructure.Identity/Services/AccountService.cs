@@ -357,8 +357,8 @@ namespace MediSearch.Infrastructure.Identity.Services
 			string code = format.Replace("-", "");
 			code = code.Substring(5, 6);
 
-			_httpContextAccessor.HttpContext.Session.Set<string>("confirmCode", code);
-			_httpContextAccessor.HttpContext.Session.Set<string>("user", user.Id);
+			_httpContextAccessor.HttpContext.Session.SetString("confirmCode", code);
+			_httpContextAccessor.HttpContext.Session.SetString("user", user.Id);
 
 			response.IsSuccess = true;
 			await _emailService.SendAsync(new EmailRequest()
@@ -465,7 +465,7 @@ namespace MediSearch.Infrastructure.Identity.Services
 				HasError = false
 			};
 
-			var confirm = _httpContextAccessor.HttpContext.Session.Get<string>("confirmCode");
+            var confirm = _httpContextAccessor.HttpContext.Session.GetString("confirmCode");
 			if (confirm == null) { 
 				response.HasError = true;
 				response.Error = "Ocurrió un error confirmando el código";
