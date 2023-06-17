@@ -378,7 +378,7 @@ namespace MediSearch.Infrastructure.Identity.Services
 				HasError = false
 			};
 
-			var userId = _httpContextAccessor.HttpContext.Session.Get<string>("user");
+			var userId = _httpContextAccessor.HttpContext.Session.GetString("user");
 			if (userId == null)
 			{
 				response.HasError = true;

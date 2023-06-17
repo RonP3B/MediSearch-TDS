@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace MediSearch.Infrastructure.Identity
 {
-	public static class ServiceRegistratiom
+	public static class ServiceRegistration
 	{
 		public static void AddIdentityInfrastructure(this IServiceCollection services, IConfiguration configuration)
 		{
