@@ -17,11 +17,17 @@ import ColorModeContext from "../contexts/ColorModeContext";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import useAuth from "../../hooks/persistence/useAuth";
+import useLogout from "../../hooks/persistence/useLogout";
 
-const ResponsiveHeader = ({ pages, settings }) => {
+const ASSETS = import.meta.env.VITE_MEDISEARCH;
+
+const ResponsiveHeader = ({ pages, settings, logged }) => {
   const colorMode = useContext(ColorModeContext);
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const { auth } = useAuth();
+  const logoutUser = useLogout();
 
   const handleOpenNavMenu = (event) => setAnchorElNav(event.currentTarget);
   const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
@@ -130,9 +136,11 @@ const ResponsiveHeader = ({ pages, settings }) => {
               <>
                 <Tooltip title="Abrir opciones">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    {/* Cambio */}
-                    {false ? (
-                      <Avatar alt="Foto del usuario" src="#" />
+                    {logged ? (
+                      <Avatar
+                        alt="Foto del usuario"
+                        src={`${ASSETS}${auth.payload.UrlImage}`}
+                      />
                     ) : (
                       <AccountCircleIcon />
                     )}
@@ -165,6 +173,11 @@ const ResponsiveHeader = ({ pages, settings }) => {
                       <Typography textAlign="center">{option}</Typography>
                     </MenuItem>
                   ))}
+                  {logged && (
+                    <MenuItem onClick={logoutUser}>
+                      <Typography textAlign="center">Cerrar sesión</Typography>
+                    </MenuItem>
+                  )}
                 </Menu>
               </>
             )}
@@ -178,6 +191,7 @@ const ResponsiveHeader = ({ pages, settings }) => {
 ResponsiveHeader.propTypes = {
   pages: PropTypes.array.isRequired,
   settings: PropTypes.array,
+  logged: PropTypes.bool.isRequired,
 };
 
 export default ResponsiveHeader;

@@ -1,16 +1,12 @@
-import ResponsiveHeader from "../scenes/ResponsiveHeader";
-
-const pages = ["opcion a", "opcion b", "opcion c"];
-const options = [
-  { option: "Iniciar sesión", route: "/login" },
-  { option: "Registrarse", route: "/signup" },
-];
+import useAuth from "../../hooks/persistence/useAuth";
 
 const Home = () => {
+  const { auth } = useAuth();
+
   return (
     <>
-      <ResponsiveHeader pages={pages} settings={options} />
       <h2>Home</h2>
+      {auth.token && <h4>Rol del usuario: {auth.payload.roles}</h4>}
     </>
   );
 };
