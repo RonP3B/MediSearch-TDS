@@ -19,7 +19,7 @@ const FileInputField = (props) => {
 
     if (file) {
       onChange(file);
-      formik.handleChange(event);
+      formik.setFieldValue(name, file);
       setFileName(file.name);
     }
   };
