@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MultiStepForm, { FormStep } from "../MultiForm/MultiStepForm";
 import InputField from "../InputFields/InputField";
 import Grid from "@mui/material/Grid";
@@ -7,8 +7,13 @@ import useCompanyFormik from "../../../hooks/formiks/useCompanyFormik";
 import { UserFormContent } from "./UserForm";
 import ImageInput from "../InputFields/ImageInput";
 import SelectInputField from "../InputFields/SelectInputField";
+import {
+  getMunicipalities,
+  getProvinces,
+} from "../../../services/TerritorialDivisionServices/TerritorialServcives";
 
 const CompanyForm = () => {
+  const [loading, setLoading] = useState(false);
   const [companyImage, setCompanyImage] = useState(null);
   const [companyImgName, setCompanyImgName] = useState("");
   const [userImage, setUserImage] = useState(null);
@@ -19,19 +24,66 @@ const CompanyForm = () => {
     validationCompanySchema,
     validationCompanySocialsSchema,
     initialCompanyValues,
-  } = useCompanyFormik();
+    onSubmit,
+  } = useCompanyFormik(setLoading);
+
+  // Cambiar
+  const [provinces, setProvinces] = useState([""]);
+  const [municipalities, setMunicipalities] = useState([""]);
+  const [loadingProvince, setLoadingProvince] = useState(false);
+  const [loadingMunicipality, setLoadingMunicipality] = useState(false);
+
+  useEffect(() => {
+    const fetchProvinces = async () => {
+      try {
+        setLoadingProvince(true);
+        const response = await getProvinces();
+        const provinceData = response.data.data.map(
+          (province) => province.name
+        );
+        setProvinces(["", ...provinceData]);
+      } catch (error) {
+        console.error("Error fetching provinces:", error);
+      } finally {
+        setLoadingProvince(false);
+      }
+    };
+
+    fetchProvinces();
+  }, []);
+
+  useEffect(() => {
+    const fetchMunicipalities = async () => {
+      try {
+        setLoadingMunicipality(true);
+        const response = await getMunicipalities();
+        const municipalityData = response.data.data.map(
+          (municipality) => municipality.name
+        );
+        setMunicipalities(["", ...municipalityData]);
+      } catch (error) {
+        console.error("Error fetching municipalities:", error);
+      } finally {
+        setLoadingMunicipality(false);
+      }
+    };
+
+    fetchMunicipalities();
+  }, []);
+  // Cambiar
 
   return (
     <MultiStepForm
       initialValues={{ ...initialUserValues, ...initialCompanyValues }}
-      onSubmit={(values) => alert(JSON.stringify(values, null, 2))}
+      onSubmit={onSubmit}
+      loading={loading}
     >
       <FormStep
         stepName="Información del administrador"
         validationSchema={validationUserSchema}
       >
         <ImageInput
-          name="userImg"
+          name="image"
           label="Imagen del usuario"
           fileName={userImgName}
           setFileName={setUserImgName}
@@ -45,7 +97,7 @@ const CompanyForm = () => {
         validationSchema={validationCompanySchema}
       >
         <ImageInput
-          name="companyImg"
+          name="imageLogo"
           label="Logo de la empresa"
           fileName={companyImgName}
           setFileName={setCompanyImgName}
@@ -70,19 +122,23 @@ const CompanyForm = () => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <InputField
-              name="countryCompany"
-              label="País de la empresa"
+            <SelectInputField
+              name="provinceCompany"
+              label="Provincia de la empresa"
               margin="dense"
+              disabled={loadingProvince}
               fullWidth
+              options={provinces}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <InputField
-              name="cityCompany"
-              label="Ciudad de la empresa"
+            <SelectInputField
+              name="municipalityCompany"
+              label="Municipio de la empresa"
               margin="dense"
+              disabled={loadingMunicipality}
               fullWidth
+              options={municipalities}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -113,14 +169,11 @@ const CompanyForm = () => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <SelectInputField
-              name="companyTypeId"
+              name="companyType"
               label="Tipo de empresa"
               margin="dense"
               fullWidth
-              options={[
-                { value: "pharmacy", label: "Farmacia" },
-                { value: "lab", label: "Laboratorio" },
-              ]}
+              options={["", "Farmacia", "Laboratorio"]}
             />
           </Grid>
         </Grid>
@@ -130,7 +183,7 @@ const CompanyForm = () => {
         validationSchema={validationCompanySocialsSchema}
       >
         <InputField
-          name="website"
+          name="webSite"
           label="Sitio web URL"
           margin="dense"
           fullWidth

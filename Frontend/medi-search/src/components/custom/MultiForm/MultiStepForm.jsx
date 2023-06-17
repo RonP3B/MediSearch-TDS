@@ -10,7 +10,7 @@ import StepLabel from "@mui/material/StepLabel";
 
 export const FormStep = ({ children }) => children;
 
-const MultiStepForm = ({ children, initialValues, onSubmit }) => {
+const MultiStepForm = ({ children, initialValues, onSubmit, loading }) => {
   const [stepNumber, setStepNumber] = useState(0);
   const [snapshot, setSnapshot] = useState(initialValues);
 
@@ -64,6 +64,7 @@ const MultiStepForm = ({ children, initialValues, onSubmit }) => {
             {step}
             <FormNavigation
               isLastStep={isLastStep}
+              loading={loading}
               hasPrevious={stepNumber > 0}
               onBackClick={() => previous(formik.values)}
             />
@@ -83,6 +84,7 @@ MultiStepForm.propTypes = {
   children: PropTypes.node.isRequired,
   initialValues: PropTypes.object.isRequired,
   onSubmit: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired,
 };
 
 export default MultiStepForm;
