@@ -1,32 +1,37 @@
 import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
+import { registerUser } from "../../services/MediSearchServices/AccountServices";
+import { toast } from "react-toastify";
 
-const useUserSignupFormik = () => {
+const useUserSignupFormik = (setLoading) => {
+  const navigate = useNavigate();
+
   const initialUserValues = {
-    name: "",
+    firstName: "",
     lastName: "",
-    username: "",
-    userImg: null,
-    country: "",
-    city: "",
+    userName: "",
+    image: null,
+    province: "",
+    municipality: "",
     address: "",
-    phone: "",
+    phoneNumber: "",
     password: "",
     confirmPass: "",
     email: "",
   };
 
   const validationUserSchema = Yup.object({
-    name: Yup.string().trim().required("Nombre requerido"),
+    firstName: Yup.string().trim().required("Nombre requerido"),
     lastName: Yup.string().trim().required("Apellido requerido"),
-    username: Yup.string()
+    userName: Yup.string()
       .trim()
       .min(3, "El nombre de usuario debe tener al menos 3 caracteres")
       .required("Nombre de usuario requerido"),
-    userImg: Yup.mixed().required("Imagen requerida"),
-    country: Yup.string().trim().required("País requerido"),
-    city: Yup.string().trim().required("Ciudad requerida"),
+    image: Yup.mixed().required("Imagen requerida"),
+    province: Yup.string().trim().required("Provincia requerida"),
+    municipality: Yup.string().trim().required("Municipio requerido"),
     address: Yup.string().trim().required("Dirección requerida"),
-    phone: Yup.string()
+    phoneNumber: Yup.string()
       .trim()
       .matches(/^\d{10}$/, "El número de teléfono debe tener 10 dígitos")
       .required("Teléfono requerido"),
@@ -59,8 +64,16 @@ const useUserSignupFormik = () => {
   });
 
   const onSubmitUser = async (values) => {
-    console.log(values);
-    alert(JSON.stringify(values, null, 2));
+    try {
+      setLoading(true);
+      await registerUser(values);
+      navigate("/login");
+      toast.success("Usuario registrado, revisa su correo para activarlo");
+    } catch (error) {
+      toast.error(error.response.data);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return { validationUserSchema, initialUserValues, onSubmitUser };

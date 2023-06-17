@@ -1,17 +1,22 @@
 import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
+import { registerCompany } from "../../services/MediSearchServices/AccountServices";
+import { toast } from "react-toastify";
 
-const useCompanyFormik = () => {
+const useCompanyFormik = (setLoading) => {
+  const navigate = useNavigate();
+
   const initialCompanyValues = {
     ceo: "",
     nameCompany: "",
-    companyImg: "",
-    countryCompany: "",
-    cityCompany: "",
+    imageLogo: null,
+    provinceCompany: "",
+    municipalityCompany: "",
     addressCompany: "",
     emailCompany: "",
     phoneCompany: "",
-    companyTypeId: "",
-    website: "",
+    companyType: "",
+    webSite: "",
     facebook: "",
     instagram: "",
     twitter: "",
@@ -20,9 +25,9 @@ const useCompanyFormik = () => {
   const validationCompanySchema = Yup.object({
     ceo: Yup.string().trim().required("CEO requerido"),
     nameCompany: Yup.string().trim().required("Nombre requerido"),
-    companyImg: Yup.mixed().required("Logo requerido"),
-    countryCompany: Yup.string().trim().required("País requerido"),
-    cityCompany: Yup.string().trim().required("Ciudad requerida"),
+    imageLogo: Yup.mixed().required("Logo requerido"),
+    provinceCompany: Yup.string().trim().required("Provincia requerida"),
+    municipalityCompany: Yup.string().trim().required("Municipio requerido"),
     addressCompany: Yup.string().trim().required("Dirección requerida"),
     emailCompany: Yup.string()
       .trim()
@@ -32,20 +37,34 @@ const useCompanyFormik = () => {
       .trim()
       .required("Teléfono requerido")
       .matches(/^\d{10}$/, "El número de teléfono debe tener 10 dígitos"),
-    companyTypeId: Yup.string().required("Tipo de empresa requerido"),
+    companyType: Yup.string().required("Tipo de empresa requerido"),
   });
 
   const validationCompanySocialsSchema = Yup.object({
-    website: Yup.string().trim().url("URL del sitio web inválida").nullable(),
+    webSite: Yup.string().trim().url("URL del sitio web inválida").nullable(),
     facebook: Yup.string().trim().url("URL de Facebook inválida").nullable(),
     instagram: Yup.string().trim().url("URL de Instagram inválida").nullable(),
     twitter: Yup.string().trim().url("URL de Twitter inválida").nullable(),
   });
 
+  const onSubmit = async (values) => {
+    try {
+      setLoading(true);
+      await registerCompany(values);
+      navigate("/login");
+      toast.success("Empresa registrada, revisa su correo para activarla");
+    } catch (error) {
+      toast.error(error.response.data);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     initialCompanyValues,
     validationCompanySchema,
     validationCompanySocialsSchema,
+    onSubmit,
   };
 };
 
