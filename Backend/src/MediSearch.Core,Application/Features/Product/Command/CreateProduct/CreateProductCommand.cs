@@ -48,12 +48,14 @@ namespace MediSearch.Core.Application.Features.Product.CreateProduct
     public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, ProductResponse>
     {
         private readonly IProductRepository _productRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
 
-        public CreateProductCommandHandler(IProductRepository productRepository, IMapper mapper)
+        public CreateProductCommandHandler(IProductRepository productRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _productRepository = productRepository;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
 
@@ -63,13 +65,18 @@ namespace MediSearch.Core.Application.Features.Product.CreateProduct
             {
                 HasError = false
             };
-
+            string id = "";
             try
             {
+                var company = _httpContextAccessor.HttpContext.Request.Cookies["company"];
                 var valueToAdd = _mapper.Map<Domain.Entities.Product>(command);
+                valueToAdd.CompanyId = company;
+
                 valueToAdd = await _productRepository.AddAsync(valueToAdd);
                 valueToAdd.UrlImages = await ImageUpload.UploadImagesProduct(command.Images, valueToAdd.Id);
+                id = valueToAdd.Id;
 
+                await _productRepository.UpdateAsync(valueToAdd, valueToAdd.Id);
                 response.IsSuccess = true;
                 return response;
             }
@@ -77,6 +84,11 @@ namespace MediSearch.Core.Application.Features.Product.CreateProduct
             {
                 response.HasError = true;
                 response.Error = ex.Message;
+                if (id != "")
+                {
+                    ImageUpload.DeleteFiles(id);
+                }
+
                 return response;
             }
         }

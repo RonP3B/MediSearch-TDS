@@ -22,7 +22,7 @@ namespace MediSearch.Core.Application.Helpers
                 }
             }
             string basePath = $"/Assets/Images/Users/";
-            string path = Path.Combine(Directory.GetCurrentDirectory(), $"Public{basePath}");
+            string path = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot{basePath}");
 
             //create folder if not exist
             if (!Directory.Exists(path))
@@ -74,7 +74,7 @@ namespace MediSearch.Core.Application.Helpers
                 }
             }
             string basePath = $"/Assets/Images/Companies/";
-            string path = Path.Combine(Directory.GetCurrentDirectory(), $"Public{basePath}");
+            string path = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot{basePath}");
 
             //create folder if not exist
             if (!Directory.Exists(path))
@@ -125,7 +125,7 @@ namespace MediSearch.Core.Application.Helpers
 
             string servePath = Directory.GetCurrentDirectory();
 
-            string ServerAndBasePath = Path.Combine(servePath, $"Public{basePath}");
+            string ServerAndBasePath = Path.Combine(servePath, $"wwwroot{basePath}");
 
             if (!Directory.Exists(ServerAndBasePath))
             {
@@ -137,46 +137,40 @@ namespace MediSearch.Core.Application.Helpers
             foreach (var fileForm in fileForms)
             {
 
-                if (IsUpdateMode)
+                if (fileForm != null)
                 {
+                    FileInfo fileInfo = new FileInfo(fileForm.FileName);
+                    Guid guid = Guid.NewGuid();
 
-                    if (fileForm != null)
+                    string uniqueFileName = guid + fileInfo.Extension;
+
+                    string uniqueFileWithBaseServePath = Path.Combine(ServerAndBasePath, uniqueFileName);
+
+                    using (FileStream stream = new FileStream(uniqueFileWithBaseServePath, FileMode.Create))
                     {
-                        FileInfo fileInfo = new FileInfo(fileForm.FileName);
-                        Guid guid = Guid.NewGuid();
-
-                        string uniqueFileName = guid + fileInfo.Extension;
-
-                        string uniqueFileWithBaseServePath = Path.Combine(ServerAndBasePath, uniqueFileName);
-
-                        using (FileStream stream = new FileStream(uniqueFileWithBaseServePath, FileMode.Create))
-                        {
-                            await fileForm.CopyToAsync(stream);
-                        }
-
-                        //DELETE THE OLD IMAGE
-                        if (IsUpdateMode && !string.IsNullOrWhiteSpace(currentsImgUrl[index]))
-                        {
-                            string[] oldImagePart = currentsImgUrl[index].Split("/");
-                            string oldImageFileName = oldImagePart[^1];
-                            string completeOldImagePath = Path.Combine(ServerAndBasePath, oldImageFileName);
-
-                            if (File.Exists(completeOldImagePath))
-                            {
-                                File.Delete(completeOldImagePath);
-                            }
-
-                        }
-
-                        imgUrl.Insert(index, $"{basePath}/{uniqueFileName}");
-
-                    }
-                    else
-                    {
-                        imgUrl.Insert(index, currentsImgUrl[index]);
+                        await fileForm.CopyToAsync(stream);
                     }
 
+                    //DELETE THE OLD IMAGE
+                    if (IsUpdateMode && !string.IsNullOrWhiteSpace(currentsImgUrl[index]))
+                    {
+                        string[] oldImagePart = currentsImgUrl[index].Split("/");
+                        string oldImageFileName = oldImagePart[^1];
+                        string completeOldImagePath = Path.Combine(ServerAndBasePath, oldImageFileName);
 
+                        if (File.Exists(completeOldImagePath))
+                        {
+                            File.Delete(completeOldImagePath);
+                        }
+
+                    }
+
+                    imgUrl.Insert(index, $"{basePath}/{uniqueFileName}");
+
+                }
+                else
+                {
+                    imgUrl.Insert(index, currentsImgUrl[index]);
                 }
 
                 index++;
@@ -396,7 +390,7 @@ namespace MediSearch.Core.Application.Helpers
             {
                 string servePath = Directory.GetCurrentDirectory();
 
-                string path = Path.Combine(servePath, $"Public{basePath}");
+                string path = Path.Combine(servePath, $"wwwroot{basePath}");
 
                 if (File.Exists(path))
                 {
@@ -405,11 +399,11 @@ namespace MediSearch.Core.Application.Helpers
             }
         }
 
-        public static void DeleteFiles(int ItemId, string ContainerName = "Item")
+        public static void DeleteFiles(string ItemId)
         {
 
             //Get current directory
-            string basePath = $"/{ContainerName}/{ItemId}";
+            string basePath = $"/Assets/Images/Products/{ItemId}";
 
             string servePath = Directory.GetCurrentDirectory();
 

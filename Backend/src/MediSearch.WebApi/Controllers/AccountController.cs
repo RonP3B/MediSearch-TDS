@@ -23,7 +23,14 @@ namespace MediSearch.WebApi.Controllers
 		private IMediator _mediator;
 		protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>();
 
-		[HttpPost("login")]
+        private readonly IHostEnvironment env;
+
+        public AccountController(IHostEnvironment hostEnvironment)
+        {
+            env = hostEnvironment;
+        }
+
+        [HttpPost("login")]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthenticationResponse))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(AuthenticationResponse))]
 		[ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(AuthenticationResponse))]
@@ -58,14 +65,14 @@ namespace MediSearch.WebApi.Controllers
 			Response.Cookies.Append("refreshToken", response.RefreshToken, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
+                Secure = !env.IsDevelopment(),
                 Expires = DateTime.UtcNow.AddDays(5),
                 SameSite = SameSiteMode.None
             });
 			Response.Cookies.Append("userId", response.UserId, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
+                Secure = !env.IsDevelopment(),
                 Expires = DateTime.UtcNow.AddDays(5),
                 SameSite = SameSiteMode.None
             });
@@ -74,7 +81,7 @@ namespace MediSearch.WebApi.Controllers
                 Response.Cookies.Append("company", response.CompanyId, new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = true,
+                    Secure = !env.IsDevelopment(),
                     Expires = DateTime.UtcNow.AddDays(5),
                     SameSite = SameSiteMode.None
                 });
@@ -351,21 +358,21 @@ namespace MediSearch.WebApi.Controllers
 			Response.Cookies.Delete("refreshToken", new CookieOptions
 			{
 				HttpOnly = true,
-				Secure = true,
+				Secure = !env.IsDevelopment(),
 				Expires = DateTime.UtcNow.AddDays(5),
 				SameSite = SameSiteMode.None
 			});
 			Response.Cookies.Delete("userId", new CookieOptions
 			{
 				HttpOnly = true,
-				Secure = true,
+				Secure = !env.IsDevelopment(),
 				Expires = DateTime.UtcNow.AddDays(5),
 				SameSite = SameSiteMode.None
 			});
 			Response.Cookies.Delete("company", new CookieOptions
 			{
 				HttpOnly = true,
-				Secure = true,
+				Secure = !env.IsDevelopment(),
 				Expires = DateTime.UtcNow.AddDays(5),
 				SameSite = SameSiteMode.None
 			});

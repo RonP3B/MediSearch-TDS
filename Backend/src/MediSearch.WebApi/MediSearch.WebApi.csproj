@@ -29,9 +29,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Public\Assets\Images\Companies\" />
-	  <Folder Include="Public\Assets\Images\Products\" />
-	  <Folder Include="Public\Assets\Images\Users\" />
+	  <None Include="wwwroot\Assets\Images\default.jpg" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="wwwroot\Assets\Images\Companies\" />
+	  <Folder Include="wwwroot\Assets\Images\Products\" />
+	  <Folder Include="wwwroot\Assets\Images\Users\" />
 	</ItemGroup>
 
 </Project>
