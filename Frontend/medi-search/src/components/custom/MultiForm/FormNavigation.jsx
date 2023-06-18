@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import CircularProgress from "@mui/material/CircularProgress";
+import SubmitButton from "../Buttons/SubmitButton";
 
 const FormNavigation = (props) => {
   return (
@@ -15,27 +15,12 @@ const FormNavigation = (props) => {
       >
         Volver
       </Button>
-      <Button
-        type="submit"
+      <SubmitButton
+        loading={props.loading}
+        text={props.isLastStep ? "Enviar" : "Siguiente"}
+        loadingText="Enviando..."
         variant="contained"
-        sx={{
-          opacity: props.loading ? 0.5 : 1,
-          ...(props.loading && { pointerEvents: "none" }),
-        }}
-      >
-        {props.loading && (
-          <CircularProgress
-            size={17}
-            color="inherit"
-            sx={{ marginRight: 0.55 }}
-          />
-        )}
-        {props.isLastStep
-          ? "Enviar"
-          : props.loading
-          ? "Enviando..."
-          : "Siguiente"}
-      </Button>
+      />
     </Box>
   );
 };

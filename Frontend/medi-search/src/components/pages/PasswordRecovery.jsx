@@ -2,19 +2,21 @@ import { useState } from "react";
 import { Formik, Form } from "formik";
 import usePassRecoveryFormik from "../../hooks/formiks/usePassRecoveryFormik";
 import PasswordInputField from "../custom/InputFields/PasswordInputField";
+import SubmitButton from "../custom/Buttons/SubmitButton";
+import InputField from "../custom/InputFields/InputField";
 import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import InputField from "../custom/InputFields/InputField";
-import CircularProgress from "@mui/material/CircularProgress";
-import Button from "@mui/material/Button";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
 
 const EmailInput = () => {
   return (
     <InputField
       name="email"
       label="Correo electrónico del usuario"
-      margin="dense"
+      margin="normal"
       fullWidth
     />
   );
@@ -25,34 +27,42 @@ const CodeInput = () => {
     <InputField
       name="code"
       label="Código de validación"
-      margin="dense"
+      margin="normal"
       fullWidth
     />
   );
 };
+
 const NewPasswordInputs = () => {
   return (
     <>
       <PasswordInputField
         name="newPassword"
-        label="Contraseña"
-        margin="dense"
+        label="Nueva contraseña"
+        margin="normal"
         fullWidth
       />
       <PasswordInputField
         name="confirmNewPassword"
-        label="Confirmar contraseña"
-        margin="dense"
+        label="Confirmar nueva contraseña"
+        margin="normal"
         fullWidth
       />
     </>
   );
 };
 
+const stepLabels = [
+  "Encontrar usuario",
+  "Confirmar código",
+  "Cambiar contraseña",
+];
+
 const PasswordRecovery = () => {
   const [loading, setLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [codeValidated, setCodeValidated] = useState(false);
+  const [activeStep, setActiveStep] = useState(0);
   const {
     initialValues,
     findUserValidation,
@@ -61,17 +71,42 @@ const PasswordRecovery = () => {
     onSubmitFindUser,
     onSubmitCode,
     onSubmitNewPassword,
-  } = usePassRecoveryFormik(setLoading, setEmailSent, setCodeValidated);
+  } = usePassRecoveryFormik(
+    setLoading,
+    setEmailSent,
+    setCodeValidated,
+    setActiveStep
+  );
 
-  const getButtonMessage = () => {
+  const getFormState = () => {
     if (codeValidated) {
-      return loading ? "Cambiando contraseña..." : "Cambiar contraseña";
+      return {
+        component: <NewPasswordInputs />,
+        buttonText: "Cambiar contraseña",
+        loadingText: "Cambiando contraseña...",
+        onSubmit: onSubmitNewPassword,
+        validationSchema: newPassValidation,
+      };
     } else if (emailSent) {
-      return loading ? "Verificando código..." : "Verificar código";
-    } else {
-      return loading ? "Buscando usuario..." : "Buscar usuario";
+      return {
+        component: <CodeInput />,
+        buttonText: "Verificar código",
+        loadingText: "Verificando código...",
+        onSubmit: onSubmitCode,
+        validationSchema: codeValidation,
+      };
     }
+    return {
+      component: <EmailInput />,
+      buttonText: "Buscar usuario",
+      loadingText: "Buscando usuario...",
+      onSubmit: onSubmitFindUser,
+      validationSchema: findUserValidation,
+    };
   };
+
+  const { component, buttonText, loadingText, onSubmit, validationSchema } =
+    getFormState();
 
   return (
     <Container maxWidth="sm">
@@ -79,51 +114,28 @@ const PasswordRecovery = () => {
         <Typography variant="h5" component="h2" align="center" gutterBottom>
           Recuperar contraseña
         </Typography>
+        <Stepper activeStep={activeStep} alternativeLabel sx={{ marginTop: 3 }}>
+          {stepLabels.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
         <Formik
           initialValues={initialValues}
-          onSubmit={
-            codeValidated
-              ? onSubmitNewPassword
-              : emailSent
-              ? onSubmitCode
-              : onSubmitFindUser
-          }
-          validationSchema={
-            codeValidated
-              ? newPassValidation
-              : emailSent
-              ? codeValidation
-              : findUserValidation
-          }
+          onSubmit={onSubmit}
+          validationSchema={validationSchema}
         >
           {() => (
             <Form>
-              {codeValidated ? (
-                <NewPasswordInputs />
-              ) : emailSent ? (
-                <CodeInput />
-              ) : (
-                <EmailInput />
-              )}
-              <Button
-                type="submit"
+              {component}
+              <SubmitButton
+                loading={loading}
+                text={buttonText}
+                loadingText={loadingText}
                 variant="contained"
                 fullWidth
-                sx={{
-                  marginTop: 1,
-                  opacity: loading ? 0.5 : 1,
-                  ...(loading && { pointerEvents: "none" }),
-                }}
-              >
-                {loading && (
-                  <CircularProgress
-                    size={17}
-                    color="inherit"
-                    sx={{ marginRight: 0.55 }}
-                  />
-                )}
-                {getButtonMessage()}
-              </Button>
+              />
             </Form>
           )}
         </Formik>

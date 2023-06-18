@@ -7,7 +7,12 @@ import {
   findUserReset,
 } from "../../services/MediSearchServices/AccountServices";
 
-const usePassRecoveryFormik = (setLoading, setEmailSent, setCodeValidated) => {
+const usePassRecoveryFormik = (
+  setLoading,
+  setEmailSent,
+  setCodeValidated,
+  setActiveStep
+) => {
   const navigate = useNavigate();
 
   const initialValues = {
@@ -30,7 +35,7 @@ const usePassRecoveryFormik = (setLoading, setEmailSent, setCodeValidated) => {
 
   const newPassValidation = Yup.object({
     newPassword: Yup.string()
-      .required("Contraseña requerida")
+      .required("Nueva contraseña requerida")
       .matches(
         /^(?=.*[a-z])/,
         "La contraseña debe contener al menos una letra minúscula"
@@ -49,7 +54,7 @@ const usePassRecoveryFormik = (setLoading, setEmailSent, setCodeValidated) => {
         "La contraseña debe tener un mínimo de 8 caracteres"
       ),
     confirmNewPassword: Yup.string()
-      .required("Confirmar contraseña requerido")
+      .required("Confirmar nueva contraseña requerido")
       .oneOf([Yup.ref("newPassword"), null], "Las contraseñas deben coincidir"),
   });
 
@@ -58,11 +63,14 @@ const usePassRecoveryFormik = (setLoading, setEmailSent, setCodeValidated) => {
       setLoading(true);
       await findUserReset(values);
       setEmailSent(true);
-      toast.success("Se le ha enviado un correo con el código");
+      toast.success(
+        "Se ha enviado el código al correo electrónico del usuario"
+      );
     } catch (error) {
       toast.error(error.response.data);
     } finally {
       setLoading(false);
+      setActiveStep(1);
     }
   };
 
@@ -75,6 +83,7 @@ const usePassRecoveryFormik = (setLoading, setEmailSent, setCodeValidated) => {
       toast.error(error.response.data);
     } finally {
       setLoading(false);
+      setActiveStep(2);
     }
   };
 
@@ -83,11 +92,12 @@ const usePassRecoveryFormik = (setLoading, setEmailSent, setCodeValidated) => {
       setLoading(true);
       await changePassword(values);
       navigate("/login");
-      toast.success("La contraseña ha sido cambiada correctamente");
+      toast.success("Su contraseña ha sido cambiada correctamente");
     } catch (error) {
       toast.error(error.response.data);
     } finally {
       setLoading(false);
+      setActiveStep(3);
     }
   };
 

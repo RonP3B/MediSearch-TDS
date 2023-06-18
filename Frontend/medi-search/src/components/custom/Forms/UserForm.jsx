@@ -2,11 +2,10 @@ import { useState, useEffect } from "react";
 import useUserSignupFormik from "../../../hooks/formiks/useUserSignupFormik";
 import { Formik, Form } from "formik";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
 import InputField from "../InputFields/InputField";
+import SubmitButton from "../Buttons/SubmitButton";
 import ImageInput from "../InputFields/ImageInput";
 import PasswordInputField from "../InputFields/PasswordInputField";
-import CircularProgress from "@mui/material/CircularProgress";
 import SelectInputField from "../InputFields/SelectInputField";
 import {
   getMunicipalities,
@@ -37,25 +36,13 @@ const UserForm = () => {
             setAvatarImage={setAvatarImage}
           />
           <UserFormContent />
-          <Button
-            type="submit"
+          <SubmitButton
+            loading={loading}
+            text="Registrar"
+            loadingText="Registrando..."
             variant="contained"
             fullWidth
-            sx={{
-              marginY: 2,
-              opacity: loading ? 0.5 : 1,
-              ...(loading && { pointerEvents: "none" }),
-            }}
-          >
-            {loading && (
-              <CircularProgress
-                size={17}
-                color="inherit"
-                sx={{ marginRight: 0.55 }}
-              />
-            )}
-            {loading ? "Registrando..." : "Registrar"}
-          </Button>
+          />
         </Form>
       )}
     </Formik>

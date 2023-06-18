@@ -1,17 +1,16 @@
 import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { Formik, Form } from "formik";
+import SubmitButton from "../custom/Buttons/SubmitButton";
 import useLoginFormik from "../../hooks/formiks/useLoginFormik";
 import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import InputField from "../custom/InputFields/InputField";
 import PasswordInputField from "../custom/InputFields/PasswordInputField";
-import CircularProgress from "@mui/material/CircularProgress";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -43,24 +42,13 @@ const Login = () => {
                 margin="normal"
                 fullWidth
               />
-              <Button
-                type="submit"
+              <SubmitButton
+                loading={loading}
+                text="Iniciar Sesión"
+                loadingText="Iniciando Sesión..."
                 variant="contained"
                 fullWidth
-                sx={{
-                  opacity: loading ? 0.5 : 1,
-                  ...(loading && { pointerEvents: "none" }),
-                }}
-              >
-                {loading && (
-                  <CircularProgress
-                    size={17}
-                    color="inherit"
-                    sx={{ marginRight: 0.55 }}
-                  />
-                )}
-                {loading ? "Iniciando Sesión..." : "Iniciar Sesión"}
-              </Button>
+              />
             </Form>
           )}
         </Formik>
