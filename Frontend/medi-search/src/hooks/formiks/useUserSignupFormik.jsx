@@ -33,7 +33,10 @@ const useUserSignupFormik = (setLoading) => {
     address: Yup.string().trim().required("Dirección requerida"),
     phoneNumber: Yup.string()
       .trim()
-      .matches(/^\d{10}$/, "El número de teléfono debe tener 10 dígitos")
+      .matches(
+        /^\(\d{3}\) \d{3}-\d{4}$/,
+        "El número de teléfono debe tener 10 dígitos"
+      )
       .required("Teléfono requerido"),
     password: Yup.string()
       .required("Contraseña requerida")

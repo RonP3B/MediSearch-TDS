@@ -7,6 +7,8 @@ import SubmitButton from "../Buttons/SubmitButton";
 import ImageInput from "../InputFields/ImageInput";
 import PasswordInputField from "../InputFields/PasswordInputField";
 import SelectInputField from "../InputFields/SelectInputField";
+import { telMask } from "../../../utils/masks";
+import MaskedInputField from "../InputFields/MaskedInputField";
 import {
   getMunicipalities,
   getProvinces,
@@ -135,7 +137,8 @@ export const UserFormContent = () => {
         <InputField name="address" label="Dirección" margin="dense" fullWidth />
       </Grid>
       <Grid item xs={12} sm={6}>
-        <InputField
+        <MaskedInputField
+          mask={telMask}
           name="phoneNumber"
           type="tel"
           label="Teléfono"

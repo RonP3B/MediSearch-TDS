@@ -11,6 +11,8 @@ import {
   getMunicipalities,
   getProvinces,
 } from "../../../services/TerritorialDivisionServices/TerritorialServcives";
+import MaskedInputField from "../InputFields/MaskedInputField";
+import { telMask } from "../../../utils/masks";
 
 const CompanyForm = () => {
   const [loading, setLoading] = useState(false);
@@ -159,7 +161,8 @@ const CompanyForm = () => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <InputField
+            <MaskedInputField
+              mask={telMask}
               name="phoneCompany"
               label="Teléfono de la empresa"
               type="tel"

@@ -36,7 +36,10 @@ const useCompanyFormik = (setLoading) => {
     phoneCompany: Yup.string()
       .trim()
       .required("Teléfono requerido")
-      .matches(/^\d{10}$/, "El número de teléfono debe tener 10 dígitos"),
+      .matches(
+        /^\(\d{3}\) \d{3}-\d{4}$/,
+        "El número de teléfono debe tener 10 dígitos"
+      ),
     companyType: Yup.string().required("Tipo de empresa requerido"),
   });
 
