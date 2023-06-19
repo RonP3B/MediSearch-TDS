@@ -16,9 +16,5 @@ namespace MediSearch.Core.Application.Dtos.Account
         public string JWToken { get; set; }
         [JsonIgnore]
         public string RefreshToken { get; set; }
-		[JsonIgnore]
-		public string UserId { get; set; }
-		[JsonIgnore]
-		public string CompanyId { get; set; }
 	}
 }

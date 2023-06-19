@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace MediSearch.Core.Application.Features.Product.CreateProduct
@@ -43,6 +44,8 @@ namespace MediSearch.Core.Application.Features.Product.CreateProduct
         [SwaggerParameter(Description = "Imágenes que deseas destinar para el producto.")]
         [MinLength(1, ErrorMessage = "Debe de subir al menos una imagén para este producto.")]
         public IFormFile[] Images { get; set; }
+        [JsonIgnore]
+        public string? CompanyId { get; set; }
     }
 
     public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, ProductResponse>
@@ -66,12 +69,10 @@ namespace MediSearch.Core.Application.Features.Product.CreateProduct
                 HasError = false
             };
             string id = "";
+
             try
             {
-                var company = _httpContextAccessor.HttpContext.Request.Cookies["company"];
                 var valueToAdd = _mapper.Map<Domain.Entities.Product>(command);
-                valueToAdd.CompanyId = company;
-
                 valueToAdd = await _productRepository.AddAsync(valueToAdd);
                 valueToAdd.UrlImages = await ImageUpload.UploadImagesProduct(command.Images, valueToAdd.Id);
                 id = valueToAdd.Id;

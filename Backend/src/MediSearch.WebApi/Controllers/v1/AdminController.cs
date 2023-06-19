@@ -3,6 +3,7 @@ using MediSearch.Core.Application.Features.Account.Commands.RegisterClient;
 using MediSearch.Core.Application.Features.Admin.Commands.DeleteEmployee;
 using MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee;
 using MediSearch.Core.Application.Features.Admin.Queries.GetUsersCompany;
+using MediSearch.WebApi.Middlewares;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -13,6 +14,12 @@ namespace MediSearch.WebApi.Controllers.v1
     [Authorize(Roles = "Administrator")]
     public class AdminController : BaseApiController
     {
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+        public AdminController(IServiceScopeFactory serviceScopeFactory)
+        {
+            _serviceScopeFactory = serviceScopeFactory;
+        }
+
         [HttpGet("GetAllEmployees")]
         [SwaggerOperation(
             Summary = "Todos los empleados de la empresa.",
@@ -23,11 +30,11 @@ namespace MediSearch.WebApi.Controllers.v1
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllEmployees()
         {
-            //Este controlador no trabajara hasta que se hagan las respectivas configuraciones en Automapper de las que depende ImmovableAssetType.ImmovableAsset.IdUser
-            //Y las demas properties....
             try
             {
-                var result = await Mediator.Send(new GetUsersCompanyQuery());
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                var result = await Mediator.Send(new GetUsersCompanyQuery() { CompanyId = user.CompanyId });
 
                 if (result == null)
                     return NotFound("Esta empresa no tiene empleados registrados");
@@ -52,6 +59,9 @@ namespace MediSearch.WebApi.Controllers.v1
         )]
         public async Task<IActionResult> RegisterEmployee([FromBody] RegisterEmployeeCommand command)
         {
+            UserDataAccess userData = new(_serviceScopeFactory);
+            var user = await userData.GetUserSession();
+            command.CompanyId = user.CompanyId;
             var response = await Mediator.Send(command);
 
             if (!ModelState.IsValid)
@@ -84,7 +94,9 @@ namespace MediSearch.WebApi.Controllers.v1
         {
             try
             {
-                var result = await Mediator.Send(new DeleteEmployeeCommand() { Id = id });
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                var result = await Mediator.Send(new DeleteEmployeeCommand() { Id = id, CompanyId = user.CompanyId });
 
                 if (result == 0)
                     return StatusCode(StatusCodes.Status500InternalServerError);

@@ -5,8 +5,10 @@ using MediSearch.Core.Application.Features.Admin.Commands.DeleteEmployee;
 using MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee;
 using MediSearch.Core.Application.Features.Admin.Queries.GetUsersCompany;
 using MediSearch.Core.Application.Features.Product.CreateProduct;
+using MediSearch.WebApi.Middlewares;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net.Mime;
 
@@ -15,6 +17,12 @@ namespace MediSearch.WebApi.Controllers.v1
     [Authorize(Roles = "Administrator, Manager")]
     public class ProductController : BaseApiController
     {
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+        public ProductController(IServiceScopeFactory serviceScopeFactory)
+        {
+            _serviceScopeFactory = serviceScopeFactory;
+        }
+
         [HttpPost("create")]
         [SwaggerOperation(
            Summary = "Registra un producto.",
@@ -31,6 +39,9 @@ namespace MediSearch.WebApi.Controllers.v1
                 if (!ModelState.IsValid)
                     return BadRequest();
 
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                command.CompanyId = user.CompanyId;
                 var result = await Mediator.Send(command);
 
                 if (result.HasError)

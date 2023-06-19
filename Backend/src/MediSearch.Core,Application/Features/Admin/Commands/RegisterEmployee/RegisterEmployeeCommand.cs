@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee
@@ -47,6 +48,8 @@ namespace MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee
         [SwaggerParameter(Description = "Dirección")]
         [Required(ErrorMessage = "Debe de ingresar su dirección")]
         public string Address { get; set; }
+        [JsonIgnore]
+        public string? CompanyId { get; set; }
     }
 
     public class RegisterEmployeeCommandHandler : IRequestHandler<RegisterEmployeeCommand, RegisterResponse>

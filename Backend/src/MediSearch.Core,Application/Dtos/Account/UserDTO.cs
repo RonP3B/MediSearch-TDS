@@ -18,5 +18,6 @@ namespace MediSearch.Core.Application.Dtos.Account
         public string Province { get; set; }
         public string Municipality { get; set; }
         public string Address { get; set; }
+        public string CompanyId { get; set; }
     }
 }

@@ -20,126 +20,120 @@ using System.Text;
 namespace MediSearch.Infrastructure.Identity.Services
 {
     public class AccountService : IAccountService
-	{
+    {
 
-		private readonly UserManager<ApplicationUser> _userManager;
-		private readonly SignInManager<ApplicationUser> _signInManager;
-		private readonly IEmailService _emailService;
-		private readonly JWTSettings _jwtSettings;
-		private readonly RefreshJWTSettings _refreshSettings;
-		IHttpContextAccessor _httpContextAccessor;
-		private readonly ICompanyRepository _companyRepository;
-		private readonly ICompanyUserRepository _companyUserRepository;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IEmailService _emailService;
+        private readonly JWTSettings _jwtSettings;
+        private readonly RefreshJWTSettings _refreshSettings;
+        IHttpContextAccessor _httpContextAccessor;
+        private readonly ICompanyRepository _companyRepository;
+        private readonly ICompanyUserRepository _companyUserRepository;
 
 
-		public AccountService(
-			  UserManager<ApplicationUser> userManager,
-			  SignInManager<ApplicationUser> signInManager,
-			  IEmailService emailService,
-			  IOptions<JWTSettings> jwtSettings,
-			  IOptions<RefreshJWTSettings> refreshSettings,
-			  IHttpContextAccessor httpContextAccessor,
-			  ICompanyRepository companyRepository,
-			  ICompanyUserRepository companyUserRepository
-			)
-		{
-			_userManager = userManager;
-			_signInManager = signInManager;
-			_emailService = emailService;
-			_jwtSettings = jwtSettings.Value;
-			_refreshSettings = refreshSettings.Value;
-			_httpContextAccessor = httpContextAccessor;
-			_companyRepository = companyRepository;
-			_companyUserRepository = companyUserRepository;
+        public AccountService(
+              UserManager<ApplicationUser> userManager,
+              SignInManager<ApplicationUser> signInManager,
+              IEmailService emailService,
+              IOptions<JWTSettings> jwtSettings,
+              IOptions<RefreshJWTSettings> refreshSettings,
+              IHttpContextAccessor httpContextAccessor,
+              ICompanyRepository companyRepository,
+              ICompanyUserRepository companyUserRepository
+            )
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _emailService = emailService;
+            _jwtSettings = jwtSettings.Value;
+            _refreshSettings = refreshSettings.Value;
+            _httpContextAccessor = httpContextAccessor;
+            _companyRepository = companyRepository;
+            _companyUserRepository = companyUserRepository;
 
-		}
+        }
 
-		public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request)
-		{
-			AuthenticationResponse response = new();
-			var users = GetAllUsers();
+        public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request)
+        {
+            AuthenticationResponse response = new();
+            var users = GetAllUsers();
 
-			var user = await _userManager.FindByNameAsync(request.UserName);
-			if (user == null)
-			{
-				response.HasError = true;
-				response.Error = $"No existe una cuenta registrada con este usuario: {request.UserName}";
-				return response;
-			}
-
-			var isConfirmed = await _userManager.IsEmailConfirmedAsync(user);
-			if (!isConfirmed)
-			{
-				response.HasError = true;
-				response.Error = "El usuario no ha confirmado su cuenta. Revise su correo electrónico";
-				return response;
-			}
-
-			var result = await _signInManager.PasswordSignInAsync(user.UserName, request.Password, false, lockoutOnFailure: false);
-			if (!result.Succeeded)
-			{
-				response.HasError = true;
-				response.Error = $"Credenciales invalidas para el usuario: {request.UserName}";
-				return response;
-			}
-			var company = await _companyUserRepository.GetByUserAsync(user.Id);
-
-			response.JWToken = await GenerateJWToken(user.Id);
-			response.UserId = user.Id;
-			if(company != null)
-			{
-                response.CompanyId = company.CompanyId;
+            var user = await _userManager.FindByNameAsync(request.UserName);
+            if (user == null)
+            {
+                response.HasError = true;
+                response.Error = $"No existe una cuenta registrada con este usuario: {request.UserName}";
+                return response;
             }
+
+            var isConfirmed = await _userManager.IsEmailConfirmedAsync(user);
+            if (!isConfirmed)
+            {
+                response.HasError = true;
+                response.Error = "El usuario no ha confirmado su cuenta. Revise su correo electrónico";
+                return response;
+            }
+
+            var result = await _signInManager.PasswordSignInAsync(user.UserName, request.Password, false, lockoutOnFailure: false);
+            if (!result.Succeeded)
+            {
+                response.HasError = true;
+                response.Error = $"Credenciales invalidas para el usuario: {request.UserName}";
+                return response;
+            }
+
+            response.JWToken = await GenerateJWToken(user.Id);
             response.RefreshToken = GenerateRefreshToken(user.Id);
 
-			return response;
-		}
+            return response;
+        }
 
-		public async Task<RegisterResponse> RegisterClientUserAsync(RegisterRequest request, string origin)
-		{
-			RegisterResponse response = await ValidateUserBeforeRegistrationAsync(request);
-			if (response.HasError)
-			{
-				return response;
-			}
+        public async Task<RegisterResponse> RegisterClientUserAsync(RegisterRequest request, string origin)
+        {
+            RegisterResponse response = await ValidateUserBeforeRegistrationAsync(request);
+            if (response.HasError)
+            {
+                return response;
+            }
 
-			var user = new ApplicationUser
-			{
-				Email = request.Email,
-				FirstName = request.FirstName,
-				LastName = request.LastName,
-				UserName = request.UserName,
-				PhoneNumber = request.PhoneNumber,
-				UrlImage = request.UrlImage,
-				Province = request.Province,
-				Municipality = request.Municipality,
-				Address = request.Address
-			};
+            var user = new ApplicationUser
+            {
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                UserName = request.UserName,
+                PhoneNumber = request.PhoneNumber,
+                UrlImage = request.UrlImage,
+                Province = request.Province,
+                Municipality = request.Municipality,
+                Address = request.Address
+            };
 
-			var result = await _userManager.CreateAsync(user, request.Password);
-			if (result.Succeeded)
-			{
-				await _userManager.AddToRoleAsync(user, Roles.Client.ToString());
-				var verificationUri = await SendVerificationEmailUri(user, origin);
-				await _emailService.SendAsync(new EmailRequest()
-				{
-					To = user.Email,
-					Body = MakeEmailForConfirm(verificationUri, user.FirstName + " " + user.LastName),
-					Subject = "Confirmar Cuenta"
-				});
-			}
-			else
-			{
-				foreach (var error in result.Errors)
-				{
-					response.Error += $"Error: {error.Description}";
-				}
-				response.HasError = true;
-				return response;
-			}
-			response.IsSuccess = true;
-			return response;
-		}
+            var result = await _userManager.CreateAsync(user, request.Password);
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, Roles.Client.ToString());
+                var verificationUri = await SendVerificationEmailUri(user, origin);
+                await _emailService.SendAsync(new EmailRequest()
+                {
+                    To = user.Email,
+                    Body = MakeEmailForConfirm(verificationUri, user.FirstName + " " + user.LastName),
+                    Subject = "Confirmar Cuenta"
+                });
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    response.Error += $"Error: {error.Description}";
+                }
+                response.HasError = true;
+                return response;
+            }
+            response.IsSuccess = true;
+            return response;
+        }
 
         public async Task<RegisterResponse> RegisterCompanyAsync(RegisterCompanyRequest request, string origin)
         {
@@ -149,11 +143,11 @@ namespace MediSearch.Infrastructure.Identity.Services
                 return response;
             }
 
-			var result = await _companyRepository.GetByNameAsync(request.NameCompany);
-			if(result != null)
-			{
-				response.HasError = true;
-				response.Error = $"El nombre de empresa '{request.NameCompany}' ya está siendo usado.";
+            var result = await _companyRepository.GetByNameAsync(request.NameCompany);
+            if (result != null)
+            {
+                response.HasError = true;
+                response.Error = $"El nombre de empresa '{request.NameCompany}' ya está siendo usado.";
             }
 
             result = await _companyRepository.GetByEmailAsync(request.EmailCompany);
@@ -163,22 +157,22 @@ namespace MediSearch.Infrastructure.Identity.Services
                 response.Error = $"El correo '{request.EmailCompany}' ya está siendo usado.";
             }
 
-			var user = new ApplicationUser
-			{
-				Email = request.Email,
-				FirstName = request.FirstName,
-				LastName = request.LastName,
-				UserName = request.UserName,
-				PhoneNumber = request.PhoneNumber,
-				UrlImage = request.UrlImage,
-				Province = request.Province,
-				Municipality = request.Municipality,
-				Address = request.Address
+            var user = new ApplicationUser
+            {
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                UserName = request.UserName,
+                PhoneNumber = request.PhoneNumber,
+                UrlImage = request.UrlImage,
+                Province = request.Province,
+                Municipality = request.Municipality,
+                Address = request.Address
             };
 
-			var company = new Company()
-			{
-				Ceo = request.Ceo,
+            var company = new Company()
+            {
+                Ceo = request.Ceo,
                 Email = request.EmailCompany,
                 Name = request.NameCompany,
                 UrlImage = request.UrlImageLogo,
@@ -188,16 +182,16 @@ namespace MediSearch.Infrastructure.Identity.Services
                 Province = request.ProvinceCompany,
                 Municipality = request.MunicipalityCompany,
                 Address = request.AddressCompany,
-				Phone = request.PhoneCompany,
-				WebSite = request.WebSite,
-				CompanyTypeId = request.CompanyTypeId
+                Phone = request.PhoneCompany,
+                WebSite = request.WebSite,
+                CompanyTypeId = request.CompanyTypeId
             };
 
             var success = await _userManager.CreateAsync(user, request.Password);
             if (success.Succeeded)
             {
-				try
-				{
+                try
+                {
                     await _userManager.AddToRoleAsync(user, Roles.Administrator.ToString());
                     var entity = await _companyRepository.AddAsync(company);
                     var companyUser = new CompanyUser()
@@ -215,12 +209,12 @@ namespace MediSearch.Infrastructure.Identity.Services
                         Subject = "Confirmar Cuenta"
                     });
                 }
-                catch(Exception ex)
-				{
-					response.HasError = true;
-					response.Error = "Error: " + ex.Message;
-					return response;
-				}
+                catch (Exception ex)
+                {
+                    response.HasError = true;
+                    response.Error = "Error: " + ex.Message;
+                    return response;
+                }
             }
             else
             {
@@ -238,10 +232,10 @@ namespace MediSearch.Infrastructure.Identity.Services
 
         public async Task<RegisterResponse> RegisterEmployeeAsync(RegisterEmployeeRequest request)
         {
-			RegisterResponse response = new()
-			{
-				HasError = false
-			};
+            RegisterResponse response = new()
+            {
+                HasError = false
+            };
 
             var userWithSameEmail = await _userManager.FindByEmailAsync(request.Email);
             if (userWithSameEmail != null)
@@ -251,23 +245,22 @@ namespace MediSearch.Infrastructure.Identity.Services
                 return response;
             }
 
-            var value = _httpContextAccessor.HttpContext.Request.Cookies["company"];
-            var company = await _companyRepository.GetByIdAsync(value);
-			string userName = request.FirstName + company.Created.Day;
-			string password = $"M{company.Created.Day}#{company.Name.Substring(0, 5)}";
+            var company = await _companyRepository.GetByIdAsync(request.CompanyId);
+            string userName = request.FirstName + company.Created.Day;
+            string password = $"M{company.Created.Day}#{company.Name.Substring(0, 5)}";
 
-			var user = new ApplicationUser
-			{
-				Email = request.Email,
-				FirstName = request.FirstName,
-				LastName = request.LastName,
-				UserName = userName,
-				PhoneNumber = request.PhoneNumber,
-				UrlImage = "/Assets/Images/default.jpg",
-				Province = request.Province,
-				Municipality = request.Municipality,
-				Address = request.Address,
-				EmailConfirmed = true
+            var user = new ApplicationUser
+            {
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                UserName = userName,
+                PhoneNumber = request.PhoneNumber,
+                UrlImage = "/Assets/Images/default.jpg",
+                Province = request.Province,
+                Municipality = request.Municipality,
+                Address = request.Address,
+                EmailConfirmed = true
             };
 
             var result = await _userManager.CreateAsync(user, password);
@@ -285,7 +278,7 @@ namespace MediSearch.Infrastructure.Identity.Services
                 await _emailService.SendAsync(new EmailRequest()
                 {
                     To = user.Email,
-                    Body = MakeEmailForEmployee(new List<string> { user.FirstName + " " + user.LastName, userName, password, company.Name, request.Role}),
+                    Body = MakeEmailForEmployee(new List<string> { user.FirstName + " " + user.LastName, userName, password, company.Name, request.Role }),
                     Subject = "Registro Exitoso"
                 });
             }
@@ -303,131 +296,130 @@ namespace MediSearch.Infrastructure.Identity.Services
         }
 
         public async Task<ConfirmEmailResponse> ConfirmEmailAsync(string userId, string token)
-		{
-			ConfirmEmailResponse response = new()
-			{
-				HasError = false
-			};
-			var user = await _userManager.FindByIdAsync(userId);
-			if (user == null)
-			{
-				response.HasError = true;
-				response.Error = "No existe cuenta registrada con este usuario";
-				return response;
-			}
-
-			token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
-			var result = await _userManager.ConfirmEmailAsync(user, token);
-			if (result.Succeeded)
-			{
-				await _emailService.SendAsync(new EmailRequest()
-				{
-					To = user.Email,
-					Body = MakeEmailForConfirmed(user.FirstName + " " + user.LastName),
-					Subject = "Cuenta Confirmada"
-				});
-				response.NameUser = user.FirstName + " " + user.LastName;
-				return response;
-			}
-			else
-			{
-				response.HasError = true;
-				response.Error = $"Ocurrió un error mientras se confirmaba la cuenta para el correo: {user.Email}";
-				return response;
-			}
-		}
-
-		public async Task<ResetPasswordResponse> ResetPasswordAsync(string email)
-		{
-			ResetPasswordResponse response = new()
-			{
-				HasError = false
-			};
-
-			var user = await _userManager.FindByEmailAsync(email);
-			if (user == null)
-			{
-				response.HasError = true;
-				response.Error = "No existe cuenta registrada con este correo";
-				return response;
-			}
-
-			Guid guid = Guid.NewGuid();
-			string format = guid.ToString();
-			string code = format.Replace("-", "");
-			code = code.Substring(5, 6);
-
-			_httpContextAccessor.HttpContext.Session.SetString("confirmCode", code);
-			_httpContextAccessor.HttpContext.Session.SetString("user", user.Id);
-
-			response.IsSuccess = true;
-			await _emailService.SendAsync(new EmailRequest()
-			{
-				To = user.Email,
-				Body = MakeEmailForReset(user, code),
-				Subject = "Código de Confirmación"
-			});
-
-			return response;
-		}
-
-		public async Task<ResetPasswordResponse> ChangePasswordAsync(string password)
-		{
-			ResetPasswordResponse response = new()
-			{
-				HasError = false
-			};
-
-			var userId = _httpContextAccessor.HttpContext.Session.GetString("user");
-			if (userId == null)
-			{
-				response.HasError = true;
-				response.Error = "Sucedió un error en el sistema";
-				return response;
-			}
-
-			var user = await _userManager.FindByIdAsync(userId);
-			if (user == null)
-			{
-				response.HasError = true;
-				response.Error = "Sucedió un error en el sistema";
-				return response;
-			}
-			var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-
-			var result = await _userManager.ResetPasswordAsync(user, resetToken, password);
-
-			if (!result.Succeeded)
-			{
-				foreach(var error in result.Errors)
-				{
-					response.Error += $"{error.Description}";
-				}
-				response.HasError = true;
-				
-				return response;
-			}
-
-			response.IsSuccess = true;
-			await _emailService.SendAsync(new EmailRequest()
-			{
-				To = user.Email,
-				Body = MakeEmailForChange(user),
-				Subject = "Cambio de Contraseña"
-			});
-
-			return response;
-		}
-
-        public async Task<UserDTO> ValidateEmployee(string id)
         {
-            var company = _httpContextAccessor.HttpContext.Request.Cookies["company"];
+            ConfirmEmailResponse response = new()
+            {
+                HasError = false
+            };
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                response.HasError = true;
+                response.Error = "No existe cuenta registrada con este usuario";
+                return response;
+            }
+
+            token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (result.Succeeded)
+            {
+                await _emailService.SendAsync(new EmailRequest()
+                {
+                    To = user.Email,
+                    Body = MakeEmailForConfirmed(user.FirstName + " " + user.LastName),
+                    Subject = "Cuenta Confirmada"
+                });
+                response.NameUser = user.FirstName + " " + user.LastName;
+                return response;
+            }
+            else
+            {
+                response.HasError = true;
+                response.Error = $"Ocurrió un error mientras se confirmaba la cuenta para el correo: {user.Email}";
+                return response;
+            }
+        }
+
+        public async Task<ResetPasswordResponse> ResetPasswordAsync(string email)
+        {
+            ResetPasswordResponse response = new()
+            {
+                HasError = false
+            };
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                response.HasError = true;
+                response.Error = "No existe cuenta registrada con este correo";
+                return response;
+            }
+
+            Guid guid = Guid.NewGuid();
+            string format = guid.ToString();
+            string code = format.Replace("-", "");
+            code = code.Substring(5, 6);
+
+            _httpContextAccessor.HttpContext.Session.SetString("confirmCode", code);
+            _httpContextAccessor.HttpContext.Session.SetString("user", user.Id);
+
+            response.IsSuccess = true;
+            await _emailService.SendAsync(new EmailRequest()
+            {
+                To = user.Email,
+                Body = MakeEmailForReset(user, code),
+                Subject = "Código de Confirmación"
+            });
+
+            return response;
+        }
+
+        public async Task<ResetPasswordResponse> ChangePasswordAsync(string password)
+        {
+            ResetPasswordResponse response = new()
+            {
+                HasError = false
+            };
+
+            var userId = _httpContextAccessor.HttpContext.Session.GetString("user");
+            if (userId == null)
+            {
+                response.HasError = true;
+                response.Error = "Sucedió un error en el sistema";
+                return response;
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                response.HasError = true;
+                response.Error = "Sucedió un error en el sistema";
+                return response;
+            }
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var result = await _userManager.ResetPasswordAsync(user, resetToken, password);
+
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    response.Error += $"{error.Description}";
+                }
+                response.HasError = true;
+
+                return response;
+            }
+
+            response.IsSuccess = true;
+            await _emailService.SendAsync(new EmailRequest()
+            {
+                To = user.Email,
+                Body = MakeEmailForChange(user),
+                Subject = "Cambio de Contraseña"
+            });
+
+            return response;
+        }
+
+        public async Task<UserDTO> ValidateEmployee(string id, string company)
+        {
             var user = await _companyUserRepository.ValidateEmployeAsync(company, id);
 
-			if (!user)
-			{
-				return null;
-			}
+            if (!user)
+            {
+                return null;
+            }
 
             var appUser = await _userManager.FindByIdAsync(id);
             var roles = await _userManager.GetRolesAsync(appUser);
@@ -443,226 +435,255 @@ namespace MediSearch.Infrastructure.Identity.Services
                 Address = appUser.Address,
                 Province = appUser.Province,
                 Municipality = appUser.Municipality,
-                Role = roles.First()
+                Role = roles.First(),
+                CompanyId = company
             };
 
             return dto;
         }
 
-		public async Task DeleteUserAsync(string id)
-		{
+        public async Task DeleteUserAsync(string id)
+        {
             ApplicationUser user = await _userManager.FindByIdAsync(id);
             await _userManager.DeleteAsync(user);
 
-			var company = await _companyUserRepository.GetByUserAsync(id);
-			await _companyUserRepository.DeleteAsync(company);
+            var company = await _companyUserRepository.GetByUserAsync(id);
+            if (company != null)
+            {
+                 _companyUserRepository.DeleteAsync(company);
+            }
         }
 
         public ConfirmCodeResponse ConfirmCode(string code)
-		{
-			ConfirmCodeResponse response = new()
-			{
-				HasError = false
-			};
+        {
+            ConfirmCodeResponse response = new()
+            {
+                HasError = false
+            };
 
             var confirm = _httpContextAccessor.HttpContext.Session.GetString("confirmCode");
-			if (confirm == null) { 
-				response.HasError = true;
-				response.Error = "Ocurrió un error confirmando el código";
-				return response;
-			}
+            if (confirm == null)
+            {
+                response.HasError = true;
+                response.Error = "Ocurrió un error confirmando el código";
+                return response;
+            }
 
-			if(!confirm.Equals(code))
-			{
-				response.HasError = true;
-				response.Error = "El código de confirmación no es correcto";
-				return response;
-			}
+            if (!confirm.Equals(code))
+            {
+                response.HasError = true;
+                response.Error = "El código de confirmación no es correcto";
+                return response;
+            }
 
-			response.IsSuccess = true;
-			return response;
-		}
+            response.IsSuccess = true;
+            return response;
+        }
 
-		public async Task<string> GenerateJWToken(string userId)
-		{
-			var user = await _userManager.FindByIdAsync(userId);
-			var userClaims = await _userManager.GetClaimsAsync(user);
-			var roles = await _userManager.GetRolesAsync(user);
+        public async Task<string> GenerateJWToken(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            var userClaims = await _userManager.GetClaimsAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
 
-			var roleClaims = new List<Claim>();
+            var roleClaims = new List<Claim>();
 
-			foreach (var role in roles)
-			{
-				roleClaims.Add(new Claim("roles", role));
-			}
+            foreach (var role in roles)
+            {
+                roleClaims.Add(new Claim("roles", role));
+            }
 
-			var claims = new[]
-			{
-				new Claim(JwtRegisteredClaimNames.Sub,user.UserName),
-				new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-				new Claim(JwtRegisteredClaimNames.Email,user.Email),
-				new Claim("uid", user.Id),
-				new Claim("UrlImage", user.UrlImage)
-			}
-			.Union(userClaims)
-			.Union(roleClaims);
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub,user.UserName),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Email,user.Email),
+                new Claim("uid", user.Id),
+                new Claim("UrlImage", user.UrlImage)
+            }
+            .Union(userClaims)
+            .Union(roleClaims);
 
-			var symmectricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
-			var signingCredetials = new SigningCredentials(symmectricSecurityKey, SecurityAlgorithms.HmacSha256);
+            var symmectricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
+            var signingCredetials = new SigningCredentials(symmectricSecurityKey, SecurityAlgorithms.HmacSha256);
 
-			var jwtSecurityToken = new JwtSecurityToken(
-				issuer: _jwtSettings.Issuer,
-				audience: _jwtSettings.Audience,
-				claims: claims,
-				expires: DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes),
-				signingCredentials: signingCredetials);
+            var jwtSecurityToken = new JwtSecurityToken(
+                issuer: _jwtSettings.Issuer,
+                audience: _jwtSettings.Audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes),
+                signingCredentials: signingCredetials);
 
 
-			string token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
-			return token;
-		}
+            string token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+            return token;
+        }
 
-		public string GenerateRefreshToken(string userId)
-		{
-			var claims = new[]
-			{
-				new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-				new Claim("uid", userId)
-			};
+        public string GenerateRefreshToken(string userId)
+        {
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim("uid", userId)
+            };
 
-			var symmectricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_refreshSettings.Key));
-			var signingCredetials = new SigningCredentials(symmectricSecurityKey, SecurityAlgorithms.HmacSha256);
+            var symmectricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_refreshSettings.Key));
+            var signingCredetials = new SigningCredentials(symmectricSecurityKey, SecurityAlgorithms.HmacSha256);
 
-			var jwtSecurityToken = new JwtSecurityToken(
-				issuer: _refreshSettings.Issuer,
-				audience: _refreshSettings.Audience,
-				claims: claims,
-				expires: DateTime.UtcNow.AddDays(_refreshSettings.DurationInDays),
-				signingCredentials: signingCredetials);
+            var jwtSecurityToken = new JwtSecurityToken(
+                issuer: _refreshSettings.Issuer,
+                audience: _refreshSettings.Audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddDays(_refreshSettings.DurationInDays),
+                signingCredentials: signingCredetials);
 
-			string token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+            string token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
 
-			return token;
-		}
+            return token;
+        }
 
-		public string ValidateRefreshToken(string token)
-		{
-			string userId = "";
-			JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-			TokenValidationParameters tokenValidationParameters = new TokenValidationParameters
-			{
-				ValidateIssuerSigningKey = true,
-				ValidateIssuer = true,
-				ValidateAudience = true,
-				ValidateLifetime = true,
-				ClockSkew = TimeSpan.Zero,
-				ValidIssuer = _refreshSettings.Issuer,
-				ValidAudience = _refreshSettings.Audience,
-				IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_refreshSettings.Key))
-			};
+        public string ValidateRefreshToken(string token)
+        {
+            string userId = "";
+            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+            TokenValidationParameters tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero,
+                ValidIssuer = _refreshSettings.Issuer,
+                ValidAudience = _refreshSettings.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_refreshSettings.Key))
+            };
 
-			try
-			{
-				ClaimsPrincipal claimsPrincipal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
+            try
+            {
+                ClaimsPrincipal claimsPrincipal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
 
-				if (validatedToken == null)
-				{
-					return "Error: El token no es válido";
-				}
-				var id = claimsPrincipal.FindFirst("uid");
-				userId = id.Value;
-			}
-			catch (SecurityTokenValidationException ex)
-			{
-				return "Error de validación del token JWT: " + ex.Message;
-			}
-			catch (Exception ex)
-			{
-				return "Error al decodificar el token JWT: " + ex.Message;
-			}
+                if (validatedToken == null)
+                {
+                    return "Error: El token no es válido";
+                }
+                var id = claimsPrincipal.FindFirst("uid");
+                userId = id.Value;
+            }
+            catch (SecurityTokenValidationException ex)
+            {
+                return "Error de validación del token JWT: " + ex.Message;
+            }
+            catch (Exception ex)
+            {
+                return "Error al decodificar el token JWT: " + ex.Message;
+            }
 
-			return userId;
-		}
+            return userId;
+        }
 
-		public async Task<List<UserDTO>> GetUsersByCompany()
-		{
-			List<UserDTO> userDTOs = new();
-			var company = _httpContextAccessor.HttpContext.Request.Cookies["company"];
-			var users = await _companyUserRepository.GetByCompanyAsync(company);
+        public async Task<List<UserDTO>> GetUsersByCompany(string id)
+        {
+            List<UserDTO> userDTOs = new();
+            var company = await _companyUserRepository.GetByCompanyAsync(id);
 
-			if (users == null || users.Count == 0)
-			{
-				return null;
-			}
+            if (company == null || company.Count == 0)
+            {
+                return null;
+            }
 
-			foreach(var item in users)
-			{
-				var user = await _userManager.FindByIdAsync(item.UserId);
-				var roles = await _userManager.GetRolesAsync(user);
+            foreach (var item in company)
+            {
+                var user = await _userManager.FindByIdAsync(item.UserId);
+                var roles = await _userManager.GetRolesAsync(user);
 
                 UserDTO dto = new()
-				{
-					Id = user.Id,
-					FirstName = user.FirstName,
-					LastName = user.LastName,
-					Email = user.Email,
-					PhoneNumber = user.PhoneNumber,
-					UrlImage = user.UrlImage,
-					Address = user.Address,
-					Province = user.Province,
-					Municipality = user.Municipality,
-					Role = roles.First()
-				};
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    UrlImage = user.UrlImage,
+                    Address = user.Address,
+                    Province = user.Province,
+                    Municipality = user.Municipality,
+                    Role = roles.First(),
+                    CompanyId = id
+                };
 
-				userDTOs.Add(dto);
-			}
+                userDTOs.Add(dto);
+            }
 
-			return userDTOs;
-		}
+            return userDTOs;
+        }
 
-		#region Private Methods
-		private async Task<RegisterResponse> ValidateUserBeforeRegistrationAsync(RegisterRequest request)
-		{
-			RegisterResponse response = new()
-			{
-				HasError = false
-			};
-			var user = _userManager.Users.ToList();
+        public async Task<UserDTO> GetUsersById(string id)
+        {
+            var company = await _companyUserRepository.GetByUserAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
+            var roles = await _userManager.GetRolesAsync(user);
 
-			var userWithSameUserName = await _userManager.FindByNameAsync(request.UserName);
-			if (userWithSameUserName != null)
-			{
-				response.HasError = true;
-				response.Error = $"El nombre de usuario '{request.UserName}' ya está siendo usado.";
-				return response;
-			}
+            UserDTO dto = new()
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                UrlImage = user.UrlImage,
+                Address = user.Address,
+                Province = user.Province,
+                Municipality = user.Municipality,
+                Role = roles.First(),
+                CompanyId = company.CompanyId
+            };
 
-			var userWithSameEmail = await _userManager.FindByEmailAsync(request.Email);
-			if (userWithSameEmail != null)
-			{
-				response.HasError = true;
-				response.Error = $"El correo '{request.Email}' ya está siendo usado.";
-				return response;
-			}
+            return dto;
+        }
 
-			return response;
-		}
+        #region Private Methods
+        private async Task<RegisterResponse> ValidateUserBeforeRegistrationAsync(RegisterRequest request)
+        {
+            RegisterResponse response = new()
+            {
+                HasError = false
+            };
+            var user = _userManager.Users.ToList();
 
-		private async Task<string> SendVerificationEmailUri(ApplicationUser user, string origin)
-		{
-			var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-			code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-			var route = "api/v1/Account/confirm-email";
-			var Uri = new Uri(string.Concat($"{origin}/", route));
-			var verificationUri = QueryHelpers.AddQueryString(Uri.ToString(), "userId", user.Id);
-			verificationUri = QueryHelpers.AddQueryString(verificationUri, "token", code);
+            var userWithSameUserName = await _userManager.FindByNameAsync(request.UserName);
+            if (userWithSameUserName != null)
+            {
+                response.HasError = true;
+                response.Error = $"El nombre de usuario '{request.UserName}' ya está siendo usado.";
+                return response;
+            }
 
-			return verificationUri;
-		}
+            var userWithSameEmail = await _userManager.FindByEmailAsync(request.Email);
+            if (userWithSameEmail != null)
+            {
+                response.HasError = true;
+                response.Error = $"El correo '{request.Email}' ya está siendo usado.";
+                return response;
+            }
 
-		private string MakeEmailForConfirm(string verificationUri, string user)
-		{
-			string htmlBody = @"
+            return response;
+        }
+
+        private async Task<string> SendVerificationEmailUri(ApplicationUser user, string origin)
+        {
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            var route = "api/v1/Account/confirm-email";
+            var Uri = new Uri(string.Concat($"{origin}/", route));
+            var verificationUri = QueryHelpers.AddQueryString(Uri.ToString(), "userId", user.Id);
+            verificationUri = QueryHelpers.AddQueryString(verificationUri, "token", code);
+
+            return verificationUri;
+        }
+
+        private string MakeEmailForConfirm(string verificationUri, string user)
+        {
+            string htmlBody = @"
 <!DOCTYPE html>
 <html>
 <head>
@@ -735,14 +756,14 @@ namespace MediSearch.Infrastructure.Identity.Services
 </html>
 ";
 
-			string html = htmlBody.Replace("[URL]", verificationUri);
-			html = html.Replace("[Nombre]", user);
-			return html;
-		}
+            string html = htmlBody.Replace("[URL]", verificationUri);
+            html = html.Replace("[Nombre]", user);
+            return html;
+        }
 
-		private string MakeEmailForConfirmed(string user)
-		{
-			string htmlBody = @"
+        private string MakeEmailForConfirmed(string user)
+        {
+            string htmlBody = @"
 <!DOCTYPE html>
 <html>
 <head>
@@ -797,13 +818,13 @@ namespace MediSearch.Infrastructure.Identity.Services
 </body>
 </html>
 ";
-			string html = htmlBody.Replace("Nombre", user);
-			return html;
-		}
+            string html = htmlBody.Replace("Nombre", user);
+            return html;
+        }
 
-		private string MakeEmailForReset(ApplicationUser user, string code)
-		{
-			string htmlBody = @"
+        private string MakeEmailForReset(ApplicationUser user, string code)
+        {
+            string htmlBody = @"
 <!DOCTYPE html>
 <html>
 <head>
@@ -867,14 +888,14 @@ namespace MediSearch.Infrastructure.Identity.Services
 </html>
 ";
 
-			string html = htmlBody.Replace("[Nombre]", user.FirstName + " " + user.LastName);
-			html = html.Replace("[Código]", code);
-			return html;
-		}
+            string html = htmlBody.Replace("[Nombre]", user.FirstName + " " + user.LastName);
+            html = html.Replace("[Código]", code);
+            return html;
+        }
 
-		private string MakeEmailForChange(ApplicationUser user)
-		{
-			string htmlBody = @"
+        private string MakeEmailForChange(ApplicationUser user)
+        {
+            string htmlBody = @"
 <!DOCTYPE html>
 <html>
 <head>
@@ -929,9 +950,9 @@ namespace MediSearch.Infrastructure.Identity.Services
 </html>
 ";
 
-			string html = htmlBody.Replace("[Nombre]", user.FirstName + " " + user.LastName);
-			return html;
-		}
+            string html = htmlBody.Replace("[Nombre]", user.FirstName + " " + user.LastName);
+            return html;
+        }
 
         private string MakeEmailForEmployee(List<string> requirements)
         {
@@ -1038,12 +1059,12 @@ namespace MediSearch.Infrastructure.Identity.Services
         }
 
         private async Task<List<ApplicationUser>> GetAllUsers()
-		{
-			var list = _userManager.Users.ToList();
+        {
+            var list = _userManager.Users.ToList();
 
-			return list;
-		}
-		#endregion
+            return list;
+        }
+        #endregion
 
-	}
+    }
 }

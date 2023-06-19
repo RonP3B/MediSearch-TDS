@@ -17,6 +17,8 @@ namespace MediSearch.Core.Application.Features.Admin.Commands.DeleteEmployee
         [SwaggerParameter(Description = "Identificador de empleado")]
         [Required(ErrorMessage = "Debe de ingresar el identiicador del empleado")]
         public string Id { get; set; }
+        [JsonIgnore]
+        public string? CompanyId { get; set; }
     }
 
     public class DeleteEmployeeCommandHandler : IRequestHandler<DeleteEmployeeCommand, int>
@@ -29,7 +31,7 @@ namespace MediSearch.Core.Application.Features.Admin.Commands.DeleteEmployee
 
         public async Task<int> Handle(DeleteEmployeeCommand command, CancellationToken cancellationToken)
         {
-            var result = await _accountService.ValidateEmployee(command.Id);
+            var result = await _accountService.ValidateEmployee(command.Id, command.CompanyId);
 
             if (result == null)
                 return 0;

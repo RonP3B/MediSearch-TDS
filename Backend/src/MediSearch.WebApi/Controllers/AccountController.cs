@@ -69,23 +69,6 @@ namespace MediSearch.WebApi.Controllers
                 Expires = DateTime.UtcNow.AddDays(5),
                 SameSite = SameSiteMode.None
             });
-			Response.Cookies.Append("userId", response.UserId, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                Expires = DateTime.UtcNow.AddDays(5),
-                SameSite = SameSiteMode.None
-            });
-			if(response.CompanyId != null)
-			{
-                Response.Cookies.Append("company", response.CompanyId, new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true,
-                    Expires = DateTime.UtcNow.AddDays(5),
-                    SameSite = SameSiteMode.None
-                });
-            }
 			
 			return Ok(response);
 		}
@@ -356,20 +339,6 @@ namespace MediSearch.WebApi.Controllers
 		public async Task<IActionResult> Logout()
 		{
 			Response.Cookies.Delete("refreshToken", new CookieOptions
-			{
-				HttpOnly = true,
-				Secure = true,
-				Expires = DateTime.UtcNow.AddDays(5),
-				SameSite = SameSiteMode.None
-			});
-			Response.Cookies.Delete("userId", new CookieOptions
-			{
-				HttpOnly = true,
-				Secure = true,
-				Expires = DateTime.UtcNow.AddDays(5),
-				SameSite = SameSiteMode.None
-			});
-			Response.Cookies.Delete("company", new CookieOptions
 			{
 				HttpOnly = true,
 				Secure = true,
