@@ -59,27 +59,34 @@ namespace MediSearch.WebApi.Controllers.v1
         )]
         public async Task<IActionResult> RegisterEmployee([FromBody] RegisterEmployeeCommand command)
         {
-            UserDataAccess userData = new(_serviceScopeFactory);
-            var user = await userData.GetUserSession();
-            command.CompanyId = user.CompanyId;
-            var response = await Mediator.Send(command);
-
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest();
-            }
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                command.CompanyId = user.CompanyId;
+                var response = await Mediator.Send(command);
 
-            if (response.HasError)
-            {
-
-                if (response.Error.Contains("Error") && !response.Error.Contains("password"))
+                if (!ModelState.IsValid)
                 {
-                    return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
+                    return BadRequest();
                 }
-                return BadRequest(response.Error);
-            }
 
-            return Ok(response.IsSuccess);
+                if (response.HasError)
+                {
+
+                    if (response.Error.Contains("Error") && !response.Error.Contains("password"))
+                    {
+                        return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
+                    }
+                    return BadRequest(response.Error);
+                }
+
+                return Ok(response.IsSuccess);
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
         }
 
         [HttpDelete("delete-employee/{id}")]

@@ -15,13 +15,13 @@ using System.Net.Mime;
 
 namespace MediSearch.WebApi.Controllers
 {
-	[ApiController]
-	[Route("api/v1/[Controller]")]
-	[SwaggerTag("Sistema de membresia")]
-	public class AccountController : ControllerBase
-	{
-		private IMediator _mediator;
-		protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>();
+    [ApiController]
+    [Route("api/v1/[Controller]")]
+    [SwaggerTag("Sistema de membresia")]
+    public class AccountController : ControllerBase
+    {
+        private IMediator _mediator;
+        protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>();
 
         private readonly IHostEnvironment env;
 
@@ -31,157 +31,193 @@ namespace MediSearch.WebApi.Controllers
         }
 
         [HttpPost("login")]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthenticationResponse))]
-		[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(AuthenticationResponse))]
-		[ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(AuthenticationResponse))]
-		[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(AuthenticationResponse))]
-		[SwaggerOperation(
-		   Summary = "Iniciar sesión",
-		   Description = "Autentica al usuario y devuelve un JWT Token"
-		)]
-		[Consumes(MediaTypeNames.Application.Json)]
-		public async Task<IActionResult> Authenticate([FromBody] AuthenticateCommand command)
-		{
-			var response = await Mediator.Send(command);
-
-			if (!ModelState.IsValid)
-			{
-				return BadRequest();
-			}
-
-			if (response.HasError)
-			{
-				if (response.Error.Contains("No existe una cuenta registrada con este usuario"))
-				{
-					return NotFound(response.Error);
-				}
-				if (response.Error.Contains("correo"))
-				{
-					return StatusCode(StatusCodes.Status401Unauthorized, response.Error);
-				}
-				return BadRequest(response.Error);
-			}
-
-			Response.Cookies.Append("refreshToken", response.RefreshToken, new CookieOptions
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthenticationResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(AuthenticationResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(AuthenticationResponse))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(AuthenticationResponse))]
+        [SwaggerOperation(
+           Summary = "Iniciar sesión",
+           Description = "Autentica al usuario y devuelve un JWT Token"
+        )]
+        [Consumes(MediaTypeNames.Application.Json)]
+        public async Task<IActionResult> Authenticate([FromBody] AuthenticateCommand command)
+        {
+            try
             {
-                HttpOnly = true,
-                Secure = true,
-                Expires = DateTime.UtcNow.AddDays(5),
-                SameSite = SameSiteMode.None
-            });
-			
-			return Ok(response);
-		}
+                var response = await Mediator.Send(command);
 
-		[HttpGet("refresh-access-token")]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthenticationResponse))]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(AuthenticationResponse))]
-		[SwaggerOperation(
-		   Summary = "Obtener nuevo access token",
-		   Description = "Valida el refresh token y devuelve un JWT Token de acceso nuevo"
-		)]
-		public async Task<IActionResult> RefreshAccesToken()
-		{
-			var response = await Mediator.Send(new GetRefreshAccessTokenQuery());
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest();
+                }
 
-			if (response.HasError)
-			{
-				return StatusCode(StatusCodes.Status500InternalServerError);
-			}
+                if (response.HasError)
+                {
+                    if (response.Error.Contains("No existe una cuenta registrada con este usuario"))
+                    {
+                        return NotFound(response.Error);
+                    }
+                    if (response.Error.Contains("correo"))
+                    {
+                        return StatusCode(StatusCodes.Status401Unauthorized, response.Error);
+                    }
+                    return BadRequest(response.Error);
+                }
 
-			return Ok(response);
-		}
+                Response.Cookies.Append("refreshToken", response.RefreshToken, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    Expires = DateTime.UtcNow.AddDays(5),
+                    SameSite = SameSiteMode.None
+                });
 
-		[HttpPost("register-client")]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RegisterResponse))]
-		[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(RegisterResponse))]
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
+        }
+
+        [HttpGet("refresh-access-token")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthenticationResponse))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(AuthenticationResponse))]
+        [SwaggerOperation(
+           Summary = "Obtener nuevo access token",
+           Description = "Valida el refresh token y devuelve un JWT Token de acceso nuevo"
+        )]
+        public async Task<IActionResult> RefreshAccesToken()
+        {
+            try
+            {
+                var response = await Mediator.Send(new GetRefreshAccessTokenQuery());
+
+                if (response.HasError)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
+
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+        }
+
+        [HttpPost("register-client")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RegisterResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(RegisterResponse))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(RegisterResponse))]
         [SwaggerOperation(
-		   Summary = "Registro de usuario cliente",
-		   Description = "Registra a un usuario de tipo cliente"
-		)]
-		public async Task<IActionResult> RegisterClient([FromForm] RegisterClientCommand command)
-		{
-			var response = await Mediator.Send(command);
+           Summary = "Registro de usuario cliente",
+           Description = "Registra a un usuario de tipo cliente"
+        )]
+        public async Task<IActionResult> RegisterClient([FromForm] RegisterClientCommand command)
+        {
+            try
+            {
+                var response = await Mediator.Send(command);
 
-			if (!ModelState.IsValid)
-			{
-				return BadRequest();
-			}
-
-			if (response.HasError)
-			{
-                if (response.Error.Contains("Error") && !response.Error.Contains("password"))
+                if (!ModelState.IsValid)
                 {
-                    return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
-				}
-				return BadRequest(response.Error);
-			}
+                    return BadRequest();
+                }
 
-			return Ok(response.IsSuccess);
-		}
+                if (response.HasError)
+                {
+                    if (response.Error.Contains("Error") && !response.Error.Contains("password"))
+                    {
+                        return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
+                    }
+                    return BadRequest(response.Error);
+                }
+
+                return Ok(response.IsSuccess);
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+        }
 
         [HttpPost("register-company")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RegisterResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(RegisterResponse))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(RegisterResponse))]
         [SwaggerOperation(
-			Summary = "Registro de empresa",
-			Description = "Registra a un usuario de tipo administrador junto con su empresa"
-			)]
+            Summary = "Registro de empresa",
+            Description = "Registra a un usuario de tipo administrador junto con su empresa"
+            )]
         public async Task<IActionResult> RegisterCompany([FromForm] RegisterCompanyCommand command)
         {
-            var response = await Mediator.Send(command);
-
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest();
-            }
+                var response = await Mediator.Send(command);
 
-            if (response.HasError)
-            {
-                if (response.Error.Contains("Error") && !response.Error.Contains("password"))
+                if (!ModelState.IsValid)
                 {
-                    return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
+                    return BadRequest();
                 }
-                return BadRequest(response.Error);
-            }
 
-            return Ok(response.IsSuccess);
+                if (response.HasError)
+                {
+                    if (response.Error.Contains("Error") && !response.Error.Contains("password"))
+                    {
+                        return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
+                    }
+                    return BadRequest(response.Error);
+                }
+
+                return Ok(response.IsSuccess);
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
         }
 
         [HttpGet("confirm-email")]
-		[ProducesResponseType(StatusCodes.Status204NoContent)]
-		[ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ConfirmEmailResponse))]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ConfirmEmailResponse))]
-		[SwaggerOperation(
-		   Summary = "Comfirmar al usuario ",
-		   Description = "Confirma la cuenta del usuario"
-		)]
-		public async Task<IActionResult> ConfirmEmail(string userId, string token)
-		{
-			ConfirmEmailCommand command = new()
-			{
-				UserId = userId,
-				Token = token
-			};
-			var response = await Mediator.Send(command);
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ConfirmEmailResponse))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ConfirmEmailResponse))]
+        [SwaggerOperation(
+           Summary = "Comfirmar al usuario ",
+           Description = "Confirma la cuenta del usuario"
+        )]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            try
+            {
+                ConfirmEmailCommand command = new()
+                {
+                    UserId = userId,
+                    Token = token
+                };
+                var response = await Mediator.Send(command);
 
-			if (response.HasError)
-			{
-				if (response.Error.Contains("error"))
-				{
-					return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
-				}
-				return NotFound(response.Error);
-			}
+                if (response.HasError)
+                {
+                    if (response.Error.Contains("error"))
+                    {
+                        return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
+                    }
+                    return NotFound(response.Error);
+                }
 
-			return RedirectToAction("thanks", new { name = response.NameUser });
-		}
+                return RedirectToAction("thanks", new { name = response.NameUser });
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+        }
 
-		[HttpGet("thanks")]
-		public IActionResult Thanks(string name)
-		{
+        [HttpGet("thanks")]
+        public IActionResult Thanks(string name)
+        {
             string htmlBody = @"
 <!DOCTYPE html>
 <html>
@@ -256,97 +292,125 @@ namespace MediSearch.WebApi.Controllers
 </html>
 ";
 
-			string html = htmlBody.Replace("[Nombre]", name);
+            string html = htmlBody.Replace("[Nombre]", name);
             return Content(html, "text/html");
-		}
+        }
 
-		[HttpPost("reset-password")]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResetPasswordResponse))]
-		[ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResetPasswordResponse))]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ResetPasswordResponse))]
-		[SwaggerOperation(
-			Summary = "Restablecer contraseña",
-			Description = "Permite que el usuario cambie su contraseña si se le olvidó"
-			)]
-		public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command)
-		{
-			var response = await Mediator.Send(command);
+        [HttpPost("reset-password")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResetPasswordResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResetPasswordResponse))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ResetPasswordResponse))]
+        [SwaggerOperation(
+            Summary = "Restablecer contraseña",
+            Description = "Permite que el usuario cambie su contraseña si se le olvidó"
+            )]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command)
+        {
+            try
+            {
+                var response = await Mediator.Send(command);
 
-			if (response.HasError)
-			{
-				if (response.Error.Contains("error"))
-				{
-					return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
-				}
-				return NotFound(response.Error);
-			}
+                if (response.HasError)
+                {
+                    if (response.Error.Contains("error"))
+                    {
+                        return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
+                    }
+                    return NotFound(response.Error);
+                }
 
-			return Ok(response.IsSuccess);
-		}
+                return Ok(response.IsSuccess);
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+        }
 
-		[HttpPost("confirm-code")]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ConfirmCodeResponse))]
-		[ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ConfirmCodeResponse))]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ConfirmCodeResponse))]
-		[SwaggerOperation(
-			Summary = "Confirmar código",
-			Description = "Permite que el usuario ingrese el código de confirmación que se le envió por correo"
-			)]
-		public async Task<IActionResult> ConfirmCode([FromBody] ConfirmCodeCommand command)
-		{
-			var response = await Mediator.Send(command);
+        [HttpPost("confirm-code")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ConfirmCodeResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ConfirmCodeResponse))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ConfirmCodeResponse))]
+        [SwaggerOperation(
+            Summary = "Confirmar código",
+            Description = "Permite que el usuario ingrese el código de confirmación que se le envió por correo"
+            )]
+        public async Task<IActionResult> ConfirmCode([FromBody] ConfirmCodeCommand command)
+        {
+            try
+            {
+                var response = await Mediator.Send(command);
 
-			if (response.HasError)
-			{
-				if (response.Error.Contains("error"))
-				{
-					return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
-				}
-				return NotFound(response.Error);
-			}
+                if (response.HasError)
+                {
+                    if (response.Error.Contains("error"))
+                    {
+                        return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
+                    }
+                    return NotFound(response.Error);
+                }
 
-			return Ok(response.IsSuccess);
-		}
+                return Ok(response.IsSuccess);
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+        }
 
-		[HttpPost("change-password")]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResetPasswordResponse))]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ResetPasswordResponse))]
-		[SwaggerOperation(
-			Summary = "Restablecer contraseña",
-			Description = "Permite que el usuario cambie su contraseña si se le olvidó"
-			)]
-		public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordCommand command)
-		{
-			var response = await Mediator.Send(command);
+        [HttpPost("change-password")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResetPasswordResponse))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ResetPasswordResponse))]
+        [SwaggerOperation(
+            Summary = "Restablecer contraseña",
+            Description = "Permite que el usuario cambie su contraseña si se le olvidó"
+            )]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordCommand command)
+        {
+            try
+            {
+                var response = await Mediator.Send(command);
 
-			if (response.HasError)
-			{
-				return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
-			}
+                if (response.HasError)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
+                }
 
-			HttpContext.Session.Remove("user");
-			HttpContext.Session.Remove("confirmCode");
+                HttpContext.Session.Remove("user");
+                HttpContext.Session.Remove("confirmCode");
 
-			return Ok(response.IsSuccess);
-		}
+                return Ok(response.IsSuccess);
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+        }
 
-		[HttpGet("logout")]
-		[ProducesResponseType(StatusCodes.Status204NoContent)]
-		[SwaggerOperation(
-		   Summary = "Salir de sesión",
-		   Description = "Borra el refresh token"
-		)]
-		public async Task<IActionResult> Logout()
-		{
-			Response.Cookies.Delete("refreshToken", new CookieOptions
-			{
-				HttpOnly = true,
-				Secure = true,
-				Expires = DateTime.UtcNow.AddDays(5),
-				SameSite = SameSiteMode.None
-			});
+        [HttpGet("logout")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [SwaggerOperation(
+           Summary = "Salir de sesión",
+           Description = "Borra el refresh token"
+        )]
+        public async Task<IActionResult> Logout()
+        {
+            try
+            {
+                Response.Cookies.Delete("refreshToken", new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    Expires = DateTime.UtcNow.AddDays(5),
+                    SameSite = SameSiteMode.None
+                });
 
-			return NoContent();
-		}
-	}
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+        }
+    }
 }
