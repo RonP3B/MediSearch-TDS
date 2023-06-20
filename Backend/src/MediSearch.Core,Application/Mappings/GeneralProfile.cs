@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediSearch.Core.Application.Dtos.Account;
+using MediSearch.Core.Application.Dtos.Product;
 using MediSearch.Core.Application.Features.Account.Commands.Authenticate;
 using MediSearch.Core.Application.Features.Account.Commands.RegisterClient;
 using MediSearch.Core.Application.Features.Account.Commands.RegisterCompany;
@@ -45,6 +46,15 @@ namespace MediSearch.Core.Application.Mappings
                 .ForMember(x => x.Images, opt => opt.Ignore())
                 .ReverseMap()
                 .ForMember(x => x.UrlImages, opt => opt.Ignore());
+
+            CreateMap<Product, ProductDTO>()
+                .ReverseMap()
+                .ForMember(x => x.Company, opt => opt.Ignore())
+                .ForMember(x => x.CompanyId, opt => opt.Ignore())
+                .ForMember(x => x.Created, opt => opt.Ignore())
+                .ForMember(x => x.CreatedBy, opt => opt.Ignore())
+                .ForMember(x => x.LastModified, opt => opt.Ignore())
+                .ForMember(x => x.LastModifiedBy, opt => opt.Ignore());
             #endregion
         }
 

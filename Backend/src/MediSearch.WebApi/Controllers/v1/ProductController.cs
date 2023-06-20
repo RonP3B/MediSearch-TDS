@@ -5,6 +5,7 @@ using MediSearch.Core.Application.Features.Admin.Commands.DeleteEmployee;
 using MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee;
 using MediSearch.Core.Application.Features.Admin.Queries.GetUsersCompany;
 using MediSearch.Core.Application.Features.Product.CreateProduct;
+using MediSearch.Core.Application.Features.Product.Queries.GetAllProduct;
 using MediSearch.WebApi.Middlewares;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,37 @@ namespace MediSearch.WebApi.Controllers.v1
         public ProductController(IServiceScopeFactory serviceScopeFactory)
         {
             _serviceScopeFactory = serviceScopeFactory;
+        }
+
+        [HttpGet("get-aLL")]
+        [SwaggerOperation(
+           Summary = "Obtener todos los productos de la empresa.",
+            Description = "Nos permite obtener todos los productos de la empresa."
+        )]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProductResponse))]
+        public async Task<IActionResult> GetAllProduct()
+        {
+
+            try
+            {
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+
+                var result = await Mediator.Send(new GetAllProductQuery() { CompanyId = user.CompanyId});
+
+                if (result == null || result.Count == 0)
+                    return NotFound();
+
+                return Ok(result);
+
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
         }
 
         [HttpPost("create")]

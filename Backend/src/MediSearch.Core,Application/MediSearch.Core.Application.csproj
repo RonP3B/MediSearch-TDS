@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Features\Product\Queries\GetProductById\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
