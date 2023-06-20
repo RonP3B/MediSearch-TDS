@@ -16,6 +16,9 @@ import useAuth from "./hooks/persistence/useAuth";
 import LoggedLayout from "./components/layouts/LoggedLayout";
 import UnloggedLayout from "./components/layouts/UnloggedLayout";
 
+//prueba
+import SideBar from "./components/scenes/SideBar";
+
 const App = () => {
   const { auth } = useAuth();
 
@@ -39,6 +42,10 @@ const App = () => {
           <Route path="*" element={<h1>404 page</h1>} />
         </Route>
       </Route>
+
+      {/* Prueba sidebar */}
+      <Route path="prueba" element={<SideBar />} />
+      {/* Prueba sidebar */}
     </Routes>
   );
 };
