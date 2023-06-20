@@ -1,9 +1,11 @@
-import axios from "axios";
+import TerritorialDivisionApi from "../../APIs/TerritorialDivisionApi";
 
 export const getProvinces = () => {
-  return axios.get("https://api.digital.gob.do/v1/territories/provinces");
+  return TerritorialDivisionApi.get("/provinces");
 };
 
-export const getMunicipalities = () => {
-  return axios.get("https://api.digital.gob.do/v1/territories/municipalities");
+export const getProvinceMunicipalities = (provinceCode) => {
+  return TerritorialDivisionApi.get(
+    `/municipalities?provinceCode=${provinceCode}`
+  );
 };

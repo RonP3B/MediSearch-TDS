@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import useUserSignupFormik from "../../../hooks/formiks/useUserSignupFormik";
 import { Formik, Form } from "formik";
 import Grid from "@mui/material/Grid";
@@ -9,10 +9,7 @@ import PasswordInputField from "../InputFields/PasswordInputField";
 import SelectInputField from "../InputFields/SelectInputField";
 import { telMask } from "../../../utils/masks";
 import MaskedInputField from "../InputFields/MaskedInputField";
-import {
-  getMunicipalities,
-  getProvinces,
-} from "../../../services/TerritorialDivisionServices/TerritorialServcives";
+import useTerritorial from "../../../hooks/useTerritorial";
 
 const UserForm = () => {
   const [loading, setLoading] = useState(false);
@@ -52,50 +49,13 @@ const UserForm = () => {
 };
 
 export const UserFormContent = () => {
-  // Cambiar
-  const [provinces, setProvinces] = useState([""]);
-  const [municipalities, setMunicipalities] = useState([""]);
-  const [loadingProvince, setLoadingProvince] = useState(false);
-  const [loadingMunicipality, setLoadingMunicipality] = useState(false);
-
-  useEffect(() => {
-    const fetchProvinces = async () => {
-      try {
-        setLoadingProvince(true);
-        const response = await getProvinces();
-        const provinceData = response.data.data.map(
-          (province) => province.name
-        );
-        setProvinces(["", ...provinceData]);
-      } catch (error) {
-        console.error("Error fetching provinces:", error);
-      } finally {
-        setLoadingProvince(false);
-      }
-    };
-
-    fetchProvinces();
-  }, []);
-
-  useEffect(() => {
-    const fetchMunicipalities = async () => {
-      try {
-        setLoadingMunicipality(true);
-        const response = await getMunicipalities();
-        const municipalityData = response.data.data.map(
-          (municipality) => municipality.name
-        );
-        setMunicipalities(["", ...municipalityData]);
-      } catch (error) {
-        console.error("Error fetching municipalities:", error);
-      } finally {
-        setLoadingMunicipality(false);
-      }
-    };
-
-    fetchMunicipalities();
-  }, []);
-  // Cambiar
+  const {
+    provinces,
+    municipalities,
+    setSelectedProvince,
+    municipalitiesSelect,
+    provincesSelect,
+  } = useTerritorial();
 
   return (
     <Grid container spacing={2}>
@@ -118,9 +78,14 @@ export const UserFormContent = () => {
           name="province"
           label="Provincia"
           margin="dense"
-          disabled={loadingProvince}
           fullWidth
-          options={provinces}
+          options={
+            provinces.length === 0
+              ? [""]
+              : ["", ...provinces.map((province) => province.name)]
+          }
+          setSelected={setSelectedProvince}
+          ref={provincesSelect}
         />
       </Grid>
       <Grid item xs={12} sm={6}>
@@ -128,9 +93,14 @@ export const UserFormContent = () => {
           name="municipality"
           label="Municipio"
           margin="dense"
-          disabled={loadingMunicipality}
           fullWidth
-          options={municipalities}
+          options={
+            municipalities.length === 0
+              ? [""]
+              : ["", ...municipalities.map((municipality) => municipality.name)]
+          }
+          disabled={municipalities.length === 0}
+          ref={municipalitiesSelect}
         />
       </Grid>
       <Grid item xs={12} sm={6}>

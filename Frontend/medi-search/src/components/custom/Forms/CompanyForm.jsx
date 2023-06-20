@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import MultiStepForm, { FormStep } from "../MultiForm/MultiStepForm";
 import InputField from "../InputFields/InputField";
 import Grid from "@mui/material/Grid";
@@ -7,12 +7,9 @@ import useCompanyFormik from "../../../hooks/formiks/useCompanyFormik";
 import { UserFormContent } from "./UserForm";
 import ImageInput from "../InputFields/ImageInput";
 import SelectInputField from "../InputFields/SelectInputField";
-import {
-  getMunicipalities,
-  getProvinces,
-} from "../../../services/TerritorialDivisionServices/TerritorialServcives";
 import MaskedInputField from "../InputFields/MaskedInputField";
 import { telMask } from "../../../utils/masks";
+import useTerritorial from "../../../hooks/useTerritorial";
 
 const CompanyForm = () => {
   const [loading, setLoading] = useState(false);
@@ -29,50 +26,13 @@ const CompanyForm = () => {
     onSubmit,
   } = useCompanyFormik(setLoading);
 
-  // Cambiar
-  const [provinces, setProvinces] = useState([""]);
-  const [municipalities, setMunicipalities] = useState([""]);
-  const [loadingProvince, setLoadingProvince] = useState(false);
-  const [loadingMunicipality, setLoadingMunicipality] = useState(false);
-
-  useEffect(() => {
-    const fetchProvinces = async () => {
-      try {
-        setLoadingProvince(true);
-        const response = await getProvinces();
-        const provinceData = response.data.data.map(
-          (province) => province.name
-        );
-        setProvinces(["", ...provinceData]);
-      } catch (error) {
-        console.error("Error fetching provinces:", error);
-      } finally {
-        setLoadingProvince(false);
-      }
-    };
-
-    fetchProvinces();
-  }, []);
-
-  useEffect(() => {
-    const fetchMunicipalities = async () => {
-      try {
-        setLoadingMunicipality(true);
-        const response = await getMunicipalities();
-        const municipalityData = response.data.data.map(
-          (municipality) => municipality.name
-        );
-        setMunicipalities(["", ...municipalityData]);
-      } catch (error) {
-        console.error("Error fetching municipalities:", error);
-      } finally {
-        setLoadingMunicipality(false);
-      }
-    };
-
-    fetchMunicipalities();
-  }, []);
-  // Cambiar
+  const {
+    provinces,
+    municipalities,
+    setSelectedProvince,
+    municipalitiesSelect,
+    provincesSelect,
+  } = useTerritorial();
 
   return (
     <MultiStepForm
@@ -128,9 +88,14 @@ const CompanyForm = () => {
               name="provinceCompany"
               label="Provincia de la empresa"
               margin="dense"
-              disabled={loadingProvince}
               fullWidth
-              options={provinces}
+              options={
+                provinces.length === 0
+                  ? [""]
+                  : ["", ...provinces.map((province) => province.name)]
+              }
+              setSelected={setSelectedProvince}
+              ref={provincesSelect}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -138,9 +103,19 @@ const CompanyForm = () => {
               name="municipalityCompany"
               label="Municipio de la empresa"
               margin="dense"
-              disabled={loadingMunicipality}
               fullWidth
-              options={municipalities}
+              options={
+                municipalities.length === 0
+                  ? [""]
+                  : [
+                      "",
+                      ...municipalities.map(
+                        (municipality) => municipality.name
+                      ),
+                    ]
+              }
+              disabled={municipalities.length === 0}
+              ref={municipalitiesSelect}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
