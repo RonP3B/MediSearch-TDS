@@ -4,6 +4,7 @@ using MediSearch.Core.Application.Features.Account.Commands.RegisterClient;
 using MediSearch.Core.Application.Features.Admin.Commands.DeleteEmployee;
 using MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee;
 using MediSearch.Core.Application.Features.Admin.Queries.GetUsersCompany;
+using MediSearch.Core.Application.Features.Product.Command.UpdateProduct;
 using MediSearch.Core.Application.Features.Product.CreateProduct;
 using MediSearch.Core.Application.Features.Product.Queries.GetAllProduct;
 using MediSearch.WebApi.Middlewares;
@@ -81,6 +82,47 @@ namespace MediSearch.WebApi.Controllers.v1
 
                 return Ok(result.IsSuccess);
 
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
+        }
+
+        [HttpPut("update")]
+        [SwaggerOperation(
+            Summary = "Actualiza un producto.",
+            Description = "Permite actualizar los valores de un producto específico."
+            )]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProductResponse))]
+        public async Task<IActionResult> UpdateProduct([FromForm] UpdateProductCommand command)
+        {
+
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest();
+
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                command.CompanyId = user.CompanyId;
+                var result = await Mediator.Send(command);
+
+                if (result.HasError)
+                {
+                    if (result.Error == "Producto no encontrado")
+                    {
+                        return NotFound();
+                    }
+
+                    return StatusCode(StatusCodes.Status500InternalServerError, result);
+                }
+
+                return Ok(result.IsSuccess);
             }
             catch (Exception e)
             {

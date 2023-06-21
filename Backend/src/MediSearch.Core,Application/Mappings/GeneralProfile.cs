@@ -5,6 +5,7 @@ using MediSearch.Core.Application.Features.Account.Commands.Authenticate;
 using MediSearch.Core.Application.Features.Account.Commands.RegisterClient;
 using MediSearch.Core.Application.Features.Account.Commands.RegisterCompany;
 using MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee;
+using MediSearch.Core.Application.Features.Product.Command.UpdateProduct;
 using MediSearch.Core.Application.Features.Product.CreateProduct;
 using MediSearch.Core.Domain.Entities;
 using System;
@@ -43,6 +44,11 @@ namespace MediSearch.Core.Application.Mappings
 
             #region Product
             CreateMap<Product, CreateProductCommand>()
+                .ForMember(x => x.Images, opt => opt.Ignore())
+                .ReverseMap()
+                .ForMember(x => x.UrlImages, opt => opt.Ignore());
+
+            CreateMap<Product, UpdateProductCommand>()
                 .ForMember(x => x.Images, opt => opt.Ignore())
                 .ReverseMap()
                 .ForMember(x => x.UrlImages, opt => opt.Ignore());

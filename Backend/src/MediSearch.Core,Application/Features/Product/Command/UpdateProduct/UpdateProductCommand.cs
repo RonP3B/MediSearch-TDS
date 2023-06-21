@@ -1,44 +1,97 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using MediSearch.Core.Application.Dtos.Product;
+using MediSearch.Core.Application.Helpers;
+using MediSearch.Core.Application.Interfaces.Repositories;
 using Microsoft.AspNetCore.Http;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace MediSearch.Core.Application.Features.Product.Command.UpdateProduct
 {
-    public record UpdateProductCommand : IRequest<ProductResponse>
+    public class UpdateProductCommand : IRequest<ProductResponse>
     {
-        [SwaggerParameter(Description = "El id del producto a actualizar")]
-        [Required(ErrorMessage = "El id es requerido para actualizarlo")]
-        public string Id { get; init; }
-
-        [SwaggerParameter(Description = "Nombre que deseas destinar para el producto.")]
+        [SwaggerParameter(Description = "Id del producto a actualizar.")]
         [Required(ErrorMessage = "Debe de especificar un nombre para este producto.")]
-        public string Name { get; init; }
-
-        [SwaggerParameter(Description = "Descripción que deseas destinar para el producto.")]
+        public string Id { get; set; }
+        
+        [SwaggerParameter(Description = "Nombre nuevo para el producto.")]
         [Required(ErrorMessage = "Debe de especificar un nombre para este producto.")]
-        public string Description { get; init; }
+        public string Name { get; set; }
+
+        [SwaggerParameter(Description = "Descripción nueva para el producto.")]
+        [Required(ErrorMessage = "Debe de especificar un nombre para este producto.")]
+        public string Description { get; set; }
 
         [SwaggerParameter(Description = "Categorías (enfermedades) que trata, cura o alivia el producto.")]
         [Required(ErrorMessage = "Debe de especificar categorías para este producto.")]
-        public List<string> Categories { get; init; }
+        public List<string> Categories { get; set; }
 
         [SwaggerParameter(Description = "Componentes que tiene el producto.")]
         [Required(ErrorMessage = "Debe especificar los componentes de este producto.")]
-        public List<string> Components { get; init; }
+        public List<string> Components { get; set; }
 
-        [SwaggerParameter(Description = "Precio que deseas destinar para el producto.")]
+        [SwaggerParameter(Description = "Precio nuevo para el producto.")]
         [Required(ErrorMessage = "Debe de especificar un precio para este producto.")]
-        public double Price { get; init; }
+        public double Price { get; set; }
 
         [SwaggerParameter(Description = "Cantidad disponible que tienes del producto.")]
         [Required(ErrorMessage = "Debe de especificar la cantidad del producto.")]
-        public int Quantity { get; init; }
+        public int Quantity { get; set; }
 
         [SwaggerParameter(Description = "Imágenes que deseas destinar para el producto.")]
         [MinLength(1, ErrorMessage = "Debe de subir al menos una imagén para este producto.")]
-        public IFormFile[] Images { get; init; }
+        public IFormFile[] Images { get; set; }
+        [JsonIgnore]
+        public string? CompanyId { get; set; }
+
+    }
+
+    public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, ProductResponse>
+    {
+        private readonly IProductRepository _productRepository;
+        private readonly IMapper _mapper;
+
+        public UpdateProductCommandHandler(IProductRepository productRepository, IMapper mapper)
+        {
+            _productRepository = productRepository;
+            _mapper = mapper;
+        }
+
+
+        public async Task<ProductResponse> Handle(UpdateProductCommand command, CancellationToken cancellationToken)
+        {
+            ProductResponse response = new()
+            {
+                HasError = false
+            };
+
+            try
+            {
+                var valueToUpdate = await _productRepository.GetByIdAsync(command.Id);
+                if (valueToUpdate == null)
+                {
+                    response.HasError = true;
+                    response.Error = "Producto no encontrado";
+                    return response;
+                }
+
+                var newValues = _mapper.Map<Domain.Entities.Product>(command);
+                newValues.UrlImages = await ImageUpload.UploadImagesProduct(command.Images, newValues.Id, true, valueToUpdate.UrlImages);
+
+                await _productRepository.UpdateAsync(newValues, newValues.Id);
+                response.IsSuccess = true;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.Error = ex.Message;
+
+                return response;
+            }
+        }
 
     }
 
