@@ -1,20 +1,13 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using MediSearch.Core.Application.Dtos.Account;
 using MediSearch.Core.Application.Interfaces.Services;
-using Microsoft.AspNetCore.Http;
 using Swashbuckle.AspNetCore.Annotations;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MediSearch.Core.Application.Features.Account.Commands.ConfirmCode
 
 {
-	public class ConfirmCodeCommand : IRequest<ConfirmCodeResponse>
+    public class ConfirmCodeCommand : IRequest<ConfirmCodeResponse>
 	{
         [SwaggerParameter(Description = "Código de confirmación")]
         [Required(ErrorMessage = "Debe de ingresar el código que se le envió al correo")]

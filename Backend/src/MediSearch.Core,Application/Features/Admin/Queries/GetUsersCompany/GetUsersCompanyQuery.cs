@@ -1,13 +1,6 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using MediSearch.Core.Application.Dtos.Account;
 using MediSearch.Core.Application.Interfaces.Services;
-using Swashbuckle.AspNetCore.Annotations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MediSearch.Core.Application.Features.Admin.Queries.GetUsersCompany
 {

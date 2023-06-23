@@ -1,19 +1,12 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using MediSearch.Core.Application.Dtos.Account;
 using MediSearch.Core.Application.Interfaces.Services;
-using Microsoft.AspNetCore.Http;
 using Swashbuckle.AspNetCore.Annotations;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MediSearch.Core.Application.Features.Account.Commands.ResetPassword
 {
-	public class ResetPasswordCommand : IRequest<ResetPasswordResponse>
+    public class ResetPasswordCommand : IRequest<ResetPasswordResponse>
 	{
         [SwaggerParameter(Description = "Correo")]
         [Required(ErrorMessage = "Debe de ingresar su correo")]

@@ -3,16 +3,11 @@ using MediatR;
 using MediSearch.Core.Application.Dtos.Account;
 using MediSearch.Core.Application.Interfaces.Services;
 using Swashbuckle.AspNetCore.Annotations;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MediSearch.Core.Application.Features.Account.Commands.Authenticate
 {
-	public class AuthenticateCommand : IRequest<AuthenticationResponse>
+    public class AuthenticateCommand : IRequest<AuthenticationResponse>
 	{
 		[SwaggerParameter(Description = "Nombre de usuario")]
 		[Required(ErrorMessage = "Debe de ingresar su nombre de usuario")]

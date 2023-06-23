@@ -1,14 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
 using MediSearch.Core.Application.Dtos.Account;
-using MediSearch.Core.Application.Helpers;
 using MediSearch.Core.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MediSearch.Core.Application.Features.Account.Commands.ConfirmEmail
 {

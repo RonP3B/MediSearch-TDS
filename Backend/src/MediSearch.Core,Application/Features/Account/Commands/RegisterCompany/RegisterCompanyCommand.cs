@@ -6,16 +6,11 @@ using MediSearch.Core.Application.Interfaces.Repositories;
 using MediSearch.Core.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
 using Swashbuckle.AspNetCore.Annotations;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MediSearch.Core.Application.Features.Account.Commands.RegisterCompany
 {
-	public class RegisterCompanyCommand : IRequest<RegisterResponse>
+    public class RegisterCompanyCommand : IRequest<RegisterResponse>
 	{
 		[SwaggerParameter(Description = "Nombre")]
 		[Required(ErrorMessage = "Debe de ingresar su nombre")]
