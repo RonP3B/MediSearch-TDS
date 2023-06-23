@@ -4,6 +4,7 @@ using MediSearch.Core.Application.Features.Account.Commands.RegisterClient;
 using MediSearch.Core.Application.Features.Admin.Commands.DeleteEmployee;
 using MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee;
 using MediSearch.Core.Application.Features.Admin.Queries.GetUsersCompany;
+using MediSearch.Core.Application.Features.Product.Command.DeleteProduct;
 using MediSearch.Core.Application.Features.Product.Command.UpdateProduct;
 using MediSearch.Core.Application.Features.Product.CreateProduct;
 using MediSearch.Core.Application.Features.Product.Queries.GetAllProduct;
@@ -123,6 +124,36 @@ namespace MediSearch.WebApi.Controllers.v1
                 }
 
                 return Ok(result.IsSuccess);
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
+        }
+
+        [HttpDelete("delete/{id}")]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [SwaggerOperation(
+            Summary = "Permite eliminar un producto.",
+            Description = "Maneja el apartado de eliminación, debe de especificar los parametros correspondientes."
+        )]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteProduct(string id)
+        {
+            try
+            {
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                var result = await Mediator.Send(new DeleteProductCommand() { Id = id, CompanyId = user.CompanyId});
+
+                if (result.HasError)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, result.Error != null ? result.Error : "");
+                }
+
+                return NoContent();
             }
             catch (Exception e)
             {
