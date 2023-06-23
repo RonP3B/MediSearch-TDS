@@ -1,9 +1,4 @@
-﻿using MediSearch.Core.Application.Dtos.Account;
-using MediSearch.Core.Application.Dtos.Product;
-using MediSearch.Core.Application.Features.Account.Commands.RegisterClient;
-using MediSearch.Core.Application.Features.Admin.Commands.DeleteEmployee;
-using MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee;
-using MediSearch.Core.Application.Features.Admin.Queries.GetUsersCompany;
+﻿using MediSearch.Core.Application.Dtos.Product;
 using MediSearch.Core.Application.Features.Product.Command.DeleteProduct;
 using MediSearch.Core.Application.Features.Product.Command.UpdateProduct;
 using MediSearch.Core.Application.Features.Product.CreateProduct;
@@ -11,13 +6,13 @@ using MediSearch.Core.Application.Features.Product.Queries.GetAllProduct;
 using MediSearch.WebApi.Middlewares;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net.Mime;
 
 namespace MediSearch.WebApi.Controllers.v1
 {
     [Authorize(Roles = "Administrator, Manager")]
+    [SwaggerTag("Mantenimiento de Productos")]
     public class ProductController : BaseApiController
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;

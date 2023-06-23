@@ -1,5 +1,4 @@
 ﻿using MediSearch.Core.Application.Dtos.Account;
-using MediSearch.Core.Application.Features.Account.Commands.RegisterClient;
 using MediSearch.Core.Application.Features.Admin.Commands.DeleteEmployee;
 using MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee;
 using MediSearch.Core.Application.Features.Admin.Queries.GetUsersCompany;
@@ -12,6 +11,7 @@ using System.Net.Mime;
 namespace MediSearch.WebApi.Controllers.v1
 {
     [Authorize(Roles = "Administrator")]
+    [SwaggerTag("Administración de empresa")]
     public class AdminController : BaseApiController
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
