@@ -22,7 +22,7 @@ namespace MediSearch.WebApi.Controllers.v1
             _serviceScopeFactory = serviceScopeFactory;
         }
 
-        [HttpGet("get-aLL")]
+        [HttpGet("get-all")]
         [SwaggerOperation(
            Summary = "Obtener todos los productos de la empresa.",
             Description = "Nos permite obtener todos los productos de la empresa."
