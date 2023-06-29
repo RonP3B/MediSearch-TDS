@@ -3,6 +3,7 @@ using MediSearch.Core.Application.Features.Product.Command.DeleteProduct;
 using MediSearch.Core.Application.Features.Product.Command.UpdateProduct;
 using MediSearch.Core.Application.Features.Product.CreateProduct;
 using MediSearch.Core.Application.Features.Product.Queries.GetAllProduct;
+using MediSearch.Core.Application.Features.Product.Queries.GetProductById;
 using MediSearch.WebApi.Middlewares;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +22,7 @@ namespace MediSearch.WebApi.Controllers.v1
             _serviceScopeFactory = serviceScopeFactory;
         }
 
-        [HttpGet("get-aLL")]
+        [HttpGet("get-all")]
         [SwaggerOperation(
            Summary = "Obtener todos los productos de la empresa.",
             Description = "Nos permite obtener todos los productos de la empresa."
@@ -40,6 +41,34 @@ namespace MediSearch.WebApi.Controllers.v1
                 var result = await Mediator.Send(new GetAllProductQuery() { CompanyId = user.CompanyId});
 
                 if (result == null || result.Count == 0)
+                    return NotFound();
+
+                return Ok(result);
+
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
+        }
+
+        [HttpGet("get/{id}")]
+        [SwaggerOperation(
+           Summary = "Obtener todos los productos de la empresa.",
+            Description = "Nos permite obtener todos los productos de la empresa."
+        )]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProductResponse))]
+        public async Task<IActionResult> GetProductById(string id)
+        {
+            try
+            {
+
+                var result = await Mediator.Send(new GetProductByIdQuery() { Id = id });
+
+                if (result == null)
                     return NotFound();
 
                 return Ok(result);

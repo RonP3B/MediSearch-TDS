@@ -78,6 +78,8 @@ namespace MediSearch.Core.Application.Features.Product.Command.UpdateProduct
                 }
 
                 var newValues = _mapper.Map<Domain.Entities.Product>(command);
+                newValues.Created = valueToUpdate.Created;
+                newValues.CreatedBy = valueToUpdate.CreatedBy;
                 newValues.UrlImages = await ImageUpload.UploadImagesProduct(command.Images, newValues.Id, true, valueToUpdate.UrlImages);
 
                 await _productRepository.UpdateAsync(newValues, newValues.Id);
