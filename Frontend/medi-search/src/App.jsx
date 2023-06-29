@@ -4,20 +4,19 @@ import { Route, Routes } from "react-router-dom";
 //import RequiresAuth from "./components/persistence/RequiresAuth";
 import RequiresUnauth from "./components/persistence/RequiresUnauth";
 import PersistLogin from "./components/persistence/PersistLogin";
+import useAuth from "./hooks/persistence/useAuth";
 
 //Pages
 import Home from "./components/pages/Home";
 import Login from "./components/pages/Login";
 import Signup from "./components/pages/Signup";
 import PasswordRecovery from "./components/pages/PasswordRecovery";
-import useAuth from "./hooks/persistence/useAuth";
+import Dashboard from "./components/pages/Dashboard";
+import Users from "./components/pages/Users";
 
 //Layouts
 import LoggedLayout from "./components/layouts/LoggedLayout";
 import UnloggedLayout from "./components/layouts/UnloggedLayout";
-
-//prueba
-import SideBar from "./components/scenes/SideBar";
 
 const App = () => {
   const { auth } = useAuth();
@@ -38,14 +37,15 @@ const App = () => {
 
           <Route path="/" element={<Home />} />
 
+          {/* Limit this to company accounts */}
+          <Route path="/company/dashboard" element={<Dashboard />} />
+          <Route path="/company/users" element={<Users />} />
+          {/* Limit this to company accounts */}
+
           {/* Non-existence handler */}
           <Route path="*" element={<h1>404 page</h1>} />
         </Route>
       </Route>
-
-      {/* Prueba sidebar */}
-      <Route path="prueba" element={<SideBar />} />
-      {/* Prueba sidebar */}
     </Routes>
   );
 };
