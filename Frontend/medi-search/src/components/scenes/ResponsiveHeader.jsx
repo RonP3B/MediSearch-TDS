@@ -6,6 +6,7 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
+import Divider from "@mui/material/Divider";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
@@ -162,6 +163,21 @@ const ResponsiveHeader = ({ pages, settings, logged }) => {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
+                  {logged && (
+                    <Box sx={{ my: 1.5, px: 2.5 }}>
+                      <Typography variant="subtitle2" noWrap>
+                        {auth.payload.sub}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "text.secondary" }}
+                        noWrap
+                      >
+                        {auth.payload.email}
+                      </Typography>
+                    </Box>
+                  )}
+                  {logged && <Divider sx={{ borderStyle: "dashed" }} />}
                   {settings.map(({ option, route }) => (
                     <MenuItem
                       key={option}
@@ -173,6 +189,7 @@ const ResponsiveHeader = ({ pages, settings, logged }) => {
                       <Typography textAlign="center">{option}</Typography>
                     </MenuItem>
                   ))}
+                  {logged && <Divider />}
                   {logged && (
                     <MenuItem onClick={logoutUser}>
                       <Typography textAlign="center">Cerrar sesión</Typography>
