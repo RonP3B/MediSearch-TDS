@@ -25,7 +25,7 @@ namespace MediSearch.WebApi.Controllers.v1
             Summary = "Todos los empleados de la empresa.",
             Description = "Permite obtener todos los empleados que tiene la empresa registrados en el sistema."
         )]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDTO))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<UserDTO>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllEmployees()

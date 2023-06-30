@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediSearch.Core.Application.Dtos.Account;
+using MediSearch.Core.Application.Dtos.Company;
 using MediSearch.Core.Application.Dtos.Product;
 using MediSearch.Core.Application.Features.Account.Commands.Authenticate;
 using MediSearch.Core.Application.Features.Account.Commands.RegisterClient;
@@ -57,6 +58,36 @@ namespace MediSearch.Core.Application.Mappings
                 .ReverseMap()
                 .ForMember(x => x.Company, opt => opt.Ignore())
                 .ForMember(x => x.CompanyId, opt => opt.Ignore())
+                .ForMember(x => x.Created, opt => opt.Ignore())
+                .ForMember(x => x.CreatedBy, opt => opt.Ignore())
+                .ForMember(x => x.LastModified, opt => opt.Ignore())
+                .ForMember(x => x.LastModifiedBy, opt => opt.Ignore());
+            #endregion
+
+            #region Company
+            CreateMap<Company, CompanyDTO>()
+                .ReverseMap()
+                .ForMember(x => x.Ceo, opt => opt.Ignore())
+                .ForMember(x => x.Email, opt => opt.Ignore())
+                .ForMember(x => x.WebSite, opt => opt.Ignore())
+                .ForMember(x => x.Facebook, opt => opt.Ignore())
+                .ForMember(x => x.Instagram, opt => opt.Ignore())
+                .ForMember(x => x.Twitter, opt => opt.Ignore())
+                .ForMember(x => x.CompanyType, opt => opt.Ignore())
+                .ForMember(x => x.CompanyTypeId, opt => opt.Ignore())
+                .ForMember(x => x.CompanyUsers, opt => opt.Ignore())
+                .ForMember(x => x.Products, opt => opt.Ignore())
+                .ForMember(x => x.Created, opt => opt.Ignore())
+                .ForMember(x => x.CreatedBy, opt => opt.Ignore())
+                .ForMember(x => x.LastModified, opt => opt.Ignore())
+                .ForMember(x => x.LastModifiedBy, opt => opt.Ignore());
+            
+            CreateMap<Company, CompanyDetailsDTO>()
+                .ReverseMap()
+                .ForMember(x => x.CompanyType, opt => opt.Ignore())
+                .ForMember(x => x.CompanyTypeId, opt => opt.Ignore())
+                .ForMember(x => x.CompanyUsers, opt => opt.Ignore())
+                .ForMember(x => x.Products, opt => opt.Ignore())
                 .ForMember(x => x.Created, opt => opt.Ignore())
                 .ForMember(x => x.CreatedBy, opt => opt.Ignore())
                 .ForMember(x => x.LastModified, opt => opt.Ignore())
