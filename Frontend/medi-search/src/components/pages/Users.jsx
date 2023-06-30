@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
 import { getComparator, applySortFilter } from "../../utils/tableHelpers";
-import { getAllEmployees } from "../../services/MediSearchServices/AdminServices";
+import {
+  deleteEmployee,
+  getAllEmployees,
+} from "../../services/MediSearchServices/AdminServices";
+import useToast from "../../hooks/useToast";
+import useAuth from "../../hooks/persistence/useAuth";
 import UserListHead from "../custom/UserLists/UserListHead";
 import UserListToolbar from "../custom/UserLists/UserListToolbar";
 import Container from "@mui/material/Container";
@@ -25,7 +29,6 @@ import TablePagination from "@mui/material/TablePagination";
 import AddIcon from "@mui/icons-material/Add";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
@@ -42,6 +45,7 @@ const TABLE_HEAD = [
 
 const Users = () => {
   const [users, setUsers] = useState([]);
+  const [userID, setUserID] = useState("");
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(null);
   const [page, setPage] = useState(0);
@@ -49,6 +53,8 @@ const Users = () => {
   const [orderBy, setOrderBy] = useState("name");
   const [filterName, setFilterName] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const showToast = useToast();
+  const { auth } = useAuth();
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -56,7 +62,9 @@ const Users = () => {
         const res = await getAllEmployees();
         setUsers(res.data.$values);
       } catch (error) {
-        toast.error("Ocurrió un error al obtener los usuarios");
+        showToast("Ocurrió un error al obtener los usuarios", {
+          type: "error",
+        });
       } finally {
         setLoading(false);
       }
@@ -65,8 +73,24 @@ const Users = () => {
     fetchEmployees();
   }, []);
 
-  const handleOpenMenu = (event) => {
+  const deleteUser = async () => {
+    if (userID === auth.payload.uid) {
+      //cambiar
+      return showToast("No puedes eliminar tu propia cuenta", {
+        type: "warning",
+      });
+    }
+
+    try {
+      const res = await deleteEmployee(userID);
+    } catch (error) {
+      showToast(error.response.data, { type: "error" });
+    }
+  };
+
+  const handleOpenMenu = (event, id) => {
     setOpen(event.currentTarget);
+    setUserID(id);
   };
 
   const handleCloseMenu = () => {
@@ -196,7 +220,7 @@ const Users = () => {
                           <IconButton
                             size="large"
                             color="inherit"
-                            onClick={handleOpenMenu}
+                            onClick={(event) => handleOpenMenu(event, id)}
                           >
                             <MoreVertIcon />
                           </IconButton>
@@ -233,7 +257,7 @@ const Users = () => {
                 </TableRow>
               </TableBody>
             )}
-            {users.length && !loading === 0 && (
+            {users.length === 0 && !loading && (
               <TableBody>
                 <TableRow>
                   <TableCell align="center" colSpan={8} sx={{ py: 3 }}>
@@ -247,7 +271,12 @@ const Users = () => {
                         No hay ningún usuario registrado
                       </Typography>
 
-                      <Button variant="contained" startIcon={<AddIcon />}>
+                      <Button
+                        component={Link}
+                        to="add"
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                      >
                         Nuevo Usuario
                       </Button>
                     </Paper>
@@ -285,11 +314,7 @@ const Users = () => {
           },
         }}
       >
-        <MenuItem>
-          <EditIcon sx={{ mr: 2 }} />
-          Edit
-        </MenuItem>
-        <MenuItem sx={{ color: "error.main" }}>
+        <MenuItem sx={{ color: "error.main" }} onClick={deleteUser}>
           <DeleteIcon sx={{ mr: 2 }} />
           Delete
         </MenuItem>
