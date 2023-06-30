@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import useToast from "../useToast";
 import {
   changePassword,
   confirmCode,
@@ -14,6 +14,7 @@ const usePassRecoveryFormik = (
   setActiveStep
 ) => {
   const navigate = useNavigate();
+  const showToast = useToast();
 
   const initialValues = {
     email: "",
@@ -63,11 +64,11 @@ const usePassRecoveryFormik = (
       setLoading(true);
       await findUserReset(values);
       setEmailSent(true);
-      toast.success(
-        "Se ha enviado el código al correo electrónico del usuario"
-      );
+      showToast("Se ha enviado el código al correo electrónico del usuario", {
+        type: "success",
+      });
     } catch (error) {
-      toast.error(error.response.data);
+      showToast(error.response.data, { type: "error" });
     } finally {
       setLoading(false);
       setActiveStep(1);
@@ -80,7 +81,7 @@ const usePassRecoveryFormik = (
       await confirmCode(values);
       setCodeValidated(true);
     } catch (error) {
-      toast.error(error.response.data);
+      showToast(error.response.data, { type: "error" });
     } finally {
       setLoading(false);
       setActiveStep(2);
@@ -92,9 +93,11 @@ const usePassRecoveryFormik = (
       setLoading(true);
       await changePassword(values);
       navigate("/login");
-      toast.success("Su contraseña ha sido cambiada correctamente");
+      showToast("Su contraseña ha sido cambiada correctamente", {
+        type: "success",
+      });
     } catch (error) {
-      toast.error(error.response.data);
+      showToast(error.response.data, { type: "error" });
     } finally {
       setLoading(false);
       setActiveStep(3);

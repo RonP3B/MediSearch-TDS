@@ -1,10 +1,11 @@
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { registerCompany } from "../../services/MediSearchServices/AccountServices";
-import { toast } from "react-toastify";
+import useToast from "../useToast";
 
 const useCompanyFormik = (setLoading) => {
   const navigate = useNavigate();
+  const showToast = useToast();
 
   const initialCompanyValues = {
     ceo: "",
@@ -55,9 +56,11 @@ const useCompanyFormik = (setLoading) => {
       setLoading(true);
       await registerCompany(values);
       navigate("/login");
-      toast.success("Empresa registrada, revisa su correo para activarla");
+      showToast("Empresa registrada, revisa su correo para activarla", {
+        type: "success",
+      });
     } catch (error) {
-      toast.error(error.response.data);
+      showToast(error.response.data, { type: "error" });
     } finally {
       setLoading(false);
     }

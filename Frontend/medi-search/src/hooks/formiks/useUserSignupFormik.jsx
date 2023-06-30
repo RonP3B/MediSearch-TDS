@@ -1,10 +1,11 @@
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../services/MediSearchServices/AccountServices";
-import { toast } from "react-toastify";
+import useToast from "../useToast";
 
 const useUserSignupFormik = (setLoading) => {
   const navigate = useNavigate();
+  const showToast = useToast();
 
   const initialUserValues = {
     firstName: "",
@@ -71,9 +72,11 @@ const useUserSignupFormik = (setLoading) => {
       setLoading(true);
       await registerUser(values);
       navigate("/login");
-      toast.success("Usuario registrado, revisa su correo para activarlo");
+      showToast("Usuario registrado, revisa su correo para activarlo", {
+        type: "success",
+      });
     } catch (error) {
-      toast.error(error.response.data);
+      showToast(error.response.data, { type: "error" });
     } finally {
       setLoading(false);
     }
