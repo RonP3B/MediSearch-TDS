@@ -1,10 +1,14 @@
-import { useState } from "react";
-import { filter } from "lodash";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { getComparator, applySortFilter } from "../../utils/tableHelpers";
+import { getAllEmployees } from "../../services/MediSearchServices/AdminServices";
 import UserListHead from "../custom/UserLists/UserListHead";
 import UserListToolbar from "../custom/UserLists/UserListToolbar";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import Stack from "@mui/material/Stack";
 import Card from "@mui/material/Card";
 import Table from "@mui/material/Table";
@@ -23,56 +27,43 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 
-import USERLIST from "../../utils/borrame";
+const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
 const TABLE_HEAD = [
-  { id: "name", label: "Name", alignRight: false },
-  { id: "company", label: "Company", alignRight: false },
-  { id: "role", label: "Role", alignRight: false },
-  { id: "isVerified", label: "Verified", alignRight: false },
-  { id: "status", label: "Status", alignRight: false },
+  { id: "name", label: "Nombre", alignRight: false },
+  { id: "email", label: "Correo", alignRight: false },
+  { id: "phone", label: "Teléfono", alignRight: false },
+  { id: "role", label: "Rol", alignRight: false },
+  { id: "province", label: "Provincia", alignRight: false },
+  { id: "municipality", label: "Municipio", alignRight: false },
+  { id: "address", label: "Dirección", alignRight: false },
   { id: "" },
 ];
 
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function applySortFilter(array, comparator, query) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  if (query) {
-    return filter(
-      array,
-      (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
-    );
-  }
-  return stabilizedThis.map((el) => el[0]);
-}
-
 const Users = () => {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(null);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("name");
   const [filterName, setFilterName] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const res = await getAllEmployees();
+        setUsers(res.data.$values);
+      } catch (error) {
+        toast.error("Ocurrió un error al obtener los usuarios");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEmployees();
+  }, []);
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -103,10 +94,10 @@ const Users = () => {
   };
 
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - users.length) : 0;
 
   const filteredUsers = applySortFilter(
-    USERLIST,
+    users,
     getComparator(order, orderBy),
     filterName
   );
@@ -114,7 +105,7 @@ const Users = () => {
   const isNotFound = !filteredUsers.length && !!filterName;
 
   return (
-    <Container maxWidth="xl">
+    <Container sx={{ maxWidth: "90vw" }}>
       <Stack
         direction="row"
         alignItems="center"
@@ -124,19 +115,22 @@ const Users = () => {
         <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold" }}>
           Usuarios
         </Typography>
-        <Button variant="contained" startIcon={<AddIcon />}>
+        <Button
+          component={Link}
+          to="add"
+          variant="contained"
+          startIcon={<AddIcon />}
+        >
           Nuevo Usuario
         </Button>
       </Stack>
-
-      <Card sx={{ boxShadow: 3, mb: 3 }}>
+      <Card sx={{ boxShadow: 3, mb: 3, borderRadius: "12px" }}>
         <UserListToolbar
           filterName={filterName}
           onFilterName={handleFilterByName}
         />
-
         <TableContainer>
-          <Table sx={{ minWidth: 750 }}>
+          <Table>
             <UserListHead
               order={order}
               orderBy={orderBy}
@@ -144,67 +138,83 @@ const Users = () => {
               onRequestSort={handleRequestSort}
             />
             <TableBody>
-              {filteredUsers
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
-                  const {
-                    id,
-                    name,
-                    role,
-                    status,
-                    company,
-                    avatarUrl,
-                    isVerified,
-                  } = row;
+              {loading ? (
+                <TableRow>
+                  <TableCell align="center" colSpan={8} sx={{ py: 3 }}>
+                    <Paper
+                      sx={{
+                        textAlign: "center",
+                        padding: 2,
+                      }}
+                    >
+                      <CircularProgress />
+                    </Paper>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredUsers
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
+                    const {
+                      id,
+                      firstName,
+                      lastName,
+                      role,
+                      address,
+                      email,
+                      municipality,
+                      province,
+                      phoneNumber,
+                      urlImage,
+                    } = row;
 
-                  return (
-                    <TableRow hover key={id} tabIndex={-1} role="checkbox">
-                      <TableCell component="th" scope="row" padding="none">
-                        <Stack direction="row" alignItems="center" spacing={2}>
-                          <Avatar
-                            alt={name}
-                            src={avatarUrl}
-                            sx={{ marginLeft: 1 }}
-                          />
-                          <Typography variant="subtitle2" noWrap>
-                            {name}
-                          </Typography>
-                        </Stack>
-                      </TableCell>
-
-                      <TableCell align="left">{company}</TableCell>
-
-                      <TableCell align="left">{role}</TableCell>
-
-                      <TableCell align="left">
-                        {isVerified ? "Yes" : "No"}
-                      </TableCell>
-
-                      <TableCell align="left">{status}</TableCell>
-
-                      <TableCell align="right">
-                        <IconButton
-                          size="large"
-                          color="inherit"
-                          onClick={handleOpenMenu}
-                        >
-                          <MoreVertIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                    return (
+                      <TableRow hover key={id} tabIndex={-1} role="checkbox">
+                        <TableCell component="th" scope="row" padding="none">
+                          <Stack
+                            direction="row"
+                            alignItems="center"
+                            spacing={2}
+                          >
+                            <Avatar
+                              alt={firstName}
+                              src={`${ASSETS}${urlImage}`}
+                              sx={{ marginLeft: 1 }}
+                            />
+                            <Typography variant="subtitle2" noWrap>
+                              {firstName} {lastName}
+                            </Typography>
+                          </Stack>
+                        </TableCell>
+                        <TableCell align="left">{email}</TableCell>
+                        <TableCell align="left">{phoneNumber}</TableCell>
+                        <TableCell align="left">{role}</TableCell>
+                        <TableCell align="left">{province}</TableCell>
+                        <TableCell align="left">{municipality}</TableCell>
+                        <TableCell align="left">{address}</TableCell>
+                        <TableCell align="right">
+                          <IconButton
+                            size="large"
+                            color="inherit"
+                            onClick={handleOpenMenu}
+                          >
+                            <MoreVertIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+              )}
               {emptyRows > 0 && (
                 <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={6} />
+                  <TableCell colSpan={8} />
                 </TableRow>
               )}
             </TableBody>
-
             {isNotFound && (
               <TableBody>
                 <TableRow>
-                  <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                  <TableCell align="center" colSpan={8} sx={{ py: 3 }}>
                     <Paper
                       sx={{
                         textAlign: "center",
@@ -214,7 +224,6 @@ const Users = () => {
                       <Typography variant="h6" paragraph>
                         Usuario no encontrado
                       </Typography>
-
                       <Typography variant="body2">
                         No hay resultados para: &nbsp;
                         <strong>&quot;{filterName}&quot;</strong>.
@@ -224,11 +233,10 @@ const Users = () => {
                 </TableRow>
               </TableBody>
             )}
-
-            {USERLIST.length === 0 && (
+            {users.length && !loading === 0 && (
               <TableBody>
                 <TableRow>
-                  <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                  <TableCell align="center" colSpan={8} sx={{ py: 3 }}>
                     <Paper
                       sx={{
                         textAlign: "center",
@@ -252,7 +260,7 @@ const Users = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={USERLIST.length}
+          count={users.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
@@ -281,7 +289,6 @@ const Users = () => {
           <EditIcon sx={{ mr: 2 }} />
           Edit
         </MenuItem>
-
         <MenuItem sx={{ color: "error.main" }}>
           <DeleteIcon sx={{ mr: 2 }} />
           Delete

@@ -13,6 +13,7 @@ import Signup from "./components/pages/Signup";
 import PasswordRecovery from "./components/pages/PasswordRecovery";
 import Dashboard from "./components/pages/Dashboard";
 import Users from "./components/pages/Users";
+import SaveUser from "./components/pages/SaveUser";
 
 //Layouts
 import LoggedLayout from "./components/layouts/LoggedLayout";
@@ -40,6 +41,7 @@ const App = () => {
           {/* Limit this to company accounts */}
           <Route path="/company/dashboard" element={<Dashboard />} />
           <Route path="/company/users" element={<Users />} />
+          <Route path="/company/users/add" element={<SaveUser />} />
           {/* Limit this to company accounts */}
 
           {/* Non-existence handler */}
