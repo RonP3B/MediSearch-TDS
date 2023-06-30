@@ -27,7 +27,7 @@ namespace MediSearch.WebApi.Controllers.v1
            Summary = "Obtener todos los productos de la empresa.",
             Description = "Nos permite obtener todos los productos de la empresa."
         )]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductResponse))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ProductResponse>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProductResponse))]
         public async Task<IActionResult> GetAllProduct()
@@ -60,7 +60,7 @@ namespace MediSearch.WebApi.Controllers.v1
         )]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProductResponse))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetProductById(string id)
         {
             try

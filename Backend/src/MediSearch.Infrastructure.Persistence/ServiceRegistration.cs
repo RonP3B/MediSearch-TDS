@@ -43,6 +43,10 @@ namespace MediSearch.Infrastructure.Persistence
 			services.AddTransient<ICompanyRepository, CompanyRepository>();
 			services.AddTransient<ICompanyTypeRepository, CompanyTypeRepository>();
 			services.AddTransient<ICompanyUserRepository, CompanyUserRepository>();
+			services.AddTransient<IHallRepository, HallRepository>();
+			services.AddTransient<IHallUserRepository, HallUserRepository>();
+			services.AddTransient<IMessageRepository, MessageRepository>();
+			services.AddTransient<IMessageTypeRepository, MessageTypeRepository>();
 			services.AddScoped<IProductRepository, ProductRepository>();
 			#endregion
 		}
