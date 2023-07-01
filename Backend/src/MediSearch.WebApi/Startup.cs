@@ -22,7 +22,18 @@ namespace MediSearch.WebApi
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddApplicationLayer(Configuration);
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificDomain",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:5173")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .AllowCredentials();
+                    });
+            });
+            services.AddApplicationLayer(Configuration);
 			services.AddPersistenceInfrastructure(Configuration);
 			services.AddIdentityInfrastructure(Configuration);
 			services.AddSharedInfrastructure(Configuration);
@@ -50,17 +61,6 @@ namespace MediSearch.WebApi
                 options.Cookie.SameSite = SameSiteMode.None;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
-            services.AddCors(options =>
-            {
-                options.AddPolicy("AllowSpecificDomain",
-                    builder =>
-                    {
-                        builder.WithOrigins("http://localhost:5173")
-                            .AllowAnyHeader()
-                            .AllowAnyMethod()
-							.AllowCredentials();
-                    });
-            });
 			
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 		}
@@ -68,7 +68,8 @@ namespace MediSearch.WebApi
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
-			if (env.IsDevelopment())
+            app.UseCors("AllowSpecificDomain");
+            if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
 			}
@@ -87,7 +88,6 @@ namespace MediSearch.WebApi
 			app.UseSwaggerExtension();
 			app.UseHealthChecks("/health");
 			app.UseSession();
-            app.UseCors("AllowSpecificDomain");
 			app.UseStaticFiles();
 
             app.UseEndpoints(endpoints =>
