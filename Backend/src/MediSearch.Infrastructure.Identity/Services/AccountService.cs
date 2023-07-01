@@ -246,7 +246,8 @@ namespace MediSearch.Infrastructure.Identity.Services
             }
 
             var company = await _companyRepository.GetByIdAsync(request.CompanyId);
-            string userName = request.FirstName + company.Created.Day;
+            string random = Nanoid.Nanoid.Generate("0123456789", 4);
+            string userName = request.FirstName + random;
             string password = $"M{company.Created.Day}#{company.Name.Substring(0, 5)}";
 
             var user = new ApplicationUser
