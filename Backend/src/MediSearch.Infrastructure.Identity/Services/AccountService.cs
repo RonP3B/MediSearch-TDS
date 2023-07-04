@@ -30,6 +30,7 @@ namespace MediSearch.Infrastructure.Identity.Services
         IHttpContextAccessor _httpContextAccessor;
         private readonly ICompanyRepository _companyRepository;
         private readonly ICompanyUserRepository _companyUserRepository;
+        private readonly ICompanyTypeRepository _companyTypeRepository;
 
 
         public AccountService(
@@ -40,7 +41,8 @@ namespace MediSearch.Infrastructure.Identity.Services
               IOptions<RefreshJWTSettings> refreshSettings,
               IHttpContextAccessor httpContextAccessor,
               ICompanyRepository companyRepository,
-              ICompanyUserRepository companyUserRepository
+              ICompanyUserRepository companyUserRepository,
+              ICompanyTypeRepository companyTypeRepository
             )
         {
             _userManager = userManager;
@@ -51,7 +53,7 @@ namespace MediSearch.Infrastructure.Identity.Services
             _httpContextAccessor = httpContextAccessor;
             _companyRepository = companyRepository;
             _companyUserRepository = companyUserRepository;
-
+            _companyTypeRepository = companyTypeRepository;
         }
 
         public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request)
@@ -486,6 +488,13 @@ namespace MediSearch.Infrastructure.Identity.Services
             var user = await _userManager.FindByIdAsync(userId);
             var userClaims = await _userManager.GetClaimsAsync(user);
             var roles = await _userManager.GetRolesAsync(user);
+            var isEmployee = await _companyUserRepository.GetByUserAsync(userId);
+            string roletype = "Cliente";
+            if(isEmployee != null){
+                var company = await _companyRepository.GetByIdAsync(isEmployee.CompanyId);
+                var type = await _companyTypeRepository.GetByIdAsync(company.CompanyTypeId);
+                roletype = type.Name;
+            }
 
             var roleClaims = new List<Claim>();
 
@@ -500,7 +509,8 @@ namespace MediSearch.Infrastructure.Identity.Services
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Email,user.Email),
                 new Claim("uid", user.Id),
-                new Claim("UrlImage", user.UrlImage)
+                new Claim("UrlImage", user.UrlImage),
+                new Claim("RoleType", roletype)
             }
             .Union(userClaims)
             .Union(roleClaims);
