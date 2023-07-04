@@ -451,7 +451,7 @@ namespace MediSearch.Infrastructure.Identity.Services
             var company = await _companyUserRepository.GetByUserAsync(id);
             if (company != null)
             {
-                 _companyUserRepository.DeleteAsync(company);
+                 await _companyUserRepository.DeleteAsync(company);
             }
         }
 
