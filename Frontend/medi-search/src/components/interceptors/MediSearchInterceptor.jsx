@@ -25,9 +25,9 @@ const MediSearchInterceptor = ({ children }) => {
 
       async (error) => {
         const prevRequest = error.config;
-        const data = error.response.data;
+        const data = error?.response?.data;
 
-        if (data.code === "ERR_JWT" && !prevRequest.sent) {
+        if (data?.Error === "ERR_JWT" && !prevRequest.sent) {
           prevRequest.sent = true;
           const newToken = await refreshAccessToken();
 

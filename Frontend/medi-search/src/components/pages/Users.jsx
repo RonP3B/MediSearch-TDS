@@ -71,20 +71,22 @@ const Users = () => {
     };
 
     fetchEmployees();
-  }, []);
+  }, [showToast]);
 
   const deleteUser = async () => {
     if (userID === auth.payload.uid) {
-      //cambiar
       return showToast("No puedes eliminar tu propia cuenta", {
         type: "warning",
       });
     }
 
     try {
-      const res = await deleteEmployee(userID);
+      await deleteEmployee(userID);
+      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userID));
+      showToast("Usuario eliminado con éxito", { type: "success" });
     } catch (error) {
       showToast(error.response.data, { type: "error" });
+      console.log(error);
     }
   };
 
@@ -129,7 +131,7 @@ const Users = () => {
   const isNotFound = !filteredUsers.length && !!filterName;
 
   return (
-    <Container sx={{ maxWidth: "90vw" }}>
+    <Container sx={{ maxWidth: "90vw", mb: 2 }}>
       <Stack
         direction="row"
         alignItems="center"

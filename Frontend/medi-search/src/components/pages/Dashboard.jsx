@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 
 const Dashboard = () => {
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="xl" sx={{ mb: 2 }}>
       <Typography variant="h5" sx={{ mb: 5, fontWeight: "bold" }}>
         Bienvenido a MediSearch
       </Typography>

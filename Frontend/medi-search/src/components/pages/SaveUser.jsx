@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Formik, Form } from "formik";
 import { telMask } from "../../utils/masks";
-import useEmployeeRegister from "../../hooks/formiks/useEmployeeRegister";
+import useEmployeeRegisterFormik from "../../hooks/formiks/useEmployeeRegisterFormik";
 import useTerritorial from "../../hooks/useTerritorial";
 import MaskedInputField from "../custom/InputFields/MaskedInputField";
 import SubmitButton from "../custom/Buttons/SubmitButton";
@@ -16,7 +16,7 @@ const SaveUser = () => {
   const [loading, setLoading] = useState(false);
 
   const { initialValues, validationSchema, onSubmit } =
-    useEmployeeRegister(setLoading);
+    useEmployeeRegisterFormik(setLoading);
 
   const {
     provinces,
@@ -27,7 +27,7 @@ const SaveUser = () => {
   } = useTerritorial();
 
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="xl" sx={{ mb: 2 }}>
       <Typography variant="h5" sx={{ mb: 5, fontWeight: "bold" }}>
         Registrar usuario
       </Typography>
@@ -131,7 +131,7 @@ const SaveUser = () => {
                   margin="dense"
                   variant="filled"
                   fullWidth
-                  options={["", "Administrador"]}
+                  options={["", "Administrator"]}
                 />
               </Grid>
             </Grid>

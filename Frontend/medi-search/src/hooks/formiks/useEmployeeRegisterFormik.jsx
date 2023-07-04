@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import useToast from "../useToast";
 import { registerEmployee } from "../../services/MediSearchServices/AdminServices";
 
-const useEmployeeRegister = (setLoading) => {
+const useEmployeeRegisterFormik = (setLoading) => {
   const navigate = useNavigate();
   const showToast = useToast();
 
@@ -40,8 +40,6 @@ const useEmployeeRegister = (setLoading) => {
 
   const onSubmit = async (values) => {
     try {
-      console.log(values)
-      
       setLoading(true);
       await registerEmployee(values);
       navigate("/company/users");
@@ -50,7 +48,6 @@ const useEmployeeRegister = (setLoading) => {
       });
     } catch (error) {
       showToast(error.response.data, { type: "error" });
-      console.log(error)
     } finally {
       setLoading(false);
     }
@@ -59,4 +56,4 @@ const useEmployeeRegister = (setLoading) => {
   return { validationSchema, initialValues, onSubmit };
 };
 
-export default useEmployeeRegister;
+export default useEmployeeRegisterFormik;

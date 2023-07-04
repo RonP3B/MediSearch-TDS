@@ -17,7 +17,9 @@ const useRefreshToken = () => {
         token: token,
         payload: decodeJWT(res.data.jwToken),
       });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
 
     return token;
   };
