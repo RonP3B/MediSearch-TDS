@@ -153,21 +153,25 @@ namespace MediSearch.Core.Application.Helpers
 
                     int size = index + 1;
                     //DELETE THE OLD IMAGE
-                    if (currentsImgUrl.Count >= size)
+                    if (IsUpdateMode)
                     {
-                        if (IsUpdateMode && !string.IsNullOrWhiteSpace(currentsImgUrl[index]))
+                        if (currentsImgUrl.Count >= size)
                         {
-                            string[] oldImagePart = currentsImgUrl[index].Split("/");
-                            string oldImageFileName = oldImagePart[^1];
-                            string completeOldImagePath = Path.Combine(ServerAndBasePath, oldImageFileName);
-
-                            if (File.Exists(completeOldImagePath))
+                            if (!string.IsNullOrWhiteSpace(currentsImgUrl[index]))
                             {
-                                File.Delete(completeOldImagePath);
-                            }
+                                string[] oldImagePart = currentsImgUrl[index].Split("/");
+                                string oldImageFileName = oldImagePart[^1];
+                                string completeOldImagePath = Path.Combine(ServerAndBasePath, oldImageFileName);
 
+                                if (File.Exists(completeOldImagePath))
+                                {
+                                    File.Delete(completeOldImagePath);
+                                }
+
+                            }
                         }
                     }
+
 
                     imgUrl.Insert(index, $"{basePath}/{uniqueFileName}");
                 }
