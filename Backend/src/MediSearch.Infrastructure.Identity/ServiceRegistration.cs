@@ -30,8 +30,16 @@ namespace MediSearch.Infrastructure.Identity
 			connection = connection.Replace("#", password);
 			connection = connection.Replace("ServerHost", host);
 
-			#region Contexts
-			if (configuration.GetValue<bool>("UseInMemoryDatabase"))
+            #region Vaciar tablas
+            /*var optionsBuilder = new DbContextOptionsBuilder<IdentityContext>();
+            optionsBuilder.EnableSensitiveDataLogging();
+            optionsBuilder.UseNpgsql(connection, m => m.MigrationsAssembly(typeof(IdentityContext).Assembly.FullName));
+            var context = new IdentityContext(optionsBuilder.Options);
+			context.TruncateTables();*/
+            #endregion
+
+            #region Contexts
+            if (configuration.GetValue<bool>("UseInMemoryDatabase"))
 			{
 				services.AddDbContext<IdentityContext>(options => options.UseInMemoryDatabase("MediSearchDb"));
 			}

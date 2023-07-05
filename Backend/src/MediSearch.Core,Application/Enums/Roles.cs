@@ -8,9 +8,8 @@ namespace MediSearch.Core.Application.Enums
 {
 	public enum Roles
 	{
-		Administrator,
-		Manager,
-		Doctor,
+		SuperAdmin,
+		Admin,
 		Client
 	}
 }

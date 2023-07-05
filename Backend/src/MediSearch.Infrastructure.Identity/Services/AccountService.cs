@@ -194,7 +194,7 @@ namespace MediSearch.Infrastructure.Identity.Services
             {
                 try
                 {
-                    await _userManager.AddToRoleAsync(user, Roles.Administrator.ToString());
+                    await _userManager.AddToRoleAsync(user, Roles.SuperAdmin.ToString());
                     var entity = await _companyRepository.AddAsync(company);
                     var companyUser = new CompanyUser()
                     {

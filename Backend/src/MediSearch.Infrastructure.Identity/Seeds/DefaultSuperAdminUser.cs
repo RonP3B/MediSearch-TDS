@@ -32,9 +32,8 @@ namespace MediSearch.Infrastructure.Identity.Seeds
                 {
                     await userManager.CreateAsync(defaultUser, "1505Pa@@word");
                     await userManager.AddToRoleAsync(defaultUser, Roles.Client.ToString());
-                    await userManager.AddToRoleAsync(defaultUser, Roles.Administrator.ToString());
-                    await userManager.AddToRoleAsync(defaultUser, Roles.Doctor.ToString());
-					await userManager.AddToRoleAsync(defaultUser, Roles.Manager.ToString());
+                    await userManager.AddToRoleAsync(defaultUser, Roles.SuperAdmin.ToString());
+                    await userManager.AddToRoleAsync(defaultUser, Roles.Admin.ToString());
 
 				}
 			}

@@ -1,10 +1,12 @@
-﻿using MediSearch.Infrastructure.Identity.Entities;
+﻿using MediSearch.Core.Domain.Entities;
+using MediSearch.Infrastructure.Identity.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,5 +42,20 @@ namespace MediSearch.Infrastructure.Identity.Contexts
 			});
 
 		}
-	}
+
+        public void TruncateTables()
+        {
+            var users = Set<ApplicationUser>();
+            var roles = Set<IdentityRole>();
+            var userRoles = Set<IdentityUserRole<string>>();
+            var logins = Set<IdentityUserLogin<string>>();
+
+            users.RemoveRange(users);
+            roles.RemoveRange(roles);
+            userRoles.RemoveRange(userRoles);
+            logins.RemoveRange(logins);
+
+			SaveChanges();
+        }
+    }
 }

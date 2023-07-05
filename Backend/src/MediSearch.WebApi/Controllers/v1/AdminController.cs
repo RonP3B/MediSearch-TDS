@@ -10,7 +10,6 @@ using System.Net.Mime;
 
 namespace MediSearch.WebApi.Controllers.v1
 {
-    [Authorize(Roles = "Administrator")]
     [SwaggerTag("Administración de empresa")]
     public class AdminController : BaseApiController
     {
@@ -20,6 +19,7 @@ namespace MediSearch.WebApi.Controllers.v1
             _serviceScopeFactory = serviceScopeFactory;
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpGet("GetAllEmployees")]
         [SwaggerOperation(
             Summary = "Todos los empleados de la empresa.",
@@ -49,6 +49,7 @@ namespace MediSearch.WebApi.Controllers.v1
 
         }
 
+        [Authorize(Roles = "SuperAdmin")]
         [HttpPost("register-employee")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RegisterResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(RegisterResponse))]
@@ -89,6 +90,7 @@ namespace MediSearch.WebApi.Controllers.v1
             }
         }
 
+        [Authorize(Roles = "SuperAdmin")]
         [HttpDelete("delete-employee/{id}")]
         [Consumes(MediaTypeNames.Application.Json)]
         [SwaggerOperation(

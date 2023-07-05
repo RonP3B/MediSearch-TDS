@@ -12,7 +12,7 @@ using System.Net.Mime;
 
 namespace MediSearch.WebApi.Controllers.v1
 {
-    [Authorize(Roles = "Administrator, Manager")]
+    [Authorize(Roles = "SuperAdmin, Admin")]
     [SwaggerTag("Mantenimiento de Productos")]
     public class ProductController : BaseApiController
     {
