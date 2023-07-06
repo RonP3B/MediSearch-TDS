@@ -12,6 +12,7 @@ using MediSearch.Core.Application.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net.Mime;
+using MediSearch.Core.Application.Features.Account.Commands.ValidateRefreshToken;
 
 namespace MediSearch.WebApi.Controllers
 {
@@ -98,6 +99,32 @@ namespace MediSearch.WebApi.Controllers
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError);
                 }
+
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+        }
+
+        [HttpGet("validate-refresh-token")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ValidateRefreshTokenResponse))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(AuthenticationResponse))]
+        [SwaggerOperation(
+           Summary = "Validar el refresh token",
+           Description = "Verifica si existe refresh token y lo valida"
+        )]
+        public async Task<IActionResult> ValidateRefreshToken()
+        {
+            try
+            {
+                var token = Request.Cookies["refreshToken"];
+                if (token == null)
+                {
+                    return Ok(new ValidateRefreshTokenResponse() { ValidRefreshToken = false });
+                }
+                var response = await Mediator.Send(new ValidateRefreshTokenCommand() { refreshToken = token});
 
                 return Ok(response);
             }
