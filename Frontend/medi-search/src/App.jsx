@@ -48,9 +48,20 @@ const App = () => {
             {/* Limit this to company accounts */}
             <Route path="/company/dashboard" element={<Dashboard />} />
             <Route path="/company/users" element={<Users />} />
+
+            {/* Limit this to SuperAdmin rol */}
             <Route path="/company/users/add" element={<SaveUser />} />
+            {/* Limit this to SuperAdmin rol */}
+
             <Route path="/company/products" element={<Products />} />
-            <Route path="/company/products/add" element={<SaveProduct />} />
+            <Route
+              path="/company/products/add"
+              element={<SaveProduct edit={false} />}
+            />
+            <Route
+              path="/company/products/edit/:id"
+              element={<SaveProduct edit={true} />}
+            />
             {/* Limit this to company accounts */}
           </Route>
           {/* Routes that require to be authorized */}

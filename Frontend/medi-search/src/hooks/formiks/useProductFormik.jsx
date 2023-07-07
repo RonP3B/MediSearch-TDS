@@ -1,9 +1,12 @@
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-import useToast from "../useToast";
-import { createProduct } from "../../services/MediSearchServices/ProductServices";
+import useToast from "../feedback/useToast";
+import {
+  createProduct,
+  editProduct,
+} from "../../services/MediSearchServices/ProductServices";
 
-const useProductFormik = (setLoading) => {
+const useProductFormik = (setLoading, edit) => {
   const navigate = useNavigate();
   const showToast = useToast();
 
@@ -29,18 +32,22 @@ const useProductFormik = (setLoading) => {
     quantity: Yup.number("Solo se pueden ingresar números")
       .min(1, "La cantidad debe ser mayor o igual a 1")
       .required("La cantidad es requerida"),
-    images: Yup.array().min(1, "Seleccione al menos una imagen"),
+    images: edit
+      ? Yup.array()
+      : Yup.array().min(1, "Seleccione al menos una imagen"),
   });
 
   const onSubmit = async (values) => {
     try {
-      console.log(values);
       setLoading(true);
-      await createProduct(values);
+      edit ? await editProduct(values) : await createProduct(values);
       navigate("/company/products");
-      showToast("Producto creado con éxito", { type: "success" });
+      showToast(`Producto ${edit ? "editado" : "creado"} con éxito`, {
+        type: "success",
+      });
     } catch (error) {
       showToast(error.response.data, { type: "error" });
+      console.log(error);
     } finally {
       setLoading(false);
     }
