@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { toast } from "react-toastify";
-import ColorModeContext from "../components/contexts/ColorModeContext";
+import ColorModeContext from "../../components/contexts/ColorModeContext";
 
 const useToast = () => {
   const colorMode = useContext(ColorModeContext);

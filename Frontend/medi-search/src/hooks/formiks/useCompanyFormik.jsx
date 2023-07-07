@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { registerCompany } from "../../services/MediSearchServices/AccountServices";
-import useToast from "../useToast";
+import useToast from "../feedback/useToast";
 
 const useCompanyFormik = (setLoading) => {
   const navigate = useNavigate();

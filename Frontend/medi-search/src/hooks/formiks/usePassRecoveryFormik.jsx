@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-import useToast from "../useToast";
+import useToast from "../feedback/useToast";
 import {
   changePassword,
   confirmCode,
@@ -67,11 +67,11 @@ const usePassRecoveryFormik = (
       showToast("Se ha enviado el código al correo electrónico del usuario", {
         type: "success",
       });
+      setActiveStep(1);
     } catch (error) {
       showToast(error.response.data, { type: "error" });
     } finally {
       setLoading(false);
-      setActiveStep(1);
     }
   };
 
@@ -80,11 +80,11 @@ const usePassRecoveryFormik = (
       setLoading(true);
       await confirmCode(values);
       setCodeValidated(true);
+      setActiveStep(2);
     } catch (error) {
       showToast(error.response.data, { type: "error" });
     } finally {
       setLoading(false);
-      setActiveStep(2);
     }
   };
 
@@ -96,11 +96,11 @@ const usePassRecoveryFormik = (
       showToast("Su contraseña ha sido cambiada correctamente", {
         type: "success",
       });
+      setActiveStep(3);
     } catch (error) {
       showToast(error.response.data, { type: "error" });
     } finally {
       setLoading(false);
-      setActiveStep(3);
     }
   };
 

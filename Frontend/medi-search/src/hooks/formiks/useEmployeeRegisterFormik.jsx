@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-import useToast from "../useToast";
+import useToast from "../feedback/useToast";
 import { registerEmployee } from "../../services/MediSearchServices/AdminServices";
 
 const useEmployeeRegisterFormik = (setLoading) => {

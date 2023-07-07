@@ -3,12 +3,12 @@ import { login } from "../../services/MediSearchServices/AccountServices";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../persistence/useAuth";
 import decodeJWT from "../../utils/decodeJWT";
-import useToast from "../useToast";
+import useToast from "../feedback/useToast";
 
 const useLoginFormik = (setLoading) => {
   const { setAuth } = useAuth();
-  const navigate = useNavigate()
-  const showToast = useToast()
+  const navigate = useNavigate();
+  const showToast = useToast();
   const initialValues = { userName: "", password: "" };
 
   const validationSchema = Yup.object({
@@ -20,16 +20,16 @@ const useLoginFormik = (setLoading) => {
     try {
       setLoading(true);
       const res = await login(values);
-      const decoded = decodeJWT(res.data.jwToken)
+      const decoded = decodeJWT(res.data.jwToken);
 
       setAuth({
         token: res.data.jwToken,
         payload: decoded,
       });
 
-      decoded.roles === "Administrator" && navigate("/company/dashboard")
+      decoded.roles === "Administrator" && navigate("/company/dashboard");
     } catch (error) {
-      showToast(error.response.data, { type: "error"});
+      showToast(error.response.data, { type: "error" });
     } finally {
       setLoading(false);
     }
