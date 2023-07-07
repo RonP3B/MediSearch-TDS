@@ -131,7 +131,7 @@ const SaveUser = () => {
                   margin="dense"
                   variant="filled"
                   fullWidth
-                  options={["", "Administrator"]}
+                  options={["", "SuperAdmin", "Admin"]}
                 />
               </Grid>
             </Grid>

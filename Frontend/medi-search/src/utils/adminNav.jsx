@@ -1,6 +1,8 @@
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PersonIcon from "@mui/icons-material/Person";
-import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import BusinessIcon from "@mui/icons-material/Business";
 
 export const adminNav = [
@@ -15,9 +17,19 @@ export const adminNav = [
     to: "/company/users",
   },
   {
+    item: "Crear Usuario",
+    icon: <PersonAddIcon />,
+    to: "/company/users/add",
+  },
+  {
     item: "Productos",
-    icon: <ShoppingBasketIcon />,
+    icon: <ShoppingCartIcon />,
     to: "/company/products",
+  },
+  {
+    item: "Crear Producto",
+    icon: <AddShoppingCartIcon />,
+    to: "/company/products/add",
   },
   {
     item: "Proveedores",
