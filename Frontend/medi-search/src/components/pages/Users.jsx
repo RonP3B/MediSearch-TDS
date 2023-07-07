@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { useConfirm } from "material-ui-confirm";
 import { getComparator, applySortFilter } from "../../utils/tableHelpers";
 import {
   deleteEmployee,
   getAllEmployees,
 } from "../../services/MediSearchServices/AdminServices";
-import useToast from "../../hooks/useToast";
+import useToast from "../../hooks/feedback/useToast";
 import useAuth from "../../hooks/persistence/useAuth";
 import UserListHead from "../custom/UserLists/UserListHead";
 import UserListToolbar from "../custom/UserLists/UserListToolbar";
@@ -54,39 +55,58 @@ const Users = () => {
   const [filterName, setFilterName] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const showToast = useToast();
+  const showToastRef = useRef(showToast);
   const { auth } = useAuth();
+  const confirm = useConfirm();
 
   useEffect(() => {
+    console.count("Users.jsx"); //borrame
+    let isMounted = true;
+
     const fetchEmployees = async () => {
       try {
         const res = await getAllEmployees();
-        setUsers(res.data.$values);
+        isMounted && setUsers(res.data.$values);
       } catch (error) {
-        showToast("Ocurrió un error al obtener los usuarios", {
-          type: "error",
-        });
+        if (error.response?.data?.Error === "ERR_JWT") return;
+
+        showToastRef.current(
+          "Ocurrió un error al obtener los usuarios, informelo al equipo técnico",
+          {
+            type: "error",
+          }
+        );
       } finally {
-        setLoading(false);
+        isMounted && setLoading(false);
       }
     };
 
     fetchEmployees();
-  }, [showToast]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [showToastRef]);
 
   const deleteUser = async () => {
-    if (userID === auth.payload.uid) {
-      return showToast("No puedes eliminar tu propia cuenta", {
-        type: "warning",
-      });
-    }
-
     try {
+      setOpen(null);
+
+      await confirm({
+        title: "Confirmación",
+        description: "¿Estás seguro que deseas eliminar a este usuario?",
+        cancellationText: "Cancelar",
+      });
+
       await deleteEmployee(userID);
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userID));
       showToast("Usuario eliminado con éxito", { type: "success" });
     } catch (error) {
-      showToast(error.response.data, { type: "error" });
-      console.log(error);
+      if (error?.response)
+        showToast(
+          "Ocurrió un error al intentar eliminar un usuario, informelo al equipo técnico",
+          { type: "error" }
+        );
     }
   };
 
@@ -194,6 +214,8 @@ const Users = () => {
                       urlImage,
                     } = row;
 
+                    if (id === auth.payload.uid) return null;
+
                     return (
                       <TableRow hover key={id} tabIndex={-1} role="checkbox">
                         <TableCell component="th" scope="row" padding="none">
@@ -259,33 +281,36 @@ const Users = () => {
                 </TableRow>
               </TableBody>
             )}
-            {users.length === 0 && !loading && (
-              <TableBody>
-                <TableRow>
-                  <TableCell align="center" colSpan={8} sx={{ py: 3 }}>
-                    <Paper
-                      sx={{
-                        textAlign: "center",
-                        padding: 2,
-                      }}
-                    >
-                      <Typography variant="h6" paragraph>
-                        No hay ningún usuario registrado
-                      </Typography>
-
-                      <Button
-                        component={Link}
-                        to="add"
-                        variant="contained"
-                        startIcon={<AddIcon />}
+            {users.length === 1 &&
+              users[0].id === auth.payload.uid &&
+              !isNotFound &&
+              !loading && (
+                <TableBody>
+                  <TableRow>
+                    <TableCell align="center" colSpan={8} sx={{ py: 3 }}>
+                      <Paper
+                        sx={{
+                          textAlign: "center",
+                          padding: 2,
+                        }}
                       >
-                        Nuevo Usuario
-                      </Button>
-                    </Paper>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            )}
+                        <Typography variant="h6" paragraph>
+                          No hay ningún usuario registrado
+                        </Typography>
+
+                        <Button
+                          component={Link}
+                          to="add"
+                          variant="contained"
+                          startIcon={<AddIcon />}
+                        >
+                          Nuevo Usuario
+                        </Button>
+                      </Paper>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              )}
           </Table>
         </TableContainer>
         <TablePagination
