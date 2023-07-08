@@ -6,6 +6,7 @@ namespace MediSearch.Core.Application.Interfaces.Repositories
 {
     public interface IHallUserRepository : IGenericRepository<HallUser>
     {
-        
+        Task<List<HallUser>> GetByUserAsync(string user);
+        Task<List<HallUser>> GetByHallAsync(string hallId);
     }
 }

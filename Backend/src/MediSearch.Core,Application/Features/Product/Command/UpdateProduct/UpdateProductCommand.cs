@@ -15,7 +15,7 @@ namespace MediSearch.Core.Application.Features.Product.Command.UpdateProduct
         [SwaggerParameter(Description = "Id del producto a actualizar.")]
         [Required(ErrorMessage = "Debe de especificar un nombre para este producto.")]
         public string Id { get; set; }
-        
+
         [SwaggerParameter(Description = "Nombre nuevo para el producto.")]
         [Required(ErrorMessage = "Debe de especificar un nombre para este producto.")]
         public string Name { get; set; }
@@ -41,8 +41,7 @@ namespace MediSearch.Core.Application.Features.Product.Command.UpdateProduct
         public int Quantity { get; set; }
 
         [SwaggerParameter(Description = "Imágenes que deseas destinar para el producto.")]
-        [MinLength(1, ErrorMessage = "Debe de subir al menos una imagén para este producto.")]
-        public IFormFile[] Images { get; set; }
+        public IFormFile[]? Images { get; set; }
         [JsonIgnore]
         public string? CompanyId { get; set; }
 
@@ -80,7 +79,14 @@ namespace MediSearch.Core.Application.Features.Product.Command.UpdateProduct
                 var newValues = _mapper.Map<Domain.Entities.Product>(command);
                 newValues.Created = valueToUpdate.Created;
                 newValues.CreatedBy = valueToUpdate.CreatedBy;
-                newValues.UrlImages = await ImageUpload.UploadImagesProduct(command.Images, newValues.Id, true, valueToUpdate.UrlImages);
+                if (command.Images != null && command.Images.Length != 0)
+                {
+                    newValues.UrlImages = await ImageUpload.UploadImagesProduct(command.Images, newValues.Id, true, valueToUpdate.UrlImages);
+                }
+                else
+                {
+                    newValues.UrlImages = valueToUpdate.UrlImages;
+                }
 
                 await _productRepository.UpdateAsync(newValues, newValues.Id);
                 response.IsSuccess = true;

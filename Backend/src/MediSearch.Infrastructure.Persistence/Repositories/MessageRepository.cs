@@ -16,5 +16,13 @@ namespace MediSearch.Infrastructure.Persistence.Repositories
         {
             _dbContext = dbContext;
         }
+
+        public async Task<List<Message>> GetByHall(string hall)
+        {
+            var messages = await GetAllAsync();
+
+            var result = messages.Where(m => m.HallId == hall).ToList();
+            return result;
+        }
     }
 }

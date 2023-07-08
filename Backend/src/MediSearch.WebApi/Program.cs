@@ -35,9 +35,11 @@ namespace MediSearch.WebApi
 					#endregion
 
 					#region Application
-					var typeRepository = services.GetRequiredService<ICompanyTypeRepository>();
+					var companyRepository = services.GetRequiredService<ICompanyTypeRepository>();
+					var messageRepository = services.GetRequiredService<IMessageTypeRepository>();
 
-					await DefaultCompanyType.SeedAsync(typeRepository);
+					await DefaultCompanyType.SeedAsync(companyRepository);
+					await DefaultMessageType.SeedAsync(messageRepository);
                     #endregion
                 }
                 catch (Exception ex)

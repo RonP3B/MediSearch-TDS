@@ -6,6 +6,6 @@ namespace MediSearch.Core.Application.Interfaces.Repositories
 {
     public interface IMessageRepository : IGenericRepository<Message>
     {
-        
+        Task<List<Message>> GetByHall(string hall);
     }
 }

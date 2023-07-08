@@ -632,6 +632,12 @@ namespace MediSearch.Infrastructure.Identity.Services
         {
             var company = await _companyUserRepository.GetByUserAsync(id);
             var user = await _userManager.FindByIdAsync(id);
+
+            if(user == null)
+            {
+                return null;
+            }
+
             var roles = await _userManager.GetRolesAsync(user);
 
             UserDTO dto = new()
@@ -646,7 +652,7 @@ namespace MediSearch.Infrastructure.Identity.Services
                 Province = user.Province,
                 Municipality = user.Municipality,
                 Role = roles.First(),
-                CompanyId = company.CompanyId
+                CompanyId = company == null ? "Client" : company.CompanyId
             };
 
             return dto;
