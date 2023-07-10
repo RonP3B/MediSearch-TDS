@@ -14,11 +14,15 @@ import MultipleSelectField from "../custom/InputFields/MultipleSelectField";
 import useProductFormik from "../../hooks/formiks/useProductFormik";
 import MultipleFileInputField from "../custom/InputFields/MultipleFileInputField";
 import { getProduct } from "../../services/MediSearchServices/ProductServices";
+import ImageSlider from "../custom/ImageSlider/ImageSlider";
+
+const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
 const SaveProduct = ({ edit }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
+  const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(edit);
   const [submitLoading, setSubmitLoading] = useState(false);
   const showToast = useToast();
@@ -35,7 +39,11 @@ const SaveProduct = ({ edit }) => {
     const fetchProduct = async () => {
       try {
         const res = await getProduct(id);
-        isMounted && setProduct(res.data);
+
+        if (isMounted) {
+          setProduct(res.data);
+          setImages(res.data.urlImages.$values.map((url) => ASSETS + url));
+        }
       } catch (error) {
         if (error.response?.data?.Error === "ERR_JWT") return;
 
@@ -75,110 +83,147 @@ const SaveProduct = ({ edit }) => {
           <CircularProgress />
         </Box>
       ) : (
-        <Formik
-          initialValues={
-            edit
-              ? {
-                  name: product.name,
-                  description: product.description,
-                  categories: product.categories.$values,
-                  components: product.components.$values,
-                  price: product.price,
-                  quantity: product.quantity,
-                  images: [],
-                  companyId: null,
-                }
-              : initialValues
-          }
-          onSubmit={onSubmit}
-          validationSchema={validationSchema}
-        >
-          {() => (
-            <Form>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <MultipleFileInputField
-                    accept="image/*"
-                    label="Imagenes"
-                    name="images"
-                    margin="dense"
-                    variant="filled"
-                    fullWidth
+        <>
+          {images.length > 0 && (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                flexDirection: "column",
+              }}
+            >
+              {images.length > 1 ? (
+                <>
+                  <Typography sx={{ fontWeight: "bold" }}>
+                    Imagenes seleccionadas:
+                  </Typography>
+                  <ImageSlider images={images} width={200} height={150} />
+                </>
+              ) : (
+                <>
+                  <Typography sx={{ fontWeight: "bold" }}>
+                    Imagen seleccionada:
+                  </Typography>
+                  <Box
+                    component="img"
+                    src={images[0]}
+                    width={200}
+                    height={150}
+                    sx={{
+                      border: "2px solid",
+                      borderColor: "primary.main",
+                    }}
                   />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <InputField
-                    name="name"
-                    label="Nombre del producto"
-                    margin="dense"
-                    variant="filled"
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <MultipleSelectField
-                    label="Categorías"
-                    name="categories"
-                    variant="filled"
-                    margin="dense"
-                    fullWidth
-                    options={["a", "b", "c"]}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <MultipleSelectField
-                    label="Componentes"
-                    name="components"
-                    variant="filled"
-                    margin="dense"
-                    fullWidth
-                    options={["s", "z", "x"]}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <InputField
-                    name="price"
-                    label="Precio"
-                    type="number"
-                    margin="dense"
-                    variant="filled"
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <InputField
-                    name="quantity"
-                    label="Cantidad"
-                    type="number"
-                    margin="dense"
-                    variant="filled"
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <InputField
-                    name="description"
-                    label="Descripción del producto"
-                    margin="dense"
-                    variant="filled"
-                    multiline
-                    maxRows={4}
-                    minRows={4}
-                    fullWidth
-                  />
-                </Grid>
-              </Grid>
-              <Box display="flex" justifyContent="end" mt="20px">
-                <SubmitButton
-                  loading={submitLoading}
-                  text={`${edit ? "Editar" : "Crear"} producto`}
-                  loadingText={`${edit ? "Editando" : "Creando"} producto...`}
-                  variant="contained"
-                />
-              </Box>
-            </Form>
+                </>
+              )}
+            </Box>
           )}
-        </Formik>
+          <Formik
+            initialValues={
+              edit
+                ? {
+                    id: product.id,
+                    name: product.name,
+                    description: product.description,
+                    categories: product.categories.$values,
+                    components: product.components.$values,
+                    price: product.price,
+                    quantity: product.quantity,
+                    images: [],
+                  }
+                : initialValues
+            }
+            onSubmit={onSubmit}
+            validationSchema={validationSchema}
+          >
+            {() => (
+              <Form>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <MultipleFileInputField
+                      accept="image/*"
+                      label="Imagenes"
+                      name="images"
+                      setImages={setImages}
+                      margin="dense"
+                      variant="filled"
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <InputField
+                      name="name"
+                      label="Nombre del producto"
+                      margin="dense"
+                      variant="filled"
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <MultipleSelectField
+                      label="Categorías"
+                      name="categories"
+                      variant="filled"
+                      margin="dense"
+                      fullWidth
+                      options={["a", "b", "c"]}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <MultipleSelectField
+                      label="Componentes"
+                      name="components"
+                      variant="filled"
+                      margin="dense"
+                      fullWidth
+                      options={["s", "z", "x"]}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <InputField
+                      name="price"
+                      label="Precio"
+                      type="number"
+                      margin="dense"
+                      variant="filled"
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <InputField
+                      name="quantity"
+                      label="Cantidad"
+                      type="number"
+                      margin="dense"
+                      variant="filled"
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <InputField
+                      name="description"
+                      label="Descripción del producto"
+                      margin="dense"
+                      variant="filled"
+                      multiline
+                      maxRows={4}
+                      minRows={4}
+                      fullWidth
+                    />
+                  </Grid>
+                </Grid>
+                <Box display="flex" justifyContent="end" mt="20px">
+                  <SubmitButton
+                    loading={submitLoading}
+                    text={`${edit ? "Editar" : "Crear"} producto`}
+                    loadingText={`${edit ? "Editando" : "Creando"} producto...`}
+                    variant="contained"
+                  />
+                </Box>
+              </Form>
+            )}
+          </Formik>
+        </>
       )}
     </Container>
   );

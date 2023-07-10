@@ -15,10 +15,9 @@ const useProductFormik = (setLoading, edit) => {
     description: "",
     categories: [],
     components: [],
-    price: 0,
-    quantity: 0,
+    price: "",
+    quantity: "",
     images: [],
-    companyId: null,
   };
 
   const validationSchema = Yup.object({

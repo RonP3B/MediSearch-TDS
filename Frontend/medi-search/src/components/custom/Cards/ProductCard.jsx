@@ -20,12 +20,12 @@ const ProductCard = ({ product, company, handleDelete }) => {
     <Card sx={{ maxWidth: 345, margin: "0 auto" }}>
       <CardMedia
         component="img"
-        height="140"
+        height="160"
         image={firstImageUrl}
         alt="Nombre del producto"
       />
       <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
+        <Typography gutterBottom variant="h6" component="div" noWrap>
           {name}
         </Typography>
         <Typography variant="body2" color="text.secondary">

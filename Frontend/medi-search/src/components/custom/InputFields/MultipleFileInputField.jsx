@@ -7,7 +7,13 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 
-const MultipleFileInputField = ({ accept, label, name, ...props }) => {
+const MultipleFileInputField = ({
+  accept,
+  label,
+  name,
+  setImages,
+  ...props
+}) => {
   const inputRef = useRef(null);
   const [field, meta] = useField(name);
   const formik = useFormikContext();
@@ -17,6 +23,28 @@ const MultipleFileInputField = ({ accept, label, name, ...props }) => {
 
     if (files.length > 0) {
       formik.setFieldValue(name, files);
+
+      if (setImages) {
+        const imagesArray = [];
+
+        const readImageAsDataURL = (file) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            imagesArray.push(reader.result);
+
+            if (imagesArray.length === files.length) {
+              setImages(imagesArray);
+            }
+          };
+          reader.readAsDataURL(file);
+        };
+
+        files.forEach((file) => {
+          if (file.type.startsWith("image/")) {
+            readImageAsDataURL(file);
+          }
+        });
+      }
     }
   };
 
@@ -64,6 +92,7 @@ MultipleFileInputField.propTypes = {
   accept: PropTypes.string,
   label: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
+  setImages: PropTypes.func,
 };
 
 export default MultipleFileInputField;
