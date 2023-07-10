@@ -10,14 +10,29 @@ const useProductFormik = (setLoading, edit) => {
   const navigate = useNavigate();
   const showToast = useToast();
 
-  const initialValues = {
-    name: "",
-    description: "",
-    categories: [],
-    components: [],
-    price: "",
-    quantity: "",
-    images: [],
+  const getInitialValues = () => {
+    return {
+      name: "",
+      description: "",
+      categories: [],
+      components: [],
+      price: "",
+      quantity: "",
+      images: [],
+    };
+  };
+
+  const getEditInitialValues = (product) => {
+    return {
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      categories: product.categories.$values,
+      components: product.components.$values,
+      price: product.price,
+      quantity: product.quantity,
+      images: [],
+    };
   };
 
   const validationSchema = Yup.object({
@@ -52,7 +67,7 @@ const useProductFormik = (setLoading, edit) => {
     }
   };
 
-  return { validationSchema, initialValues, onSubmit };
+  return { validationSchema, getInitialValues, getEditInitialValues, onSubmit };
 };
 
 export default useProductFormik;

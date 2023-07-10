@@ -27,10 +27,14 @@ const SaveProduct = ({ edit }) => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const showToast = useToast();
   const showToastRef = useRef(showToast);
-  const { initialValues, validationSchema, onSubmit } = useProductFormik(
-    setSubmitLoading,
-    edit
-  );
+  const formikRef = useRef(null);
+
+  const { getInitialValues, getEditInitialValues, validationSchema, onSubmit } =
+    useProductFormik(setSubmitLoading, edit);
+
+  const resetFormValues = () => {
+    formikRef.current.resetForm();
+  };
 
   useEffect(() => {
     console.count("SaveProduct.jsx"); //borrame
@@ -66,6 +70,13 @@ const SaveProduct = ({ edit }) => {
       isMounted = false;
     };
   }, [showToastRef, edit, id, navigate]);
+
+  useEffect(() => {
+    if (!edit) {
+      resetFormValues();
+      setImages([]);
+    }
+  }, [edit]);
 
   return (
     <Container maxWidth="xl" sx={{ mb: 2 }}>
@@ -119,22 +130,13 @@ const SaveProduct = ({ edit }) => {
             </Box>
           )}
           <Formik
+            enableReinitialize={true}
             initialValues={
-              edit
-                ? {
-                    id: product.id,
-                    name: product.name,
-                    description: product.description,
-                    categories: product.categories.$values,
-                    components: product.components.$values,
-                    price: product.price,
-                    quantity: product.quantity,
-                    images: [],
-                  }
-                : initialValues
+              edit ? getEditInitialValues(product) : getInitialValues()
             }
             onSubmit={onSubmit}
             validationSchema={validationSchema}
+            innerRef={formikRef}
           >
             {() => (
               <Form>
