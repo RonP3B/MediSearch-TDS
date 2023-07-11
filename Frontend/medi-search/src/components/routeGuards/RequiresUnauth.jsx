@@ -3,7 +3,10 @@ import useAuth from "../../hooks/persistence/useAuth";
 
 const RequiresUnauth = () => {
   const { auth } = useAuth();
-  return !auth.token ? <Outlet /> : <Navigate to="/" replace />;
+  const role = auth?.payload?.roles;
+  const redirectTo = role === "Client" ? "/" : "/company/dashboard";
+
+  return !auth.token ? <Outlet /> : <Navigate to={redirectTo} replace />;
 };
 
 export default RequiresUnauth;

@@ -89,6 +89,7 @@ const SaveProduct = ({ edit }) => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            height: "70vh",
           }}
         >
           <CircularProgress />

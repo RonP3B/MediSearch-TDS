@@ -89,9 +89,15 @@ const Users = () => {
   }, [showToastRef]);
 
   const deleteUser = async () => {
-    try {
-      setOpen(null);
+    setOpen(null);
 
+    if (auth.payload.roles !== "SuperAdmin") {
+      return showToast("No tienes permiso para realizar esta acción", {
+        type: "warning",
+      });
+    }
+
+    try {
       await confirm({
         title: "Confirmación",
         description: "¿Estás seguro que deseas eliminar a este usuario?",

@@ -27,7 +27,7 @@ const useLoginFormik = (setLoading) => {
         payload: decoded,
       });
 
-      decoded.roles === "Administrator" && navigate("/company/dashboard");
+      decoded.roles !== "Client" && navigate("/company/dashboard");
     } catch (error) {
       showToast(error.response.data, { type: "error" });
     } finally {

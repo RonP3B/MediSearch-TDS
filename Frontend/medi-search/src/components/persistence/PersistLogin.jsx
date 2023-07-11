@@ -26,13 +26,14 @@ const PersistLogin = () => {
 
   return (
     <>
+      {console.log(auth)}
       {loading ? (
         <Box
           sx={{
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            height: "100vh",
+            height: "85vh",
           }}
         >
           <CircularProgress />

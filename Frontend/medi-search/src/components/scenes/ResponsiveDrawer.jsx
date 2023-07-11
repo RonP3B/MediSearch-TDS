@@ -80,18 +80,24 @@ const ResponsiveDrawer = (props) => {
         <Typography sx={{ fontWeight: "bold" }}>{auth.payload.sub}</Typography>
       </Paper>
       <List>
-        {nav.map(({ item, icon, to }) => (
-          <ListItem
-            key={item}
-            disablePadding
-            selected={location.pathname === to}
-          >
-            <ListItemButton component={Link} to={to}>
-              <ListItemIcon>{icon}</ListItemIcon>
-              <ListItemText primary={item} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        {nav.map(({ item, icon, to }) => {
+          if (item === "Crear Usuario" && auth.payload.roles !== "SuperAdmin") {
+            return null;
+          }
+
+          return (
+            <ListItem
+              key={item}
+              disablePadding
+              selected={location.pathname === to}
+            >
+              <ListItemButton component={Link} to={to}>
+                <ListItemIcon>{icon}</ListItemIcon>
+                <ListItemText primary={item} />
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
       </List>
     </div>
   );
