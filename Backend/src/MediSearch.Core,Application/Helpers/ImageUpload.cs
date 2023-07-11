@@ -183,6 +183,18 @@ namespace MediSearch.Core.Application.Helpers
                 index++;
             }
 
+            if (currentsImgUrl != null)
+            {
+                if (imgUrl.Count < currentsImgUrl.Count)
+                {
+                    while (imgUrl.Count != currentsImgUrl.Count)
+                    {
+                        imgUrl.Insert(index, currentsImgUrl[index]);
+                        index++;
+                    }
+                }
+            }
+
             return imgUrl;
         }
 
