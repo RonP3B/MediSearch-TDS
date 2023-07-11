@@ -14,6 +14,7 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
     {
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
 
+        public DbSet<Comment> Comments { get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<CompanyType> CompanyTypes { get; set; }
         public DbSet<CompanyUser> CompanyUsers { get; set; }
@@ -22,6 +23,7 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
         public DbSet<Message> Messages { get; set; }
         public DbSet<MessageType> MessagTypes { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Replie> Replies { get; set; }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
@@ -51,6 +53,9 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
 
             #region Tables
 
+            modelBuilder.Entity<Comment>()
+                .ToTable("Comments");
+            
             modelBuilder.Entity<Company>()
                 .ToTable("Companies");
 
@@ -74,9 +79,15 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
 
             modelBuilder.Entity<Product>()
                 .ToTable("Products");
+            
+            modelBuilder.Entity<Replie>()
+                .ToTable("Replies");
             #endregion
 
             #region Primary keys
+            modelBuilder.Entity<Comment>()
+                .HasKey(x => x.Id);
+            
             modelBuilder.Entity<Company>()
                 .HasKey(x => x.Id);
 
@@ -99,6 +110,9 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
                 .HasKey(x => x.Id);
 
             modelBuilder.Entity<Product>()
+                .HasKey(x => x.Id);
+            
+            modelBuilder.Entity<Replie>()
                 .HasKey(x => x.Id);
             #endregion
 
@@ -138,6 +152,18 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
                 .HasOne<Company>(x => x.Company)
                 .WithMany(x => x.Products)
                 .HasForeignKey(x => x.CompanyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Comment>()
+                .HasOne<Product>(x => x.Product)
+                .WithMany(x => x.Comments)
+                .HasForeignKey(x => x.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Replie>()
+                .HasOne<Comment>(x => x.Comment)
+                .WithMany(x => x.Replies)
+                .HasForeignKey(x => x.CommentId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             #endregion
