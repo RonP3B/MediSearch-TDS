@@ -7,6 +7,7 @@ using MediSearch.Core.Application.Features.Account.Commands.RegisterClient;
 using MediSearch.Core.Application.Features.Account.Commands.RegisterCompany;
 using MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee;
 using MediSearch.Core.Application.Features.Product.Command.AddComment;
+using MediSearch.Core.Application.Features.Product.Command.AddReplie;
 using MediSearch.Core.Application.Features.Product.Command.UpdateProduct;
 using MediSearch.Core.Application.Features.Product.CreateProduct;
 using MediSearch.Core.Domain.Entities;
@@ -56,7 +57,9 @@ namespace MediSearch.Core.Application.Mappings
                 .ForMember(x => x.UrlImages, opt => opt.Ignore());
 
             CreateMap<Product, ProductDTO>()
+                .ForMember(X => X.Comments, opt => opt.Ignore())
                 .ReverseMap()
+                .ForMember(x => x.Comments, opt => opt.Ignore())
                 .ForMember(x => x.Company, opt => opt.Ignore())
                 .ForMember(x => x.CompanyId, opt => opt.Ignore())
                 .ForMember(x => x.Created, opt => opt.Ignore())
@@ -105,7 +108,16 @@ namespace MediSearch.Core.Application.Mappings
                 .ForMember(x => x.Product, opt => opt.Ignore())
                 .ForMember(x => x.Replies, opt => opt.Ignore());
             #endregion
-        }
 
+            #region Replie
+            CreateMap<Replie, AddReplieCommand>()
+                .ReverseMap()
+                .ForMember(x => x.Created, opt => opt.Ignore())
+                .ForMember(x => x.CreatedBy, opt => opt.Ignore())
+                .ForMember(x => x.LastModified, opt => opt.Ignore())
+                .ForMember(x => x.LastModifiedBy, opt => opt.Ignore())
+                .ForMember(x => x.Comment, opt => opt.Ignore());
+            #endregion
+        }
     }
 }

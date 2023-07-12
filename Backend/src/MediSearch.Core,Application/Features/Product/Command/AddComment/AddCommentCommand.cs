@@ -56,6 +56,5 @@ namespace MediSearch.Core.Application.Features.Product.Command.AddComment
                 return response;
             }
         }
-
     }
 }

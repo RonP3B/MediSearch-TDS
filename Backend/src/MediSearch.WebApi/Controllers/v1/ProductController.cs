@@ -1,5 +1,6 @@
 ﻿using MediSearch.Core.Application.Dtos.Product;
 using MediSearch.Core.Application.Features.Product.Command.AddComment;
+using MediSearch.Core.Application.Features.Product.Command.AddReplie;
 using MediSearch.Core.Application.Features.Product.Command.DeleteProduct;
 using MediSearch.Core.Application.Features.Product.Command.UpdateProduct;
 using MediSearch.Core.Application.Features.Product.CreateProduct;
@@ -60,7 +61,7 @@ namespace MediSearch.WebApi.Controllers.v1
            Summary = "Obtener todos los productos de la empresa.",
             Description = "Nos permite obtener todos los productos de la empresa."
         )]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductResponse))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductDTO))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetProductById(string id)
@@ -201,6 +202,42 @@ namespace MediSearch.WebApi.Controllers.v1
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProductResponse))]
         public async Task<IActionResult>AddComment([FromBody] AddCommentCommand command)
+        {
+
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest();
+
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                command.UserId = user.Id;
+                var result = await Mediator.Send(command);
+
+                if (result.HasError)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, result);
+                }
+
+                return Ok(result.IsSuccess);
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
+        }
+
+        [Authorize]
+        [HttpPost("add-replie")]
+        [SwaggerOperation(
+            Summary = "Responde un comentario.",
+            Description = "Permite responder un comentario."
+            )]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProductResponse))]
+        public async Task<IActionResult> AddReplie([FromBody] AddReplieCommand command)
         {
 
             try

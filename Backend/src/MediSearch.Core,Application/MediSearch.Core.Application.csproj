@@ -31,7 +31,6 @@
   <ItemGroup>
     <Folder Include="Features\Chat\Command\" />
     <Folder Include="Features\Home\Command\" />
-    <Folder Include="Features\Product\Command\AddReplie\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
