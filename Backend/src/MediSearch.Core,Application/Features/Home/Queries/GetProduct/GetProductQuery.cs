@@ -100,10 +100,10 @@ namespace MediSearch.Core.Application.Features.Home.Queries.GetProduct
                     comment.OwnerName = result == null ? $"{user.FirstName} {user.LastName}" : $"{user.FirstName} {user.LastName}({name})";
                     comment.OwnerImage = user.UrlImage;
 
-                    var replies = item.Replies;
-                    if(replies != null && replies.Count != 0)
+                    
+                    if(item.Replies != null && item.Replies.Count != 0)
                     {
-                        foreach(var rep in replies)
+                        foreach(var rep in item.Replies)
                         {
                             user = await _accountService.GetUsersById(rep.UserId);
                             result = await _companyUserRepository.GetByUserAsync(rep.UserId);
@@ -116,8 +116,8 @@ namespace MediSearch.Core.Application.Features.Home.Queries.GetProduct
                             ReplieDTO dto = new();
                             dto.Id = rep.Id;
                             dto.Content = rep.Content;
-                            comment.OwnerName = result == null ? $"{user.FirstName} {user.LastName}" : $"{user.FirstName} {user.LastName}({name})";
-                            comment.OwnerImage = user.UrlImage;
+                            dto.OwnerName = result == null ? $"{user.FirstName} {user.LastName}" : $"{user.FirstName} {user.LastName}({name})";
+                            dto.OwnerImage = user.UrlImage;
 
                             list.Add(dto);
                         }

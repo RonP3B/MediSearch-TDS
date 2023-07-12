@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MediSearch.Core.Application.Dtos.Comment;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,5 +17,6 @@ namespace MediSearch.Core.Application.Dtos.Product
         public double Price { get; set; }
         public int Quantity { get; set; }
         public List<string> UrlImages { get; set; }
+        public List<CommentDTO> Comments { get; set; }
     }
 }
