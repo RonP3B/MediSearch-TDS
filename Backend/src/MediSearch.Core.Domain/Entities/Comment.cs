@@ -16,5 +16,10 @@ namespace MediSearch.Core.Domain.Entities
         public Product Product { get; set; }
         public string ProductId { get; set; }
         public ICollection<Replie> Replies { get; set; }
+
+        public Comment()
+        {
+            this.Id = "";
+        }
     }
 }

@@ -15,5 +15,10 @@ namespace MediSearch.Core.Domain.Entities
         //Navigation Properties
         public Comment Comment { get; set; }
         public string CommentId { get; set; }
+
+        public Replie()
+        {
+            this.Id = "";
+        }
     }
 }

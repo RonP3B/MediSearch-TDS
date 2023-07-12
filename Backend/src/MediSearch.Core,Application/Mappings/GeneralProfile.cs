@@ -6,6 +6,7 @@ using MediSearch.Core.Application.Features.Account.Commands.Authenticate;
 using MediSearch.Core.Application.Features.Account.Commands.RegisterClient;
 using MediSearch.Core.Application.Features.Account.Commands.RegisterCompany;
 using MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee;
+using MediSearch.Core.Application.Features.Product.Command.AddComment;
 using MediSearch.Core.Application.Features.Product.Command.UpdateProduct;
 using MediSearch.Core.Application.Features.Product.CreateProduct;
 using MediSearch.Core.Domain.Entities;
@@ -92,6 +93,17 @@ namespace MediSearch.Core.Application.Mappings
                 .ForMember(x => x.CreatedBy, opt => opt.Ignore())
                 .ForMember(x => x.LastModified, opt => opt.Ignore())
                 .ForMember(x => x.LastModifiedBy, opt => opt.Ignore());
+            #endregion
+
+            #region Comment
+            CreateMap<Comment, AddCommentCommand>()
+                .ReverseMap()
+                .ForMember(x => x.Created, opt => opt.Ignore())
+                .ForMember(x => x.CreatedBy, opt => opt.Ignore())
+                .ForMember(x => x.LastModified, opt => opt.Ignore())
+                .ForMember(x => x.LastModifiedBy, opt => opt.Ignore())
+                .ForMember(x => x.Product, opt => opt.Ignore())
+                .ForMember(x => x.Replies, opt => opt.Ignore());
             #endregion
         }
 
