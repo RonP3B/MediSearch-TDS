@@ -48,6 +48,7 @@ namespace MediSearch.Infrastructure.Persistence
 
 			#region Repositories
 			services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+			services.AddTransient<ICommentRepository, CommentRepository>();
 			services.AddTransient<ICompanyRepository, CompanyRepository>();
 			services.AddTransient<ICompanyTypeRepository, CompanyTypeRepository>();
 			services.AddTransient<ICompanyUserRepository, CompanyUserRepository>();
@@ -56,6 +57,7 @@ namespace MediSearch.Infrastructure.Persistence
 			services.AddTransient<IMessageRepository, MessageRepository>();
 			services.AddTransient<IMessageTypeRepository, MessageTypeRepository>();
 			services.AddScoped<IProductRepository, ProductRepository>();
+			services.AddScoped<IReplieRepository, ReplieRepository>();
 			#endregion
 		}
 	}

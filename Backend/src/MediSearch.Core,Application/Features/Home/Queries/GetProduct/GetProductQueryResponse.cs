@@ -1,4 +1,5 @@
-﻿using MediSearch.Core.Domain.Entities;
+﻿using MediSearch.Core.Application.Dtos.Comment;
+using MediSearch.Core.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,5 +30,6 @@ namespace MediSearch.Core.Application.Features.Home.Queries.GetProduct
         public string? Facebook { get; set; }
         public string? Instagram { get; set; }
         public string? Twitter { get; set; }
+        public List<CommentDTO> Comments { get; set; }
     }
 }
