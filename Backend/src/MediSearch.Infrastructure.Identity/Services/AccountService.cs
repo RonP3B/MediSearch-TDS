@@ -658,6 +658,35 @@ namespace MediSearch.Infrastructure.Identity.Services
             return dto;
         }
 
+        public async Task<RegisterResponse> EditProfile(UserDTO user)
+        {
+            RegisterResponse response = new();
+            var userToUpdate = await _userManager.FindByIdAsync(user.Id);
+
+            userToUpdate.FirstName = user.FirstName;
+            userToUpdate.LastName = user.LastName;
+            userToUpdate.UrlImage = user.UrlImage;
+            userToUpdate.Address = user.Address;
+            userToUpdate.Province = user.Province;
+            userToUpdate.Municipality = user.Municipality;
+
+            try
+            {
+                await _userManager.UpdateAsync(userToUpdate);
+            }catch(Exception ex)
+            {
+                return new RegisterResponse()
+                {
+                    HasError = true,
+                    Error = ex.Message
+                };
+            }
+            
+
+            response.IsSuccess = true;
+            return response;
+        }
+
         #region Private Methods
         private async Task<RegisterResponse> ValidateUserBeforeRegistrationAsync(RegisterRequest request)
         {

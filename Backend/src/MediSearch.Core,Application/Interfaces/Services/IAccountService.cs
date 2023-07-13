@@ -24,6 +24,7 @@ namespace MediSearch.Core.Application.Interfaces.Services
 		string ValidateRefreshToken(string token);
 		Task<List<UserDTO>> GetUsersByCompany(string id);
 		Task<UserDTO> GetUsersById(string id);
+		Task<RegisterResponse> EditProfile(UserDTO user);
 
     }
 }

@@ -5,6 +5,7 @@ using MediSearch.Core.Application.Dtos.Product;
 using MediSearch.Core.Application.Features.Account.Commands.Authenticate;
 using MediSearch.Core.Application.Features.Account.Commands.RegisterClient;
 using MediSearch.Core.Application.Features.Account.Commands.RegisterCompany;
+using MediSearch.Core.Application.Features.Admin.Commands.EditProfile;
 using MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee;
 using MediSearch.Core.Application.Features.Product.Command.AddComment;
 using MediSearch.Core.Application.Features.Product.Command.AddReplie;
@@ -42,6 +43,17 @@ namespace MediSearch.Core.Application.Mappings
 				.ForMember(x => x.CompanyTypeId, opt => opt.Ignore());
 
             CreateMap<RegisterEmployeeRequest, RegisterEmployeeCommand>()
+                .ReverseMap();
+
+            CreateMap<EditProfileCommand, EditProfileCommandRequest>()
+                .ReverseMap()
+                .ForMember(x => x.Id, opt => opt.Ignore());
+
+            CreateMap<EditProfileCommand, UserDTO>()
+                .ForMember(x => x.Role, opt => opt.Ignore())
+                .ForMember(x => x.Email, opt => opt.Ignore())
+                .ForMember(x => x.CompanyId, opt => opt.Ignore())
+                .ForMember(x => x.PhoneNumber, opt => opt.Ignore())
                 .ReverseMap();
             #endregion
 

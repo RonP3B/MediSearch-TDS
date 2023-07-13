@@ -1,5 +1,7 @@
-﻿using MediSearch.Core.Application.Dtos.Account;
+﻿using AutoMapper;
+using MediSearch.Core.Application.Dtos.Account;
 using MediSearch.Core.Application.Features.Admin.Commands.DeleteEmployee;
+using MediSearch.Core.Application.Features.Admin.Commands.EditProfile;
 using MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee;
 using MediSearch.Core.Application.Features.Admin.Queries.GetProfile;
 using MediSearch.Core.Application.Features.Admin.Queries.GetUsersCompany;
@@ -15,9 +17,11 @@ namespace MediSearch.WebApi.Controllers.v1
     public class AdminController : BaseApiController
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        public AdminController(IServiceScopeFactory serviceScopeFactory)
+        private readonly IMapper _mapper;
+        public AdminController(IServiceScopeFactory serviceScopeFactory, IMapper mapper)
         {
             _serviceScopeFactory = serviceScopeFactory;
+            _mapper = mapper;
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
@@ -151,6 +155,49 @@ namespace MediSearch.WebApi.Controllers.v1
 
         }
 
-        
+        [Authorize]
+        [HttpPut("edit-profile")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RegisterResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(RegisterResponse))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerOperation(
+           Summary = "Registro de empleados",
+           Description = "Registra un empleado a tu empresa"
+        )]
+        public async Task<IActionResult> EditProfile([FromForm] EditProfileCommandRequest request)
+        {
+            try
+            {
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+
+                var command = _mapper.Map<EditProfileCommand>(request);
+                command.Id = user.Id;
+
+                var response = await Mediator.Send(command);
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest();
+                }
+
+                if (response.HasError)
+                {
+
+                    if (response.Error.Contains("Usuario"))
+                    {
+                        return NotFound(response);
+                    }
+                    return StatusCode(StatusCodes.Status500InternalServerError, response.Error);
+                }
+
+                return Ok(response.IsSuccess);
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+        }
     }
 }
