@@ -1,6 +1,7 @@
 ﻿using MediSearch.Core.Application.Dtos.Account;
 using MediSearch.Core.Application.Features.Admin.Commands.DeleteEmployee;
 using MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee;
+using MediSearch.Core.Application.Features.Admin.Queries.GetProfile;
 using MediSearch.Core.Application.Features.Admin.Queries.GetUsersCompany;
 using MediSearch.WebApi.Middlewares;
 using Microsoft.AspNetCore.Authorization;
@@ -20,7 +21,7 @@ namespace MediSearch.WebApi.Controllers.v1
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
-        [HttpGet("GetAllEmployees")]
+        [HttpGet("get-all-employees")]
         [SwaggerOperation(
             Summary = "Todos los empleados de la empresa.",
             Description = "Permite obtener todos los empleados que tiene la empresa registrados en el sistema."
@@ -36,8 +37,38 @@ namespace MediSearch.WebApi.Controllers.v1
                 var user = await userData.GetUserSession();
                 var result = await Mediator.Send(new GetUsersCompanyQuery() { CompanyId = user.CompanyId });
 
-                if (result == null)
+                if (result == null || result.Count == 0)
                     return NotFound("Esta empresa no tiene empleados registrados");
+
+                return Ok(result);
+
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
+        }
+
+        [Authorize]
+        [HttpGet("get-profile")]
+        [SwaggerOperation(
+            Summary = "Datos del usuario logueado.",
+            Description = "Permite obtener los datos que tiene el usuario en el sistema."
+        )]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetProfileQueryResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetProfile()
+        {
+            try
+            {
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                var result = await Mediator.Send(new GetProfileQuery() { Id = user.Id });
+
+                if (result == null)
+                    return NotFound("No se encontró el usuario");
 
                 return Ok(result);
 
@@ -119,5 +150,7 @@ namespace MediSearch.WebApi.Controllers.v1
             }
 
         }
+
+        
     }
 }
