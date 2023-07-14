@@ -11,9 +11,9 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace MediSearch.Core.Application.Features.Product.Command.AddReplie
+namespace MediSearch.Core.Application.Features.Product.Command.AddReply
 {
-    public class AddReplieCommand : IRequest<ProductResponse>
+    public class AddReplyCommand : IRequest<ProductResponse>
     {
         [SwaggerParameter(Description = "Respuesta")]
         [Required(ErrorMessage = "Debe de especificar un contenido para esta respuesta.")]
@@ -27,19 +27,19 @@ namespace MediSearch.Core.Application.Features.Product.Command.AddReplie
         public string? UserId { get; set; }
     }
 
-    public class AddReplieCommandHandler : IRequestHandler<AddReplieCommand, ProductResponse>
+    public class AddReplyCommandHandler : IRequestHandler<AddReplyCommand, ProductResponse>
     {
-        private readonly IReplieRepository _replieRepository;
+        private readonly IReplyRepository _ReplyRepository;
         private readonly IMapper _mapper;
 
-        public AddReplieCommandHandler(IReplieRepository replieRepository, IMapper mapper)
+        public AddReplyCommandHandler(IReplyRepository ReplyRepository, IMapper mapper)
         {
-            _replieRepository = replieRepository;
+            _ReplyRepository = ReplyRepository;
             _mapper = mapper;
         }
 
 
-        public async Task<ProductResponse> Handle(AddReplieCommand command, CancellationToken cancellationToken)
+        public async Task<ProductResponse> Handle(AddReplyCommand command, CancellationToken cancellationToken)
         {
             ProductResponse response = new()
             {
@@ -48,8 +48,8 @@ namespace MediSearch.Core.Application.Features.Product.Command.AddReplie
 
             try
             {
-                var valueToAdd = _mapper.Map<Domain.Entities.Replie>(command);
-                await _replieRepository.AddAsync(valueToAdd);
+                var valueToAdd = _mapper.Map<Domain.Entities.Reply>(command);
+                await _ReplyRepository.AddAsync(valueToAdd);
 
                 response.IsSuccess = true;
                 return response;

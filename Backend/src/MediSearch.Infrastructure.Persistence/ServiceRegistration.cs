@@ -57,7 +57,7 @@ namespace MediSearch.Infrastructure.Persistence
 			services.AddTransient<IMessageRepository, MessageRepository>();
 			services.AddTransient<IMessageTypeRepository, MessageTypeRepository>();
 			services.AddScoped<IProductRepository, ProductRepository>();
-			services.AddScoped<IReplieRepository, ReplieRepository>();
+			services.AddScoped<IReplyRepository, ReplyRepository>();
 			#endregion
 		}
 	}

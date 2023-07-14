@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MediSearch.Core.Domain.Entities
 {
-    public class Replie : AuditableBaseEntity
+    public class Reply : AuditableBaseEntity
     {
         public string Content { get; set; }
         public string UserId { get; set; }
@@ -16,7 +16,7 @@ namespace MediSearch.Core.Domain.Entities
         public Comment Comment { get; set; }
         public string CommentId { get; set; }
 
-        public Replie()
+        public Reply()
         {
             this.Id = "";
         }

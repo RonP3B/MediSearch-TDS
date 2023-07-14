@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace MediSearch.Infrastructure.Persistence.Repositories
 {
-    public class ReplieRepository : GenericRepository<Replie>, IReplieRepository
+    public class ReplyRepository : GenericRepository<Reply>, IReplyRepository
     {
         private readonly ApplicationContext _dbContext;
 
-        public ReplieRepository(ApplicationContext dbContext) : base(dbContext)
+        public ReplyRepository(ApplicationContext dbContext) : base(dbContext)
         {
             _dbContext = dbContext;
         }

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MediSearch.Core.Application.Dtos.Replie
+namespace MediSearch.Core.Application.Dtos.Reply
 {
-    public class ReplieDTO
+    public class ReplyDTO
     {
         public string Id { get; set; }
         public string Content { get; set; }

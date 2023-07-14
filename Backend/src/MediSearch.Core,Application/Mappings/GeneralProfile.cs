@@ -8,7 +8,7 @@ using MediSearch.Core.Application.Features.Account.Commands.RegisterCompany;
 using MediSearch.Core.Application.Features.Admin.Commands.EditProfile;
 using MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee;
 using MediSearch.Core.Application.Features.Product.Command.AddComment;
-using MediSearch.Core.Application.Features.Product.Command.AddReplie;
+using MediSearch.Core.Application.Features.Product.Command.AddReply;
 using MediSearch.Core.Application.Features.Product.Command.UpdateProduct;
 using MediSearch.Core.Application.Features.Product.CreateProduct;
 using MediSearch.Core.Domain.Entities;
@@ -121,8 +121,8 @@ namespace MediSearch.Core.Application.Mappings
                 .ForMember(x => x.Replies, opt => opt.Ignore());
             #endregion
 
-            #region Replie
-            CreateMap<Replie, AddReplieCommand>()
+            #region Reply
+            CreateMap<Reply, AddReplyCommand>()
                 .ReverseMap()
                 .ForMember(x => x.Created, opt => opt.Ignore())
                 .ForMember(x => x.CreatedBy, opt => opt.Ignore())

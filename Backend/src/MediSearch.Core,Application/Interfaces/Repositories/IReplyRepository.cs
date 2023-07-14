@@ -2,7 +2,7 @@
 
 namespace MediSearch.Core.Application.Interfaces.Repositories
 {
-    public interface IReplieRepository : IGenericRepository<Replie>
+    public interface IReplyRepository : IGenericRepository<Reply>
     {
 
     }

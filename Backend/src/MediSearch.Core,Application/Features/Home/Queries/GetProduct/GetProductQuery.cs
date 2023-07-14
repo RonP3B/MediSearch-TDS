@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
 using MediSearch.Core.Application.Dtos.Comment;
-using MediSearch.Core.Application.Dtos.Replie;
+using MediSearch.Core.Application.Dtos.Reply;
 using MediSearch.Core.Application.Interfaces.Repositories;
 using MediSearch.Core.Application.Interfaces.Services;
 using System;
@@ -84,7 +84,7 @@ namespace MediSearch.Core.Application.Features.Home.Queries.GetProduct
             {
                 foreach (var item in comments)
                 {
-                    List<ReplieDTO> list = new();
+                    List<ReplyDTO> list = new();
                     string name = "";
                     var user = await _accountService.GetUsersById(item.UserId);
                     var result = await _companyUserRepository.GetByUserAsync(item.UserId);
@@ -113,7 +113,7 @@ namespace MediSearch.Core.Application.Features.Home.Queries.GetProduct
                                 name = company.Name;
                             }
 
-                            ReplieDTO dto = new();
+                            ReplyDTO dto = new();
                             dto.Id = rep.Id;
                             dto.Content = rep.Content;
                             dto.OwnerName = result == null ? $"{user.FirstName} {user.LastName}" : $"{user.FirstName} {user.LastName}({name})";

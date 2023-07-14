@@ -23,7 +23,7 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
         public DbSet<Message> Messages { get; set; }
         public DbSet<MessageType> MessagTypes { get; set; }
         public DbSet<Product> Products { get; set; }
-        public DbSet<Replie> Replies { get; set; }
+        public DbSet<Reply> Replies { get; set; }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
@@ -80,7 +80,7 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
             modelBuilder.Entity<Product>()
                 .ToTable("Products");
             
-            modelBuilder.Entity<Replie>()
+            modelBuilder.Entity<Reply>()
                 .ToTable("Replies");
             #endregion
 
@@ -112,7 +112,7 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
             modelBuilder.Entity<Product>()
                 .HasKey(x => x.Id);
             
-            modelBuilder.Entity<Replie>()
+            modelBuilder.Entity<Reply>()
                 .HasKey(x => x.Id);
             #endregion
 
@@ -160,7 +160,7 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
                 .HasForeignKey(x => x.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Replie>()
+            modelBuilder.Entity<Reply>()
                 .HasOne<Comment>(x => x.Comment)
                 .WithMany(x => x.Replies)
                 .HasForeignKey(x => x.CommentId)

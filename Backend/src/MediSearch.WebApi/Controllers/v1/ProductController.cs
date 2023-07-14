@@ -1,6 +1,6 @@
 ﻿using MediSearch.Core.Application.Dtos.Product;
 using MediSearch.Core.Application.Features.Product.Command.AddComment;
-using MediSearch.Core.Application.Features.Product.Command.AddReplie;
+using MediSearch.Core.Application.Features.Product.Command.AddReply;
 using MediSearch.Core.Application.Features.Product.Command.DeleteProduct;
 using MediSearch.Core.Application.Features.Product.Command.UpdateProduct;
 using MediSearch.Core.Application.Features.Product.CreateProduct;
@@ -229,7 +229,7 @@ namespace MediSearch.WebApi.Controllers.v1
         }
 
         [Authorize]
-        [HttpPost("add-replie")]
+        [HttpPost("add-reply")]
         [SwaggerOperation(
             Summary = "Responde un comentario.",
             Description = "Permite responder un comentario."
@@ -237,7 +237,7 @@ namespace MediSearch.WebApi.Controllers.v1
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProductResponse))]
-        public async Task<IActionResult> AddReplie([FromBody] AddReplieCommand command)
+        public async Task<IActionResult> AddReply([FromBody] AddReplyCommand command)
         {
 
             try

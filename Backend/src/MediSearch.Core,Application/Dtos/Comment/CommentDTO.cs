@@ -1,4 +1,4 @@
-﻿using MediSearch.Core.Application.Dtos.Replie;
+﻿using MediSearch.Core.Application.Dtos.Reply;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +13,6 @@ namespace MediSearch.Core.Application.Dtos.Comment
         public string Content { get; set; }
         public string OwnerName { get; set; }
         public string OwnerImage { get; set; }
-        public List<ReplieDTO> Replies { get; set; }
+        public List<ReplyDTO> Replies { get; set; }
     }
 }
