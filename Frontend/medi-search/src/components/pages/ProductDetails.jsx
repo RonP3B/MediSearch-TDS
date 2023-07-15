@@ -233,7 +233,7 @@ const ProductDetails = ({ logged, client }) => {
               />{" "}
               {product.description}
             </Typography>
-            {/* <Divider sx={{ mb: 2 }} /> */}
+            <Divider sx={{ mb: 2 }} />
             <CommentsAccordion>
               <CommentTextbox
                 label="Escribe un comentario"
