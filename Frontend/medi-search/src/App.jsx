@@ -14,6 +14,7 @@ import Users from "./components/pages/Users";
 import SaveUser from "./components/pages/SaveUser";
 import Products from "./components/pages/Products";
 import SaveProduct from "./components/pages/SaveProduct";
+import ProductDetails from "./components/pages/ProductDetails";
 
 //RouteGuards
 import RequiresAuth from "./components/routeGuards/RequiresAuth";
@@ -59,6 +60,10 @@ const App = () => {
               <Route
                 path="/company/products/edit/:id"
                 element={<SaveProduct edit={true} />}
+              />
+              <Route
+                path="/company/products/product-details/:id"
+                element={<ProductDetails logged={true} client={false} />}
               />
               <Route element={<RequiresSuperAdmin />}>
                 {/* Routes that require to be a SuperAdmin */}

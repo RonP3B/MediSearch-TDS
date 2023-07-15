@@ -3,13 +3,14 @@ import { useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import MobileStepper from "@mui/material/MobileStepper";
 import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
-const ImageSlider = ({ images, width, height }) => {
+const ImageSlider = ({ images, width, height, elevation }) => {
   const theme = useTheme();
   const [activeStep, setActiveStep] = useState(0);
   const maxSteps = images.length;
@@ -27,7 +28,7 @@ const ImageSlider = ({ images, width, height }) => {
   };
 
   return (
-    <Paper sx={{ maxWidth: width, flexGrow: 1 }} elevation={1}>
+    <Paper sx={{ maxWidth: width, flexGrow: 1 }} elevation={elevation}>
       <Carousel
         selectedItem={activeStep}
         onChange={handleStepChange}
@@ -39,12 +40,21 @@ const ImageSlider = ({ images, width, height }) => {
         infiniteLoop
       >
         {images.map((image, index) => (
-          <div key={index}>
+          <Box
+            key={index}
+            sx={{
+              height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "aliceblue",
+            }}
+          >
             <img
               src={image}
-              style={{ height: height, display: "block", maxWidth: width }}
+              style={{ maxHeight: height, display: "block", maxWidth: width }}
             />
-          </div>
+          </Box>
         ))}
       </Carousel>
       <MobileStepper
@@ -92,8 +102,9 @@ const ImageSlider = ({ images, width, height }) => {
 
 ImageSlider.propTypes = {
   images: PropTypes.array.isRequired,
-  width: PropTypes.number.isRequired,
-  height: PropTypes.number.isRequired,
+  width: PropTypes.string.isRequired,
+  height: PropTypes.string.isRequired,
+  elevation: PropTypes.number.isRequired,
 };
 
 export default ImageSlider;

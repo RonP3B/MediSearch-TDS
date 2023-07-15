@@ -8,7 +8,9 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
+import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import InputField from "../custom/InputFields/InputField";
 import MultipleSelectField from "../custom/InputFields/MultipleSelectField";
 import useProductFormik from "../../hooks/formiks/useProductFormik";
@@ -51,9 +53,7 @@ const SaveProduct = ({ edit }) => {
       } catch (error) {
         if (error.response?.data?.Error === "ERR_JWT") return;
 
-        if (error.response.status === 404) {
-          return navigate("/company/product/no-product");
-        }
+        if (error.response.status === 404) return navigate(-1);
 
         showToastRef.current(
           "Ocurrió un error al obtener la información del producto, informelo al equipo técnico",
@@ -83,6 +83,14 @@ const SaveProduct = ({ edit }) => {
       <Typography variant="h5" sx={{ mb: 5, fontWeight: "bold" }}>
         {edit ? "Editar" : "Crear"} producto
       </Typography>
+      {edit && (
+        <Button
+          startIcon={<KeyboardBackspaceIcon />}
+          onClick={() => navigate(-1)}
+        >
+          Volver
+        </Button>
+      )}
       {loading ? (
         <Box
           sx={{
@@ -109,7 +117,12 @@ const SaveProduct = ({ edit }) => {
                   <Typography sx={{ fontWeight: "bold" }}>
                     Imagenes seleccionadas:
                   </Typography>
-                  <ImageSlider images={images} width={200} height={150} />
+                  <ImageSlider
+                    images={images}
+                    width="200px"
+                    height="150px"
+                    elevation={2}
+                  />
                 </>
               ) : (
                 <>

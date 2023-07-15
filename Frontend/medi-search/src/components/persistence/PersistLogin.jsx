@@ -26,7 +26,6 @@ const PersistLogin = () => {
 
   return (
     <>
-      {console.log(auth)}
       {loading ? (
         <Box
           sx={{

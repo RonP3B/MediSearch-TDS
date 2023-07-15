@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { styled, alpha } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -24,7 +24,6 @@ const StyledSearch = styled(OutlinedInput)(({ theme }) => ({
   },
   "& fieldset": {
     borderWidth: `1px !important`,
-    borderColor: `${alpha(theme.palette.grey[500], 0.32)} !important`,
   },
 }));
 

@@ -5,6 +5,7 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import InfoIcon from "@mui/icons-material/Info";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -17,10 +18,17 @@ const ProductCard = ({ product, company, handleDelete }) => {
   const firstImageUrl = `${ASSETS}${urlImages.$values[0]}`;
 
   return (
-    <Card sx={{ maxWidth: 345, margin: "0 auto" }}>
+    <Card
+      sx={{
+        maxWidth: 350,
+        margin: "0 auto",
+        borderRadius: "12px",
+        boxShadow: 3,
+      }}
+    >
       <CardMedia
         component="img"
-        height="160"
+        height="200"
         image={firstImageUrl}
         alt="Nombre del producto"
       />
@@ -41,12 +49,14 @@ const ProductCard = ({ product, company, handleDelete }) => {
                 aria-label="Editar"
                 component={Link}
                 to={`edit/${id}`}
+                color="primary"
               >
                 <EditIcon />
               </IconButton>
               <IconButton
                 aria-label="Eliminar"
                 onClick={() => handleDelete(id)}
+                color="primary"
               >
                 <DeleteIcon />
               </IconButton>
@@ -57,6 +67,7 @@ const ProductCard = ({ product, company, handleDelete }) => {
               component={Link}
               to={`product-details/${id}`}
               variant="contained"
+              startIcon={<InfoIcon />}
             >
               Detalles
             </Button>
