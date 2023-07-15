@@ -17,7 +17,7 @@ namespace MediSearch.WebApi.Controllers.v1
             _serviceScopeFactory = serviceScopeFactory;
         }
 
-        [HttpGet("Get-all-chats")]
+        [HttpGet("get-all-chats")]
         [SwaggerOperation(
             Summary = "Todos los chats que tiene el usuario.",
             Description = "Permite obtener todos los chats que tiene el usuario con otros usuarios."
