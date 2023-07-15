@@ -1,4 +1,6 @@
-﻿using MediSearch.Core.Application.Dtos.Product;
+﻿using MediSearch.Core.Application.Dtos.Comment;
+using MediSearch.Core.Application.Dtos.Product;
+using MediSearch.Core.Application.Dtos.Reply;
 using MediSearch.Core.Application.Features.Product.Command.AddComment;
 using MediSearch.Core.Application.Features.Product.Command.AddReply;
 using MediSearch.Core.Application.Features.Product.Command.DeleteProduct;
@@ -198,9 +200,9 @@ namespace MediSearch.WebApi.Controllers.v1
             Summary = "Comenta un producto.",
             Description = "Permite comentar un producto."
             )]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductResponse))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CommentDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProductResponse))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult>AddComment([FromBody] AddCommentCommand command)
         {
 
@@ -214,12 +216,7 @@ namespace MediSearch.WebApi.Controllers.v1
                 command.UserId = user.Id;
                 var result = await Mediator.Send(command);
 
-                if (result.HasError)
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError, result);
-                }
-
-                return Ok(result.IsSuccess);
+                return Ok(result);
             }
             catch (Exception e)
             {
@@ -234,9 +231,9 @@ namespace MediSearch.WebApi.Controllers.v1
             Summary = "Responde un comentario.",
             Description = "Permite responder un comentario."
             )]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductResponse))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ReplyDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProductResponse))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AddReply([FromBody] AddReplyCommand command)
         {
 
@@ -250,12 +247,7 @@ namespace MediSearch.WebApi.Controllers.v1
                 command.UserId = user.Id;
                 var result = await Mediator.Send(command);
 
-                if (result.HasError)
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError, result);
-                }
-
-                return Ok(result.IsSuccess);
+                return Ok(result);
             }
             catch (Exception e)
             {
