@@ -1,4 +1,5 @@
 ﻿using MediSearch.Core.Application.Dtos.Product;
+using MediSearch.Core.Application.Features.Chat.Queries.GetChat;
 using MediSearch.Core.Application.Features.Chat.Queries.GetChats;
 using MediSearch.WebApi.Middlewares;
 using Microsoft.AspNetCore.Authorization;
@@ -44,6 +45,44 @@ namespace MediSearch.WebApi.Controllers.v1
 
                 if (result == null || result.Count == 0)
                     return NotFound("Este usuario no ha iniciado chat");
+
+                return Ok(result);
+
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
+        }
+
+        [HttpGet("get-chat/{id}")]
+        [SwaggerOperation(
+            Summary = "Mensajes que tiene el usuario en ese chat(sala).",
+            Description = "Permite obtener todos los mensajes que tiene el usuario con otro usuario en ese chat(sala)."
+        )]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetChatsQueryResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetChat(string id)
+        {
+            try
+            {
+                GetChatQueryResponse result = new();
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+
+                if (user.CompanyId == "Client")
+                {
+                    result = await Mediator.Send(new GetChatQuery() { IdHall = id, IdUser = user.Id });
+                }
+                else
+                {
+                    result = await Mediator.Send(new GetChatQuery() { IdHall = id, IdUser = user.CompanyId });
+                }
+
+                if (result == null)
+                    return NotFound("Este usuario no tiene mensajes en esta sala");
 
                 return Ok(result);
 
