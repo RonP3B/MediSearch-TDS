@@ -27,7 +27,10 @@ const useLoginFormik = (setLoading) => {
         payload: decoded,
       });
 
-      decoded.roles !== "Client" && navigate("/company/dashboard");
+      const redirectTo =
+        decoded.roles === "Client" ? "/client/home" : "/company/dashboard";
+
+      navigate(redirectTo);
     } catch (error) {
       showToast(error.response.data, { type: "error" });
     } finally {
