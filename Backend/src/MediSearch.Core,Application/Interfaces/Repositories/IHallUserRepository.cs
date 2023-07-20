@@ -8,5 +8,6 @@ namespace MediSearch.Core.Application.Interfaces.Repositories
     {
         Task<List<HallUser>> GetByUserAsync(string user);
         Task<List<HallUser>> GetByHallAsync(string hallId);
+        Task<HallUser> ValidateChat(string user, string receiver);
     }
 }
