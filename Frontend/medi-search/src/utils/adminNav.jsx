@@ -4,6 +4,7 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import BusinessIcon from "@mui/icons-material/Business";
+import BadgeIcon from "@mui/icons-material/Badge";
 
 export const adminNav = [
   {
@@ -30,6 +31,11 @@ export const adminNav = [
     item: "Crear Producto",
     icon: <AddShoppingCartIcon />,
     to: "/company/products/add",
+  },
+  {
+    item: "Mi perfil",
+    icon: <BadgeIcon />,
+    to: "/company/my-profile",
   },
   {
     item: "Proveedores",

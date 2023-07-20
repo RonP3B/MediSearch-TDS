@@ -4,8 +4,15 @@ import DefaultAvatar from "../../../assets/images/DefaultAvatar.jpg";
 import FileInputField from "./FileInputField";
 
 const ImageInput = (props) => {
-  const { name, label, avatarImage, setAvatarImage, fileName, setFileName } =
-    props;
+  const {
+    name,
+    label,
+    avatarImage,
+    setAvatarImage,
+    fileName,
+    setFileName,
+    variant,
+  } = props;
 
   const handleFileChange = (file) => {
     const reader = new FileReader();
@@ -51,6 +58,7 @@ const ImageInput = (props) => {
         name={name}
         fileName={fileName}
         setFileName={setFileName}
+        variant={variant}
       />
     </Box>
   );
@@ -63,6 +71,7 @@ ImageInput.propTypes = {
   setAvatarImage: PropTypes.func.isRequired,
   fileName: PropTypes.string.isRequired,
   setFileName: PropTypes.func.isRequired,
+  variant: PropTypes.string,
 };
 
 export default ImageInput;

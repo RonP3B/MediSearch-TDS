@@ -8,7 +8,8 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 
 const FileInputField = (props) => {
-  const { onChange, accept, label, name, fileName, setFileName } = props;
+  const { onChange, accept, label, name, fileName, setFileName, variant } =
+    props;
 
   const inputRef = useRef(null);
   const [field, meta] = useField(name);
@@ -42,6 +43,7 @@ const FileInputField = (props) => {
           disabled
           fullWidth
           label={label}
+          variant={variant || "outlined"}
           error={meta.touched && !!meta.error}
           helperText={meta.touched && meta.error}
           InputProps={{
@@ -66,6 +68,7 @@ FileInputField.propTypes = {
   name: PropTypes.string.isRequired,
   fileName: PropTypes.string.isRequired,
   setFileName: PropTypes.func.isRequired,
+  variant: PropTypes.string,
 };
 
 export default FileInputField;

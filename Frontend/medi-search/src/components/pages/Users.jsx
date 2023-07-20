@@ -167,14 +167,16 @@ const Users = () => {
         <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold" }}>
           Usuarios
         </Typography>
-        <Button
-          component={Link}
-          to="add"
-          variant="contained"
-          startIcon={<AddIcon />}
-        >
-          Nuevo Usuario
-        </Button>
+        {auth.payload.roles === "SuperAdmin" && (
+          <Button
+            component={Link}
+            to="add"
+            variant="contained"
+            startIcon={<AddIcon />}
+          >
+            Nuevo Usuario
+          </Button>
+        )}
       </Stack>
       <Card sx={{ boxShadow: 3, mb: 3, borderRadius: "12px" }}>
         <UserListToolbar

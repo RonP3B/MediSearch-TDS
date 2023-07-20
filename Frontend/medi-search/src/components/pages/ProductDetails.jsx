@@ -139,168 +139,176 @@ const ProductDetails = ({ logged, client }) => {
           <CircularProgress />
         </Box>
       ) : (
-        <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} md={6}>
-            {images.length > 1 ? (
-              <Box>
-                <ImageSlider
-                  images={images}
-                  width="100%"
-                  height="400px"
-                  elevation={3}
-                />
-              </Box>
-            ) : (
-              <Box
-                component="img"
-                src={images[0]}
-                sx={{
-                  border: "2px solid",
-                  borderColor: "primary.main",
-                  maxHeight: "400px",
-                  maxWidth: "100%",
-                  display: "block",
-                  margin: "0 auto",
-                }}
-              />
-            )}
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Typography
-              variant="subtitle1"
-              sx={{ fontWeight: "bold", mb: 1.5 }}
-            >
-              <Chip
-                sx={{ letterSpacing: "0.1rem" }}
-                label="Nombre:"
-                color="primary"
-              />{" "}
-              {product.name}
-            </Typography>
-            <Typography
-              variant="subtitle1"
-              sx={{ fontWeight: "bold", mb: 1.5 }}
-            >
-              <Chip
-                sx={{ letterSpacing: "0.1rem" }}
-                label="Precio:"
-                color="primary"
-              />{" "}
-              ${product.price}
-            </Typography>
-            <Typography
-              variant="subtitle1"
-              sx={{ fontWeight: "bold", mb: 1.5 }}
-            >
-              <Chip
-                sx={{ letterSpacing: "0.1rem" }}
-                label="Cantidad disponible:"
-                color="primary"
-              />{" "}
-              {product.quantity}
-            </Typography>
-            <Typography
-              variant="subtitle1"
-              sx={{ fontWeight: "bold", mb: 1.5 }}
-            >
-              <Chip
-                sx={{ letterSpacing: "0.1rem" }}
-                label="Componentes:"
-                color="primary"
-              />{" "}
-              {product.components.$values
-                .map((component) => component)
-                .join(", ")}
-            </Typography>
-            <Typography
-              variant="subtitle1"
-              sx={{ fontWeight: "bold", mb: 1.5 }}
-            >
-              <Chip
-                sx={{ letterSpacing: "0.1rem" }}
-                label="Categorías:"
-                color="primary"
-              />{" "}
-              {product.categories.$values
-                .map((category) => category)
-                .join(", ")}
-            </Typography>
-            <Typography variant="body1" sx={{ fontWeight: "bold", mb: 1.5 }}>
-              <Chip
-                sx={{ letterSpacing: "0.1rem" }}
-                label="Descripción:"
-                color="primary"
-              />{" "}
-              {product.description}
-            </Typography>
-            <Divider sx={{ mb: 2 }} />
-            <CommentsAccordion>
-              <CommentTextbox
-                label="Escribe un comentario"
-                sx={{ mb: 1 }}
-                onClick={sendComment}
-                show={true}
-                sendingComment={sendingComment}
-              />
-              {comments.length > 0 ? (
-                comments.map((comment, index) => {
-                  const replies = comment.replies.$values;
-                  const showReplyTextBox = activeReplyIndex === index;
-
-                  return (
-                    <Box key={comment.id}>
-                      <Comment
-                        userName={comment.ownerName}
-                        userAvatar={`${ASSETS}${comment.ownerImage}`}
-                        onClick={() =>
-                          activeReplyIndex === index
-                            ? setActiveReplyIndex(-1)
-                            : setActiveReplyIndex(index)
-                        }
-                        comment={comment.content}
-                        isReply={false}
-                      />
-                      <Box sx={{ ml: "2rem" }}>
-                        <CommentTextbox
-                          label="Escribe una respuesta"
-                          sx={{ mb: 1.5 }}
-                          onClick={sendReply}
-                          show={showReplyTextBox}
-                          sendingComment={sendingReply}
-                          parentCommentId={comment.id}
-                        />
-                        {replies.length > 0 &&
-                          replies.map((reply) => (
-                            <Comment
-                              key={reply.id}
-                              userName={reply.ownerName}
-                              userAvatar={`${ASSETS}${reply.ownerImage}`}
-                              comment={reply.content}
-                              isReply={true}
-                            />
-                          ))}
-                      </Box>
-                    </Box>
-                  );
-                })
+        <>
+          <Grid container spacing={2} alignItems="center" sx={{ mb: 3 }}>
+            <Grid item xs={12} md={6}>
+              {images.length > 1 ? (
+                <Box>
+                  <ImageSlider
+                    images={images}
+                    width="100%"
+                    height="400px"
+                    elevation={3}
+                  />
+                </Box>
               ) : (
                 <Box
+                  component="img"
+                  src={images[0]}
                   sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
+                    border: "2px solid",
+                    borderColor: "primary.main",
+                    maxHeight: "400px",
+                    maxWidth: "100%",
+                    display: "block",
+                    margin: "0 auto",
                   }}
-                >
-                  <CommentsDisabledIcon
-                    sx={{ fontSize: 75, color: "primary.main" }}
-                  />
-                  <Typography variant="body2">No hay comentarios</Typography>
-                </Box>
+                />
               )}
-            </CommentsAccordion>
+            </Grid>
+            <Grid item xs={12} md={6} sx={{ overflowWrap: "anywhere" }}>
+              <Divider sx={{ my: 1 }} />
+              <Typography
+                variant="subtitle1"
+                sx={{ fontWeight: "bold", mb: 1.5 }}
+              >
+                <Chip
+                  sx={{ letterSpacing: "0.1rem" }}
+                  label="Nombre:"
+                  color="primary"
+                />{" "}
+                {product.name}
+              </Typography>
+              <Divider sx={{ my: 1 }} />
+              <Typography
+                variant="subtitle1"
+                sx={{ fontWeight: "bold", mb: 1.5 }}
+              >
+                <Chip
+                  sx={{ letterSpacing: "0.1rem" }}
+                  label="Precio:"
+                  color="primary"
+                />{" "}
+                ${product.price}
+              </Typography>
+              <Divider sx={{ my: 1 }} />
+              <Typography
+                variant="subtitle1"
+                sx={{ fontWeight: "bold", mb: 1.5 }}
+              >
+                <Chip
+                  sx={{ letterSpacing: "0.1rem" }}
+                  label="Cantidad disponible:"
+                  color="primary"
+                />{" "}
+                {product.quantity}
+              </Typography>
+              <Divider sx={{ my: 1 }} />
+              <Typography
+                variant="subtitle1"
+                sx={{ fontWeight: "bold", mb: 1.5 }}
+              >
+                <Chip
+                  sx={{ letterSpacing: "0.1rem" }}
+                  label="Componentes:"
+                  color="primary"
+                />{" "}
+                {product.components.$values
+                  .map((component) => component)
+                  .join(", ")}
+              </Typography>
+              <Divider sx={{ my: 1 }} />
+              <Typography
+                variant="subtitle1"
+                sx={{ fontWeight: "bold", mb: 1.5 }}
+              >
+                <Chip
+                  sx={{ letterSpacing: "0.1rem" }}
+                  label="Categorías:"
+                  color="primary"
+                />{" "}
+                {product.categories.$values
+                  .map((category) => category)
+                  .join(", ")}
+              </Typography>
+              <Divider sx={{ my: 1 }} />
+              <Typography variant="body1" sx={{ fontWeight: "bold", mb: 1.5 }}>
+                <Chip
+                  sx={{ letterSpacing: "0.1rem" }}
+                  label="Descripción:"
+                  color="primary"
+                />{" "}
+                {product.description}
+              </Typography>
+              <Divider sx={{ my: 1 }} />
+            </Grid>
           </Grid>
-        </Grid>
+          <CommentsAccordion>
+            <CommentTextbox
+              label="Escribe un comentario"
+              sx={{ mb: 1 }}
+              onClick={sendComment}
+              show={true}
+              sendingComment={sendingComment}
+            />
+            {comments.length > 0 ? (
+              comments.map((comment, index) => {
+                const replies = comment.replies.$values;
+                const showReplyTextBox = activeReplyIndex === index;
+
+                return (
+                  <Box key={comment.id}>
+                    <Comment
+                      userName={comment.ownerName}
+                      userAvatar={`${ASSETS}${comment.ownerImage}`}
+                      onClick={() =>
+                        activeReplyIndex === index
+                          ? setActiveReplyIndex(-1)
+                          : setActiveReplyIndex(index)
+                      }
+                      comment={comment.content}
+                      isReply={false}
+                    />
+                    <Box sx={{ ml: "2rem" }}>
+                      <CommentTextbox
+                        label="Escribe una respuesta"
+                        sx={{ mb: 1.5 }}
+                        onClick={sendReply}
+                        show={showReplyTextBox}
+                        sendingComment={sendingReply}
+                        parentCommentId={comment.id}
+                      />
+                      {replies.length > 0 &&
+                        replies.map((reply) => (
+                          <Comment
+                            key={reply.id}
+                            userName={reply.ownerName}
+                            userAvatar={`${ASSETS}${reply.ownerImage}`}
+                            comment={reply.content}
+                            isReply={true}
+                          />
+                        ))}
+                    </Box>
+                  </Box>
+                );
+              })
+            ) : (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <CommentsDisabledIcon
+                  sx={{ fontSize: 75, color: "primary.main" }}
+                />
+                <Typography variant="body2">No hay comentarios</Typography>
+              </Box>
+            )}
+          </CommentsAccordion>
+        </>
       )}
     </Container>
   );

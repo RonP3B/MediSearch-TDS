@@ -60,7 +60,7 @@ const useTerritorial = () => {
       municipalitiesSelect.current?.setValue("");
     }
 
-    fetchMunicipalities();
+    provinces.length > 0 && fetchMunicipalities();
 
     return () => setResetMunicipality(true);
   }, [selectedProvince, provinces, resetMunicipality]);

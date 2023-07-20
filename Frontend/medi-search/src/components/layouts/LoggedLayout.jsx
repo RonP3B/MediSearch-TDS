@@ -12,7 +12,7 @@ const LoggedLayout = () => {
   const pages = ["opcion a", "opcion b", "opcion c"];
 
   const options = [
-    { option: "Opcion a", route: "/" },
+    { option: "Mi perfil", route: "/company/my-profile" },
     { option: "Opcion b", route: "/" },
     { option: "Opcion c", route: "/" },
   ];
