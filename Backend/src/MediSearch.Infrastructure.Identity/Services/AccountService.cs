@@ -1083,7 +1083,8 @@ namespace MediSearch.Infrastructure.Identity.Services
                 <p><strong>Nombre de Usuario:</strong> [Usuario]</p>
                 <p><strong>Contraseña por Defecto:</strong> <span class='password'>[Contraseña]</span></p>
             </div>
-            <p class='warning'>Es importante que cambies tu contraseña por defecto lo antes posible por motivos de seguridad.</p>
+            <p class='warning'>Te recomendamos que cambies tu contraseña por defecto por motivos de seguridad.</p>
+            <p>Puedes cambiarla desde la sección de olvidaste la contraseña de la página de inicio de sesión</p>
             <p>Ya puedes acceder al sistema y disfrutar de todas sus funcionalidades:</p>
             <p><a href='[URL]' class='button'>Ir al Sistema</a></p>
         </div>

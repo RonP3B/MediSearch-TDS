@@ -20,8 +20,7 @@ namespace MediSearch.Core.Application.Features.Admin.Commands.EditProfile
         public string LastName { get; set; }
 
         [SwaggerParameter(Description = "Foto de perfil")]
-        [Required(ErrorMessage = "Debe de subir una foto suya")]
-        public IFormFile Image { get; set; }
+        public IFormFile? Image { get; set; }
 
         [SwaggerParameter(Description = "Provincia")]
         [Required(ErrorMessage = "Debe de ingresar su provincia")]

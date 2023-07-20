@@ -162,8 +162,8 @@ namespace MediSearch.WebApi.Controllers.v1
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(RegisterResponse))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(
-           Summary = "Registro de empleados",
-           Description = "Registra un empleado a tu empresa"
+           Summary = "Editar el perfil",
+           Description = "Cambie los datos de su perfil"
         )]
         public async Task<IActionResult> EditProfile([FromForm] EditProfileCommandRequest request)
         {

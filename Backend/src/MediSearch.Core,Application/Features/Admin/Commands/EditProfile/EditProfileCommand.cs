@@ -17,7 +17,7 @@ namespace MediSearch.Core.Application.Features.Admin.Commands.EditProfile
         public string Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public IFormFile Image { get; set; }
+        public IFormFile? Image { get; set; }
         public string Province { get; set; }
         public string Municipality { get; set; }
         public string Address { get; set; }
