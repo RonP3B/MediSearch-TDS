@@ -174,6 +174,7 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
 
         public void TruncateTables()
         {
+            Comments.RemoveRange(Comments);
             Companies.RemoveRange(Companies);
             CompanyTypes.RemoveRange(CompanyTypes);
             CompanyUsers.RemoveRange(CompanyUsers);
@@ -182,6 +183,7 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
             Messages.RemoveRange(Messages);
             MessagTypes.RemoveRange(MessagTypes);
             Products.RemoveRange(Products);
+            Replies.RemoveRange(Replies);
             
             SaveChanges();
         }

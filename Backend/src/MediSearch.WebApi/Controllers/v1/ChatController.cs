@@ -1,6 +1,8 @@
 ﻿using MediSearch.Core.Application.Dtos.Product;
+using MediSearch.Core.Application.Features.Chat.Command.SendMessage;
 using MediSearch.Core.Application.Features.Chat.Queries.GetChat;
 using MediSearch.Core.Application.Features.Chat.Queries.GetChats;
+using MediSearch.Core.Domain.Entities;
 using MediSearch.WebApi.Middlewares;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -61,7 +63,7 @@ namespace MediSearch.WebApi.Controllers.v1
             Summary = "Mensajes que tiene el usuario en ese chat(sala).",
             Description = "Permite obtener todos los mensajes que tiene el usuario con otro usuario en ese chat(sala)."
         )]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetChatsQueryResponse))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetChatQueryResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetChat(string id)
@@ -83,6 +85,46 @@ namespace MediSearch.WebApi.Controllers.v1
 
                 if (result == null)
                     return NotFound("Este usuario no tiene mensajes en esta sala");
+
+                return Ok(result);
+
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
+        }
+
+        [HttpPost("send-message")]
+        [SwaggerOperation(
+            Summary = "Enviar mensajes.",
+            Description = "Permite enviar mensajes a otros usuarios."
+        )]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Message))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> SendMessage([FromForm] SendMessageCommand command)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest();
+
+                Message result = new();
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+
+                if (user.CompanyId == "Client")
+                {
+                    command.IdUser = user.Id;
+                    result = await Mediator.Send(command);
+                }
+                else
+                {
+                    command.IdUser = user.CompanyId;
+                    result = await Mediator.Send(command);
+                }
 
                 return Ok(result);
 

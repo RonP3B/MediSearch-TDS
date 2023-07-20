@@ -64,6 +64,58 @@ namespace MediSearch.Core.Application.Helpers
             return null;
         }
 
+        public static string UploadImageChat(IFormFile file, string ItemId, bool isEditMode = false,  string imagePath = "")
+        {
+            if (isEditMode)
+            {
+                if (file == null)
+                {
+                    return imagePath;
+                }
+            }
+            string basePath = $"/Assets/Images/Chats/{ItemId}/";
+            string path = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot{basePath}");
+
+            //create folder if not exist
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            //get file extension
+            if (file != null)
+            {
+                Guid guid = Guid.NewGuid();
+                FileInfo fileInfo = new(file.FileName);
+                string fileName = guid + fileInfo.Extension;
+
+                string fileNameWithPath = Path.Combine(path, fileName);
+
+                using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
+
+                if (isEditMode)
+                {
+                    if (imagePath != null)
+                    {
+                        string[] oldImagePart = imagePath.Split("/");
+                        string oldImagePath = oldImagePart[^1];
+                        string completeImageOldPath = Path.Combine(path, oldImagePath);
+
+                        if (System.IO.File.Exists(completeImageOldPath))
+                        {
+                            System.IO.File.Delete(completeImageOldPath);
+                        }
+                    }
+
+                }
+                return $"{basePath}{fileName}";
+            }
+            return null;
+        }
+
         public static string UploadImageCompany(IFormFile file, bool isEditMode = false, string imagePath = "")
         {
             if (isEditMode)

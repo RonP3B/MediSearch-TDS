@@ -23,7 +23,7 @@ namespace MediSearch.Infrastructure.Persistence.Repositories
 
             List<HallUser> halls = hall.Where(x => x.UserId == user).ToList();
 
-            return hall;
+            return halls;
         }
 
         public async Task<List<HallUser>> GetByHallAsync(string hallId)
@@ -32,7 +32,29 @@ namespace MediSearch.Infrastructure.Persistence.Repositories
 
             List<HallUser> halls = hall.Where(x => x.HallId == hallId).ToList();
 
-            return hall;
+            return halls;
+        }
+
+        public async Task<HallUser> ValidateChat(string user, string receiver)
+        {
+            HallUser exists = new();
+            var hall = await GetAllAsync();
+
+            List<HallUser> halls = hall.Where(x => x.UserId == user).ToList();
+
+            foreach (var item in halls)
+            {
+                var users = hall.Where(x => x.HallId == item.HallId).ToList();
+
+                var exist = users.Where(x => x.UserId == receiver).FirstOrDefault();
+                if (exist != null)
+                {
+                    exists = exist;
+                    break;
+                }
+            }
+
+            return exists;
         }
     }
 }

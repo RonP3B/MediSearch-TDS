@@ -29,7 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Chat\Command\" />
     <Folder Include="Features\Home\Command\" />
     <Folder Include="Services\" />
   </ItemGroup>
