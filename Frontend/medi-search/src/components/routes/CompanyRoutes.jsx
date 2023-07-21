@@ -7,6 +7,8 @@ import SaveProduct from "../pages/SaveProduct";
 import Profile from "../pages/Profile";
 import ProductDetails from "../pages/ProductDetails";
 import SuperAdminRoutes from "./SuperAdminRoutes";
+import PharmacyRoutes from "./PharmacyRoutes";
+import LabRoutes from "./LabRoutes";
 
 const CompanyRoutes = () => {
   return (
@@ -28,6 +30,8 @@ const CompanyRoutes = () => {
         element={<ProductDetails logged={true} client={false} />}
       />
       {SuperAdminRoutes()}
+      {LabRoutes()}
+      {PharmacyRoutes()}
     </Route>
   );
 };
