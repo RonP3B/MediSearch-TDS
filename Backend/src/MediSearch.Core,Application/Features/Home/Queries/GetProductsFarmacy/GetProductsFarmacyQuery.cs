@@ -1,15 +1,16 @@
 ﻿using AutoMapper;
 using MediatR;
+using MediSearch.Core.Application.Dtos.Product;
 using MediSearch.Core.Application.Interfaces.Repositories;
 
 namespace MediSearch.Core.Application.Features.Home.Queries.GetProductsFarmacy
 {
-    public class GetProductsFarmacyQuery : IRequest<List<GetProductsFarmacyQueryResponse>>
+    public class GetProductsFarmacyQuery : IRequest<List<ProductHomeDTO>>
     {
 
     }
 
-    public class GetProductsFarmacyQueryHandler : IRequestHandler<GetProductsFarmacyQuery, List<GetProductsFarmacyQueryResponse>>
+    public class GetProductsFarmacyQueryHandler : IRequestHandler<GetProductsFarmacyQuery, List<ProductHomeDTO>>
     {
         private readonly IProductRepository _productRepository;
         private readonly ICompanyTypeRepository _typeRepository;
@@ -22,19 +23,19 @@ namespace MediSearch.Core.Application.Features.Home.Queries.GetProductsFarmacy
             _mapper = mapper;
         }
 
-        public async Task<List<GetProductsFarmacyQueryResponse>> Handle(GetProductsFarmacyQuery request, CancellationToken cancellationToken)
+        public async Task<List<ProductHomeDTO>> Handle(GetProductsFarmacyQuery request, CancellationToken cancellationToken)
         {
             var result = await GetAllProducts();
 
             return result;
         }
 
-        public async Task<List<GetProductsFarmacyQueryResponse>> GetAllProducts()
+        public async Task<List<ProductHomeDTO>> GetAllProducts()
         {
             var products = await _productRepository.GetAllWithIncludeAsync(new List<string>() { "Company" });
             var farmacy = await _typeRepository.GetByNameAsync("Farmacia");
             
-            List<GetProductsFarmacyQueryResponse> response = products.Where(p => p.Company.CompanyTypeId == farmacy.Id).Select(p => new GetProductsFarmacyQueryResponse()
+            List<ProductHomeDTO> response = products.Where(p => p.Company.CompanyTypeId == farmacy.Id).Select(p => new ProductHomeDTO()
             {
                 Id = p.Id,
                 Name = p.Name,

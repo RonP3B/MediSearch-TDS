@@ -1,6 +1,12 @@
-﻿namespace MediSearch.Core.Application.Features.Home.Queries.GetProductsFarmacy
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MediSearch.Core.Application.Dtos.Product
 {
-    public class GetProductsFarmacyQueryResponse
+    public class ProductHomeDTO
     {
         public string Id { get; set; }
         public string Name { get; set; }

@@ -99,6 +99,7 @@ namespace MediSearch.Core.Application.Mappings
                 .ForMember(x => x.LastModifiedBy, opt => opt.Ignore());
             
             CreateMap<Company, CompanyDetailsDTO>()
+                .ForMember(x => x.Products, opt => opt.Ignore())
                 .ReverseMap()
                 .ForMember(x => x.CompanyType, opt => opt.Ignore())
                 .ForMember(x => x.CompanyTypeId, opt => opt.Ignore())

@@ -19,7 +19,7 @@ namespace MediSearch.WebApi.Controllers.v1
            Summary = "Obtener todos los productos de las farmacias.",
             Description = "Nos permite obtener todos los productos que las farmacias han registrado en el sistema."
         )]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<GetProductsFarmacyQueryResponse>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ProductHomeDTO>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProductResponse))]
         public async Task<IActionResult> GetProductsFarmacy()
@@ -47,7 +47,7 @@ namespace MediSearch.WebApi.Controllers.v1
            Summary = "Obtener todos los productos de los laboratorios.",
             Description = "Nos permite obtener todos los productos que los laboratoios han registrado en el sistema."
         )]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<GetProductsLaboratoryQueryResponse>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ProductHomeDTO>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProductResponse))]
         public async Task<IActionResult> GetProductsLaboratory()

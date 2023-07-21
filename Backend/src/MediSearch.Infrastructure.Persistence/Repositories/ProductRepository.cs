@@ -16,5 +16,13 @@ namespace MediSearch.Infrastructure.Persistence.Repositories
         {
             _dbContext = dbContext;
         }
+
+        public async Task<List<Product>> GetProductsByCompany(string company)
+        {
+            var products = await GetAllAsync();
+            var result = products.Where(p => p.CompanyId == company).ToList();
+
+            return result;
+        }
     }
 }
