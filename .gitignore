@@ -366,7 +366,7 @@ FodyWeavers.xsd
 Backend/src/MediSearch.WebApi/wwwroot/Assets/Images/Companies/
 Backend/src/MediSearch.WebApi/wwwroot/Assets/Images/Products/
 Backend/src/MediSearch.WebApi/wwwroot/Assets/Images/Users/
-
+Backend/src/MediSearch.WebApi/wwwroot/Assets/Images/Chats/
 
 # ========================================================
 # Logs
