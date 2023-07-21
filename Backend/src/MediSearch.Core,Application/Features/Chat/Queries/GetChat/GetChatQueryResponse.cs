@@ -1,4 +1,5 @@
-﻿using MediSearch.Core.Domain.Entities;
+﻿using MediSearch.Core.Application.Dtos.Message;
+using MediSearch.Core.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,6 @@ namespace MediSearch.Core.Application.Features.Chat.Queries.GetChat
         public string Id { get; set; }
         public string Name { get; set; }
         public string Image { get; set; }   
-        public List<Message> Messages { get; set; }
+        public List<MessageDTO> Messages { get; set; }
     }
 }

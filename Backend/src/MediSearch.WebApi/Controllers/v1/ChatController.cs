@@ -1,4 +1,5 @@
-﻿using MediSearch.Core.Application.Dtos.Product;
+﻿using MediSearch.Core.Application.Dtos.Message;
+using MediSearch.Core.Application.Dtos.Product;
 using MediSearch.Core.Application.Features.Chat.Command.SendMessage;
 using MediSearch.Core.Application.Features.Chat.Queries.GetChat;
 using MediSearch.Core.Application.Features.Chat.Queries.GetChats;
@@ -101,7 +102,7 @@ namespace MediSearch.WebApi.Controllers.v1
             Summary = "Enviar mensajes.",
             Description = "Permite enviar mensajes a otros usuarios."
         )]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Message))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MessageDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> SendMessage([FromForm] SendMessageCommand command)
@@ -111,7 +112,7 @@ namespace MediSearch.WebApi.Controllers.v1
                 if (!ModelState.IsValid)
                     return BadRequest();
 
-                Message result = new();
+                MessageDTO result = new();
                 UserDataAccess userData = new(_serviceScopeFactory);
                 var user = await userData.GetUserSession();
 

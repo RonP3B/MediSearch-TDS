@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using MediSearch.Core.Application.Dtos.Message;
 using MediSearch.Core.Application.Helpers;
 using MediSearch.Core.Application.Interfaces.Repositories;
 using MediSearch.Core.Application.Interfaces.Services;
@@ -10,7 +11,7 @@ using System.Text.Json.Serialization;
 
 namespace MediSearch.Core.Application.Features.Chat.Command.SendMessage
 {
-    public class SendMessageCommand : IRequest<Message>
+    public class SendMessageCommand : IRequest<MessageDTO>
     {
         [JsonIgnore]
         public string? IdUser { get; set; }
@@ -26,7 +27,7 @@ namespace MediSearch.Core.Application.Features.Chat.Command.SendMessage
         public IFormFile? File { get; set; }
     }
 
-    public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, Message>
+    public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, MessageDTO>
     {
         private readonly IHallRepository _hallRepository;
         private readonly IHallUserRepository _hallUserRepository;
@@ -41,11 +42,11 @@ namespace MediSearch.Core.Application.Features.Chat.Command.SendMessage
             _messageTypeRepository = messageTypeRepository;
         }
 
-        public async Task<Message> Handle(SendMessageCommand command, CancellationToken cancellationToken)
+        public async Task<MessageDTO> Handle(SendMessageCommand command, CancellationToken cancellationToken)
         {
             try
             {
-                Message response = new();
+                MessageDTO response = new();
                 Message newMessage = new();
                 var existChat = await _hallUserRepository.ValidateChat(command.IdUser, command.IdReceiver);
                 if (existChat.Id != "")
@@ -96,7 +97,11 @@ namespace MediSearch.Core.Application.Features.Chat.Command.SendMessage
                 }
                 
                 var entity = await _messageRepository.AddAsync(newMessage);
-                response = entity;
+                response.Id = entity.Id;
+                response.Content = entity.Content;
+                response.Url = entity.Url;
+                response.Date = entity.Date;
+                response.UserId = entity.UserId;
 
                 return response;
             }

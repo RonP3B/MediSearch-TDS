@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using MediSearch.Core.Application.Dtos.Message;
 using MediSearch.Core.Application.Dtos.Product;
 using MediSearch.Core.Application.Interfaces.Repositories;
 using MediSearch.Core.Application.Interfaces.Services;
@@ -53,7 +54,14 @@ namespace MediSearch.Core.Application.Features.Chat.Queries.GetChats
                 var userData = await _accountService.GetUsersById(receiver.UserId);
                 var messages = await _messageRepository.GetByHall(chat.HallId);
                 response.Id = receiver.HallId;
-                response.LastMessage = messages.OrderByDescending(m => m.Date).FirstOrDefault();
+                response.LastMessage = messages.OrderByDescending(m => m.Date).Select(m => new MessageDTO()
+                {
+                    Id = m.Id,
+                    Content = m.Content,
+                    Url = m.Url,
+                    Date = m.Date,
+                    UserId = m.UserId
+                }).FirstOrDefault();
 
                 if (userData == null)
                 {
