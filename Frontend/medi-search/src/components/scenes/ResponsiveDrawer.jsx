@@ -81,7 +81,18 @@ const ResponsiveDrawer = (props) => {
       </Paper>
       <List>
         {nav.map(({ item, icon, to }) => {
-          if (item === "Crear Usuario" && auth.payload.roles !== "SuperAdmin") {
+          if (auth.payload.RoleType === "Farmacia" && item === "Acreedores") {
+            return null;
+          }
+
+          if (
+            auth.payload.RoleType === "Laboratorio" &&
+            (item === "Proveedores" || item === "Provisiones")
+          ) {
+            return null;
+          }
+
+          if (auth.payload.roles !== "SuperAdmin" && item === "Crear Usuario") {
             return null;
           }
 
