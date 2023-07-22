@@ -1,12 +1,5 @@
 ﻿using MediatR;
-using MediSearch.Core.Application.Features.Admin.Queries.GetProfile;
 using MediSearch.Core.Application.Interfaces.Repositories;
-using MediSearch.Core.Application.Interfaces.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MediSearch.Core.Application.Features.Admin.Queries.GetProfileCompany
 {

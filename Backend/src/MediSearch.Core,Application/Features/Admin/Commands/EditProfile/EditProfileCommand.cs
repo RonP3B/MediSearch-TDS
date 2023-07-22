@@ -63,7 +63,7 @@ namespace MediSearch.Core.Application.Features.Admin.Commands.EditProfile
             }
             catch (Exception)
             {
-                throw new Exception("Ocurrió un error tratando de registrar el usuario.");
+                throw new Exception("Ocurrió un error tratando de actualizar el usuario.");
             }
         }
 

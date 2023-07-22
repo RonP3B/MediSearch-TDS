@@ -29,7 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Admin\Commands\EditProfileCompany\" />
     <Folder Include="Features\Home\Command\" />
     <Folder Include="Services\" />
   </ItemGroup>
