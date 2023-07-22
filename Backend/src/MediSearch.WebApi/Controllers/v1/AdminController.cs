@@ -4,6 +4,7 @@ using MediSearch.Core.Application.Features.Admin.Commands.DeleteEmployee;
 using MediSearch.Core.Application.Features.Admin.Commands.EditProfile;
 using MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee;
 using MediSearch.Core.Application.Features.Admin.Queries.GetProfile;
+using MediSearch.Core.Application.Features.Admin.Queries.GetProfileCompany;
 using MediSearch.Core.Application.Features.Admin.Queries.GetUsersCompany;
 using MediSearch.WebApi.Middlewares;
 using Microsoft.AspNetCore.Authorization;
@@ -73,6 +74,36 @@ namespace MediSearch.WebApi.Controllers.v1
 
                 if (result == null)
                     return NotFound("No se encontró el usuario");
+
+                return Ok(result);
+
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
+        }
+        
+        [Authorize(Roles = "SuperAdmin, Admin")]
+        [HttpGet("get-profile-company")]
+        [SwaggerOperation(
+            Summary = "Datos de la empresa del usuario logueado.",
+            Description = "Permite obtener los datos que tiene la empresa en el sistema."
+        )]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetProfileCompanyQueryResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetProfileCompany()
+        {
+            try
+            {
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                var result = await Mediator.Send(new GetProfileCompanyQuery() { Id = user.CompanyId });
+
+                if (result == null)
+                    return NotFound("No se encontró la empresa");
 
                 return Ok(result);
 
