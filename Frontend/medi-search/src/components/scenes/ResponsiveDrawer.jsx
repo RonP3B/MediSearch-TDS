@@ -1,8 +1,9 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import ColorModeContext from "../contexts/ColorModeContext";
 import PropTypes from "prop-types";
 import useAuth from "../../hooks/persistence/useAuth";
 import useLogout from "../../hooks/persistence/useLogout";
+import ScrollBar from "../custom/Scrollbar/ScrollBar";
 import { useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
@@ -39,6 +40,12 @@ const ResponsiveDrawer = (props) => {
   const { auth } = useAuth();
   const logoutUser = useLogout();
   const location = useLocation();
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    if (mobileOpen) setMobileOpen(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
   const handleCloseUserMenu = () => setAnchorElUser(null);
@@ -50,7 +57,7 @@ const ResponsiveDrawer = (props) => {
   const handleToggleColorMode = () => colorMode.toggleColorMode();
 
   const drawer = (
-    <div>
+    <ScrollBar>
       <Toolbar>
         <Box
           component="img"
@@ -110,7 +117,7 @@ const ResponsiveDrawer = (props) => {
           );
         })}
       </List>
-    </div>
+    </ScrollBar>
   );
 
   const container =

@@ -17,7 +17,22 @@ const CommentsAccordion = ({ children }) => {
         <CommentIcon />
         <Typography sx={{ ml: 1, fontWeight: "bold" }}>Comentarios</Typography>
       </AccordionSummary>
-      <AccordionDetails sx={{ maxHeight: 200, overflowY: "auto" }}>
+      <AccordionDetails
+        sx={{
+          maxHeight: 250,
+          overflowY: "auto",
+          "&::-webkit-scrollbar": {
+            width: "8px",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "rgba(0, 0, 0, 0.2)",
+            borderRadius: "4px",
+          },
+          "&::-webkit-scrollbar-thumb:hover": {
+            backgroundColor: "rgba(0, 0, 0, 0.3)",
+          },
+        }}
+      >
         {children}
       </AccordionDetails>
     </Accordion>
