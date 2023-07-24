@@ -40,8 +40,11 @@ namespace MediSearch.Core.Application.Features.Home.Queries.GetCompanyDetails
                 {
                     Id = p.Id,
                     Name = p.Name,
-                    NameCompany = company.Name,
-                    Images = p.UrlImages,
+                    Description = p.Description,
+                    UrlImages = p.UrlImages,
+                    Categories = p.Categories,
+                    Components = p.Components,
+                    Quantity = p.Quantity,
                     Price = p.Price,
                     Available = p.Quantity > 0
                 }).ToList();
