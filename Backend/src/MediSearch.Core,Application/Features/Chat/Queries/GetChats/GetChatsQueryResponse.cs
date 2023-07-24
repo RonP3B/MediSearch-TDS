@@ -11,6 +11,7 @@ namespace MediSearch.Core.Application.Features.Chat.Queries.GetChats
     public class GetChatsQueryResponse
     {
         public string Id { get; set; }
+        public string ReceiverId { get; set; }
         public string Name { get; set; }
         public string Image { get; set; }
         public MessageDTO LastMessage { get; set; }
