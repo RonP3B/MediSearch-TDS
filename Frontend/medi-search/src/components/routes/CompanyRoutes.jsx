@@ -17,7 +17,10 @@ const CompanyRoutes = () => {
       <Route path="/company/dashboard" element={<Dashboard />} />
       <Route path="/company/users" element={<Users />} />
       <Route path="/company/products" element={<Products />} />
-      <Route path="/company/my-profile" element={<Profile />} />
+      <Route
+        path="/company/my-profile"
+        element={<Profile profileType="perfil" />}
+      />
       <Route
         path="/company/products/add"
         element={<SaveProduct edit={false} />}

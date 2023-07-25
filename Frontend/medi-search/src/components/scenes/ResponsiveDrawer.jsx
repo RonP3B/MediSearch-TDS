@@ -99,7 +99,10 @@ const ResponsiveDrawer = (props) => {
             return null;
           }
 
-          if (auth.payload.roles !== "SuperAdmin" && item === "Crear Usuario") {
+          if (
+            auth.payload.roles !== "SuperAdmin" &&
+            (item === "Crear Usuario" || item === "Mi empresa")
+          ) {
             return null;
           }
 

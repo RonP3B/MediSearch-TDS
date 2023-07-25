@@ -9,17 +9,13 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import IconButton from "@mui/material/IconButton";
 import Chip from "@mui/material/Chip";
 import Divider from "@mui/material/Divider";
 import CircularProgress from "@mui/material/CircularProgress";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import WebIcon from "@mui/icons-material/Web";
-import FacebookIcon from "@mui/icons-material/Facebook";
-import InstagramIcon from "@mui/icons-material/Instagram";
-import TwitterIcon from "@mui/icons-material/Twitter";
 import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantityLimits";
 import ProductCard from "../custom/Cards/ProductCard";
+import CompanySocials from "../custom/Socials/CompanySocials";
 
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
@@ -128,86 +124,12 @@ const CompanyInfo = ({ company }) => {
         </Grid>
       </Grid>
       {hasSocial && (
-        <Box>
-          <Typography
-            variant="h6"
-            sx={{ fontWeight: "bold", textAlign: "center", mb: 1 }}
-          >
-            Redes sociales
-          </Typography>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-evenly",
-              alignItems: "center",
-              flexDirection: "row",
-              "@media (max-width: 380px)": {
-                flexDirection: "column",
-              },
-            }}
-          >
-            {webSite && (
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                <IconButton href={webSite} target="_blank" sx={{ padding: 0 }}>
-                  <WebIcon sx={{ color: "#4caf50", fontSize: 50 }} />
-                </IconButton>
-                <Typography variant="body2">Página Web</Typography>
-              </Box>
-            )}
-            {facebook && (
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                <IconButton href={facebook} target="_blank" sx={{ padding: 0 }}>
-                  <FacebookIcon sx={{ color: "#1877f2", fontSize: 50 }} />
-                </IconButton>
-                <Typography variant="body2">Facebook</Typography>
-              </Box>
-            )}
-            {instagram && (
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                <IconButton
-                  href={instagram}
-                  target="_blank"
-                  sx={{ padding: 0 }}
-                >
-                  <InstagramIcon sx={{ color: "#e4405f", fontSize: 50 }} />
-                </IconButton>
-                <Typography variant="body2">Instagram</Typography>
-              </Box>
-            )}
-            {twitter && (
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                <IconButton href={twitter} target="_blank" sx={{ padding: 0 }}>
-                  <TwitterIcon sx={{ color: "#1da1f2", fontSize: 50 }} />
-                </IconButton>
-                <Typography variant="body2">Twitter</Typography>
-              </Box>
-            )}
-          </Box>
-        </Box>
+        <CompanySocials
+          webSite={webSite}
+          facebook={facebook}
+          instagram={instagram}
+          twitter={twitter}
+        />
       )}
     </>
   );
@@ -237,19 +159,11 @@ const CompanyProducts = ({ products, name }) => {
 
   return (
     <Grid container spacing={2}>
-      {products.map((product) => {
-        //Eliminar despues de cambios en el backend
-        product.urlImages = { $values: product.images.$values };
-        product.quantity = 16;
-        console.log(products);
-        //Eliminar despues de cambios en el backend
-
-        return (
-          <Grid item key={product.id} xs={12} sm={6} md={4}>
-            <ProductCard product={product} maintenance={false} />
-          </Grid>
-        );
-      })}
+      {products.map((product) => (
+        <Grid item key={product.id} xs={12} sm={6} md={4}>
+          <ProductCard product={product} maintenance={false} />
+        </Grid>
+      ))}
     </Grid>
   );
 };

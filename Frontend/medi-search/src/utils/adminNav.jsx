@@ -8,6 +8,7 @@ import BadgeIcon from "@mui/icons-material/Badge";
 import MedicationIcon from "@mui/icons-material/Medication";
 import MarkUnreadChatAltIcon from "@mui/icons-material/MarkUnreadChatAlt";
 import LocalPharmacyIcon from "@mui/icons-material/LocalPharmacy";
+import HomeWorkIcon from "@mui/icons-material/HomeWork";
 
 export const adminNav = [
   {
@@ -34,6 +35,11 @@ export const adminNav = [
     item: "Crear Producto",
     icon: <AddShoppingCartIcon />,
     to: "/company/products/add",
+  },
+  {
+    item: "Mi empresa",
+    icon: <HomeWorkIcon />,
+    to: "/company/my-company",
   },
   {
     item: "Mi perfil",
