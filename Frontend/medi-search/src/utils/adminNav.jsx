@@ -41,16 +41,16 @@ export const adminNav = [
     to: "/company/my-profile",
   },
   {
-    item: "Proveedores",
+    item: "Laboratorios",
     icon: <BusinessIcon />,
-    to: "/company/providers",
+    to: "/company/labs",
   },
   {
     item: "Provisiones",
     icon: <MedicationIcon />,
     to: "/company/provisions",
   },
-  { item: "Acreedores", icon: <LocalPharmacyIcon />, to: "/company/creditors" },
+  { item: "Farmacias", icon: <LocalPharmacyIcon />, to: "/company/pharmacies" },
   {
     item: "Chat",
     icon: <MarkUnreadChatAltIcon />,

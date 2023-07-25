@@ -88,13 +88,13 @@ const ResponsiveDrawer = (props) => {
       </Paper>
       <List>
         {nav.map(({ item, icon, to }) => {
-          if (auth.payload.RoleType === "Farmacia" && item === "Acreedores") {
+          if (auth.payload.RoleType === "Farmacia" && item === "Farmacias") {
             return null;
           }
 
           if (
             auth.payload.RoleType === "Laboratorio" &&
-            (item === "Proveedores" || item === "Provisiones")
+            (item === "Laboratorios" || item === "Provisiones")
           ) {
             return null;
           }

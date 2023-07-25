@@ -1,10 +1,14 @@
 import { Route } from "react-router-dom";
 import RequiresLab from "../routeGuards/RequiresLab";
+import Companies from "../pages/Companies";
 
 const LabRoutes = () => {
   return (
     <Route element={<RequiresLab />}>
-      <Route path="/company/creditors" element={<>Acreedores</>} />
+      <Route
+        path="/company/pharmacies"
+        element={<Companies companyType="farmacia" />}
+      />
     </Route>
   );
 };

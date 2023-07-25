@@ -1,12 +1,19 @@
 import { Route } from "react-router-dom";
 import RequiresPharmacy from "../routeGuards/RequiresPharmacy";
-import Providers from "../pages/Providers";
+import Companies from "../pages/Companies";
+import Provisions from "../pages/Provisions";
 
 const PharmacyRoutes = () => {
   return (
-    <Route element={<RequiresPharmacy />}>
-      <Route path="/company/providers" element={<Providers />} />
-    </Route>
+    <>
+      <Route element={<RequiresPharmacy />}>
+        <Route
+          path="/company/labs"
+          element={<Companies companyType="laboratorio" />}
+        />
+      </Route>
+      <Route path="/company/provisions" element={<Provisions />} />
+    </>
   );
 };
 
