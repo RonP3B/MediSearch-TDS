@@ -39,10 +39,17 @@ namespace MediSearch.Core.Application.Features.Home.Queries.GetProductsLaborator
             {
                 Id = p.Id,
                 Name = p.Name,
+                Description = p.Description,
+                UrlImages = p.UrlImages,
+                Categories = p.Categories,
+                Components = p.Components,
+                Quantity = p.Quantity,
                 Price = p.Price,
-                Images = p.UrlImages,
+                Available = p.Quantity > 0,
                 NameCompany = p.Company.Name,
-                Available = p.Quantity > 0
+                Province = p.Company.Province,
+                Municipality = p.Company.Municipality,
+                Address = p.Company.Address
             }).ToList();
 
             return response;

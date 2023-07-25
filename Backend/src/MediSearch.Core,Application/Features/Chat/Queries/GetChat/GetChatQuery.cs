@@ -49,6 +49,7 @@ namespace MediSearch.Core.Application.Features.Chat.Queries.GetChat
             var userData = await _accountService.GetUsersById(receiver.UserId);
             var messages = await _messageRepository.GetByHall(query.IdHall);
             response.Id = receiver.HallId;
+            response.ReceiverId = receiver.UserId;
             response.Messages = messages.OrderByDescending(m => m.Date).Select(m => new MessageDTO()
             {
                 Id = m.Id,
