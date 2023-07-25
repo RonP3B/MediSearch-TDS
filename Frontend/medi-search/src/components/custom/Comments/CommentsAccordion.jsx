@@ -1,3 +1,4 @@
+import { useState } from "react";
 import PropTypes from "prop-types";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -7,8 +8,14 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CommentIcon from "@mui/icons-material/Comment";
 
 const CommentsAccordion = ({ children }) => {
+  const [expanded, setExpanded] = useState(true);
+
   return (
-    <Accordion sx={{ boxShadow: 2 }}>
+    <Accordion
+      sx={{ boxShadow: 2 }}
+      expanded={expanded}
+      onChange={() => setExpanded((prev) => !prev)}
+    >
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         aria-controls="panel1a-content"
