@@ -24,6 +24,8 @@ const SaveUser = () => {
     setSelectedProvince,
     municipalitiesSelect,
     provincesSelect,
+    loadingProvinces,
+    loadingMunicipalities,
   } = useTerritorial();
 
   return (
@@ -91,6 +93,8 @@ const SaveUser = () => {
                       : ["", ...provinces.map((province) => province.name)]
                   }
                   setSelected={setSelectedProvince}
+                  disabled={provinces.length === 0}
+                  loading={loadingProvinces}
                   ref={provincesSelect}
                 />
               </Grid>
@@ -112,6 +116,7 @@ const SaveUser = () => {
                         ]
                   }
                   disabled={municipalities.length === 0}
+                  loading={loadingMunicipalities}
                   ref={municipalitiesSelect}
                 />
               </Grid>

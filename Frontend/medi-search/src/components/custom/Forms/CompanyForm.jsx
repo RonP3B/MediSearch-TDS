@@ -32,6 +32,8 @@ const CompanyForm = () => {
     setSelectedProvince,
     municipalitiesSelect,
     provincesSelect,
+    loadingMunicipalities,
+    loadingProvinces,
   } = useTerritorial();
 
   return (
@@ -95,6 +97,8 @@ const CompanyForm = () => {
                   : ["", ...provinces.map((province) => province.name)]
               }
               setSelected={setSelectedProvince}
+              disabled={provinces.length === 0}
+              loading={loadingProvinces}
               ref={provincesSelect}
             />
           </Grid>
@@ -115,6 +119,7 @@ const CompanyForm = () => {
                     ]
               }
               disabled={municipalities.length === 0}
+              loading={loadingMunicipalities}
               ref={municipalitiesSelect}
             />
           </Grid>

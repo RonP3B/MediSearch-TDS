@@ -10,6 +10,7 @@ import LocationOffIcon from "@mui/icons-material/LocationOff";
 import Box from "@mui/material/Box";
 import FilterOptionsFormGroup from "./FilterOptionsFormGroup";
 import handleSelectedCheckboxes from "../../../utils/handleSelectedCheckboxes";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const CompanyFilterContent = (props) => {
   const {
@@ -23,6 +24,7 @@ const CompanyFilterContent = (props) => {
     municipalities,
     selectedMunicipalities,
     setSelectedMunicipalities,
+    loadingMunicipalities,
   } = props;
 
   return (
@@ -68,10 +70,16 @@ const CompanyFilterContent = (props) => {
                 alignItems: "center",
               }}
             >
-              <LocationOffIcon sx={{ fontSize: 50 }} color="primary" />
-              <Typography variant="body2" sx={{ fontWeight: 400 }}>
-                Selecciona 1 provincia
-              </Typography>
+              {loadingMunicipalities ? (
+                <CircularProgress />
+              ) : (
+                <>
+                  <LocationOffIcon sx={{ fontSize: 50 }} color="primary" />
+                  <Typography variant="body2" sx={{ fontWeight: 400 }}>
+                    Selecciona 1 provincia
+                  </Typography>
+                </>
+              )}
             </Box>
           ) : (
             <ScrollBar sx={{ display: "flex", flexDirection: "column" }}>
@@ -131,6 +139,7 @@ CompanyFilterContent.propTypes = {
   setSelectedProvince: PropTypes.func.isRequired,
   municipalities: PropTypes.array.isRequired,
   setSelectedMunicipalities: PropTypes.func.isRequired,
+  loadingMunicipalities: PropTypes.bool.isRequired,
 };
 
 export default CompanyFilterContent;

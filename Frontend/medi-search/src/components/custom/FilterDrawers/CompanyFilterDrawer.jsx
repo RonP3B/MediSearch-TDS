@@ -18,6 +18,7 @@ const CompanyFilterDrawer = (props) => {
     municipalities,
     selectedMunicipalities,
     setSelectedMunicipalities,
+    loadingMunicipalities,
     onClear,
   } = props;
 
@@ -40,6 +41,7 @@ const CompanyFilterDrawer = (props) => {
             municipalities={municipalities}
             selectedMunicipalities={selectedMunicipalities}
             setSelectedMunicipalities={setSelectedMunicipalities}
+            loadingMunicipalities={loadingMunicipalities}
           />
         </Stack>
       </Box>
@@ -60,6 +62,7 @@ CompanyFilterDrawer.propTypes = {
   selectedProvince: PropTypes.string.isRequired,
   setSelectedProvince: PropTypes.func.isRequired,
   municipalities: PropTypes.array.isRequired,
+  loadingMunicipalities: PropTypes.bool.isRequired,
   setSelectedMunicipalities: PropTypes.func.isRequired,
 };
 

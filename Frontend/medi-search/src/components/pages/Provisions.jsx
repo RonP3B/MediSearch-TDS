@@ -29,8 +29,13 @@ const Provisions = () => {
   const [maxPrice, setMaxPrice] = useState(0);
   const showToast = useToast();
   const showToastRef = useRef(showToast);
-  const { provinces, municipalities, selectedProvince, setSelectedProvince } =
-    useTerritorial();
+  const {
+    provinces,
+    municipalities,
+    selectedProvince,
+    setSelectedProvince,
+    loadingMunicipalities,
+  } = useTerritorial();
 
   useEffect(() => {
     console.count("Provisions.jsx"); //borrame
@@ -41,7 +46,6 @@ const Provisions = () => {
         const res = await getLabProducts();
         const provisionsArr = res.data.$values;
 
-        //O(n)
         const highestPrice = provisionsArr.reduce((max, product) => {
           return product.price > max ? product.price : max;
         }, 0);
@@ -110,6 +114,7 @@ const Provisions = () => {
         municipalities={municipalities}
         setSelectedMunicipalities={setSelectedMunicipalities}
         selectedMunicipalities={selectedMunicipalities}
+        loadingMunicipalities={loadingMunicipalities}
         companyNameFilter={companyNameFilter}
         addressFilter={addressFilter}
         setCompanyNameFilter={setCompanyNameFilter}
@@ -167,18 +172,11 @@ const Provisions = () => {
       {provisions.length > 0 &&
         (filteredProvisions.length > 0 ? (
           <Grid container spacing={2}>
-            {filteredProvisions.map((provision) => {
-              //Eliminar despues de cambios en el backend
-              provision.urlImages = { $values: provision.images.$values };
-              provision.quantity = 16;
-              //Eliminar despues de cambios en el backend
-
-              return (
-                <Grid item key={provision.id} xs={12} sm={6} md={4}>
-                  <ProductCard product={provision} maintenance={false} />
-                </Grid>
-              );
-            })}
+            {filteredProvisions.map((provision) => (
+              <Grid item key={provision.id} xs={12} sm={6} md={4}>
+                <ProductCard product={provision} maintenance={false} />
+              </Grid>
+            ))}
           </Grid>
         ) : (
           <Box

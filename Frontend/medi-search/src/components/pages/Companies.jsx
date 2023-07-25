@@ -28,8 +28,13 @@ const Companies = ({ companyType }) => {
   const [loading, setLoading] = useState(true);
   const showToast = useToast();
   const showToastRef = useRef(showToast);
-  const { provinces, municipalities, selectedProvince, setSelectedProvince } =
-    useTerritorial();
+  const {
+    provinces,
+    municipalities,
+    selectedProvince,
+    setSelectedProvince,
+    loadingMunicipalities,
+  } = useTerritorial();
 
   useEffect(() => {
     console.count("Companies.jsx"); //borrame
@@ -119,6 +124,7 @@ const Companies = ({ companyType }) => {
         municipalities={municipalities}
         setSelectedMunicipalities={setSelectedMunicipalities}
         selectedMunicipalities={selectedMunicipalities}
+        loadingMunicipalities={loadingMunicipalities}
         onClear={clearFilters}
       />
       <Stack

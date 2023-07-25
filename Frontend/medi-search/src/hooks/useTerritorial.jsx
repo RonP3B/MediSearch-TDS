@@ -7,6 +7,8 @@ import {
 const useTerritorial = () => {
   const [provinces, setProvinces] = useState([]);
   const [municipalities, setMunicipalities] = useState([]);
+  const [loadingProvinces, setLoadingProvinces] = useState(true);
+  const [loadingMunicipalities, setLoadingMunicipalities] = useState(false);
   const [selectedProvince, setSelectedProvince] = useState("");
   const [resetMunicipality, setResetMunicipality] = useState(true);
   const municipalitiesSelect = useRef();
@@ -26,6 +28,8 @@ const useTerritorial = () => {
         }
       } catch (error) {
         console.error("Error fetching provinces:", error);
+      } finally {
+        setLoadingProvinces(false);
       }
     };
 
@@ -37,6 +41,8 @@ const useTerritorial = () => {
       if (!selectedProvince) return setMunicipalities([]);
 
       try {
+        setLoadingMunicipalities(true);
+
         const provinceCode = provinces.filter(
           (province) => province.name === selectedProvince
         )[0]?.code;
@@ -53,6 +59,8 @@ const useTerritorial = () => {
         setMunicipalities(responseData);
       } catch (error) {
         console.error("Error fetching municipalities:", error);
+      } finally {
+        setLoadingMunicipalities(false);
       }
     };
 
@@ -74,6 +82,8 @@ const useTerritorial = () => {
     municipalitiesSelect,
     provincesSelect,
     setProvinces,
+    loadingProvinces,
+    loadingMunicipalities,
   };
 };
 

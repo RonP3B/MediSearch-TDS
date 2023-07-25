@@ -55,6 +55,8 @@ export const UserFormContent = () => {
     setSelectedProvince,
     municipalitiesSelect,
     provincesSelect,
+    loadingProvinces,
+    loadingMunicipalities,
   } = useTerritorial();
 
   return (
@@ -85,6 +87,8 @@ export const UserFormContent = () => {
               : ["", ...provinces.map((province) => province.name)]
           }
           setSelected={setSelectedProvince}
+          disabled={provinces.length === 0}
+          loading={loadingProvinces}
           ref={provincesSelect}
         />
       </Grid>
@@ -100,6 +104,7 @@ export const UserFormContent = () => {
               : ["", ...municipalities.map((municipality) => municipality.name)]
           }
           disabled={municipalities.length === 0}
+          loading={loadingMunicipalities}
           ref={municipalitiesSelect}
         />
       </Grid>

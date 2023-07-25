@@ -37,6 +37,7 @@ const ProductFilterDrawer = (props) => {
     setSelectedProvince,
     municipalities,
     selectedMunicipalities,
+    loadingMunicipalities,
     setSelectedMunicipalities,
   } = props;
 
@@ -54,9 +55,9 @@ const ProductFilterDrawer = (props) => {
             </Typography>
             <FilterOptionsFormGroup>
               <ScrollBar sx={{ display: "flex", flexDirection: "column" }}>
-                {categories.map(({ name, code }) => (
+                {categories.map((name, index) => (
                   <FormControlLabel
-                    key={code}
+                    key={index}
                     sx={{ margin: 0 }}
                     control={
                       <Checkbox
@@ -88,6 +89,7 @@ const ProductFilterDrawer = (props) => {
               municipalities={municipalities}
               selectedMunicipalities={selectedMunicipalities}
               setSelectedMunicipalities={setSelectedMunicipalities}
+              loadingMunicipalities={loadingMunicipalities}
             />
           )}
           <Box>
@@ -143,7 +145,7 @@ ProductFilterDrawer.propTypes = {
   categories: PropTypes.array.isRequired,
   selectedCategories: PropTypes.array.isRequired,
   setSelectedCategories: PropTypes.func.isRequired,
-  priceFilter: PropTypes.number.isRequired,
+  priceFilter: PropTypes.array.isRequired,
   setPriceFilter: PropTypes.func.isRequired,
   quantityFilter: PropTypes.number.isRequired,
   setQuantityFilter: PropTypes.func.isRequired,
@@ -157,6 +159,7 @@ ProductFilterDrawer.propTypes = {
   setSelectedProvince: PropTypes.func,
   municipalities: PropTypes.array,
   setSelectedMunicipalities: PropTypes.func,
+  loadingMunicipalities: PropTypes.bool.isRequired,
 };
 
 export default ProductFilterDrawer;
