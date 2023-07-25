@@ -5,6 +5,7 @@ import Users from "../pages/Users";
 import Products from "../pages/Products";
 import SaveProduct from "../pages/SaveProduct";
 import Profile from "../pages/Profile";
+import CompanyDetails from "../pages/CompanyDetails";
 import ProductDetails from "../pages/ProductDetails";
 import SuperAdminRoutes from "./SuperAdminRoutes";
 import PharmacyRoutes from "./PharmacyRoutes";
@@ -29,6 +30,7 @@ const CompanyRoutes = () => {
         path="/company/products/product-details/:id"
         element={<ProductDetails logged={true} client={false} />}
       />
+      <Route path="/company/company-details/:id" element={<CompanyDetails />} />
       {SuperAdminRoutes()}
       {LabRoutes()}
       {PharmacyRoutes()}
