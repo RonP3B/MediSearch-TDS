@@ -63,14 +63,17 @@ const useTerritorial = () => {
     provinces.length > 0 && fetchMunicipalities();
 
     return () => setResetMunicipality(true);
-  }, [selectedProvince, provinces, resetMunicipality]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedProvince]);
 
   return {
     provinces,
     municipalities,
+    selectedProvince,
     setSelectedProvince,
     municipalitiesSelect,
     provincesSelect,
+    setProvinces,
   };
 };
 

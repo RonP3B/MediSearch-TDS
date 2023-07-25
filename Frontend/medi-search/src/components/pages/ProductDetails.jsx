@@ -158,6 +158,8 @@ const ProductDetails = ({ logged, client }) => {
                   sx={{
                     border: "2px solid",
                     borderColor: "primary.main",
+                    minHeight: "200px",
+                    minWidth: "200px",
                     maxHeight: "400px",
                     maxWidth: "100%",
                     display: "block",
@@ -167,7 +169,7 @@ const ProductDetails = ({ logged, client }) => {
               )}
             </Grid>
             <Grid item xs={12} md={6} sx={{ overflowWrap: "anywhere" }}>
-              <Divider sx={{ my: 1 }} />
+              <Divider sx={{ my: 1, display: { md: "none" } }} />
               <Typography
                 variant="subtitle1"
                 sx={{ fontWeight: "bold", mb: 1.5 }}
@@ -240,7 +242,7 @@ const ProductDetails = ({ logged, client }) => {
                 />{" "}
                 {product.description}
               </Typography>
-              <Divider sx={{ my: 1 }} />
+              <Divider sx={{ my: 1, display: { md: "none" } }} />
             </Grid>
           </Grid>
           <CommentsAccordion>

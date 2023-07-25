@@ -164,7 +164,7 @@ const Users = () => {
         justifyContent="space-between"
         mb={5}
       >
-        <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold" }}>
+        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
           Usuarios
         </Typography>
         {auth.payload.roles === "SuperAdmin" && (
