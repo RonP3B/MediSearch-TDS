@@ -91,7 +91,7 @@ const Products = () => {
         justifyContent="space-between"
         mb={5}
       >
-        <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold" }}>
+        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
           Productos
         </Typography>
         <Button
@@ -181,7 +181,7 @@ const Products = () => {
               <Grid item key={product.id} xs={12} sm={6} md={4}>
                 <ProductCard
                   product={product}
-                  company={true}
+                  maintenance={true}
                   handleDelete={handleDelete}
                 />
               </Grid>
