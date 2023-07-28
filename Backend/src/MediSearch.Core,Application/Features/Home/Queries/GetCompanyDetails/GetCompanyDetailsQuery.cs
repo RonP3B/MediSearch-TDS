@@ -43,7 +43,7 @@ namespace MediSearch.Core.Application.Features.Home.Queries.GetCompanyDetails
                     Description = p.Description,
                     UrlImages = p.UrlImages,
                     Categories = p.Categories,
-                    Components = p.Components,
+                    Classification = p.Classification,
                     Quantity = p.Quantity,
                     Price = p.Price,
                     Available = p.Quantity > 0

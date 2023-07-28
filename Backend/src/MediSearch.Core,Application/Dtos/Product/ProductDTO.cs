@@ -13,7 +13,7 @@ namespace MediSearch.Core.Application.Dtos.Product
         public string Name { get; set; }
         public string Description { get; set; }
         public List<string> Categories { get; set; }
-        public List<string> Components { get; set; }
+        public string Classification { get; set; }
         public double Price { get; set; }
         public int Quantity { get; set; }
         public List<string> UrlImages { get; set; }

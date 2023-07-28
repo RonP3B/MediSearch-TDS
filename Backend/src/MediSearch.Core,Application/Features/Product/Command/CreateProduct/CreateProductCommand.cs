@@ -20,13 +20,13 @@ namespace MediSearch.Core.Application.Features.Product.CreateProduct
         [Required(ErrorMessage = "Debe de especificar un nombre para este producto.")]
         public string Description { get; set; }
 
-        [SwaggerParameter(Description = "Categorías (enfermedades) que trata, cura o alivia el producto.")]
+        [SwaggerParameter(Description = "Categorías del producto.")]
         [Required(ErrorMessage = "Debe de especificar categorías para este producto.")]
         public List<string> Categories { get; set; }
 
-        [SwaggerParameter(Description = "Componentes que tiene el producto.")]
-        [Required(ErrorMessage = "Debe especificar los componentes de este producto.")]
-        public List<string> Components { get; set; }
+        [SwaggerParameter(Description = "Clasificación del producto.")]
+        [Required(ErrorMessage = "Debe especificar la clasificación de este producto.")]
+        public string Classification { get; set; }
 
         [SwaggerParameter(Description = "Precio que deseas destinar para el producto.")]
         [Required(ErrorMessage = "Debe de especificar un precio para este producto.")]

@@ -14,7 +14,7 @@ namespace MediSearch.Core.Application.Features.Home.Queries.GetProduct
         public string Name { get; set; }
         public string Description { get; set; }
         public List<string> Categories { get; set; }
-        public List<string> Components { get; set; }
+        public string Classification { get; set; }
         public double Price { get; set; }
         public bool Available { get; set; }
         public List<string>? Images { get; set; }
