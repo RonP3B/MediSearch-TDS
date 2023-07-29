@@ -5,12 +5,15 @@ import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Slider from "@mui/material/Slider";
 import PropTypes from "prop-types";
 import FilterOptionsFormGroup from "./FilterOptionsFormGroup";
 import ScrollBar from "../Scrollbar/ScrollBar";
 import handleSelectedCheckboxes from "../../../utils/handleSelectedCheckboxes";
+import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 
 const ProductFilterDrawer = (props) => {
   const {
@@ -39,6 +42,9 @@ const ProductFilterDrawer = (props) => {
     selectedMunicipalities,
     loadingMunicipalities,
     setSelectedMunicipalities,
+    setSelectedClassification,
+    selectedClassification,
+    classifications,
   } = props;
 
   return (
@@ -51,30 +57,73 @@ const ProductFilterDrawer = (props) => {
         <Stack spacing={3}>
           <Box>
             <Typography variant="subtitle1" gutterBottom>
-              Categorías:
+              Clasificaciones:
             </Typography>
             <FilterOptionsFormGroup>
               <ScrollBar sx={{ display: "flex", flexDirection: "column" }}>
-                {categories.map((name, index) => (
-                  <FormControlLabel
-                    key={index}
-                    sx={{ margin: 0 }}
-                    control={
-                      <Checkbox
-                        checked={selectedCategories.includes(name)}
-                        onChange={() =>
-                          handleSelectedCheckboxes(
-                            selectedCategories,
-                            setSelectedCategories,
-                            name
-                          )
-                        }
-                      />
-                    }
-                    label={name}
-                  />
-                ))}
+                <RadioGroup
+                  onChange={(e) => {
+                    setSelectedClassification(e.target.value);
+                    setSelectedCategories([]);
+                  }}
+                  value={selectedClassification}
+                >
+                  {classifications.map((name, index) => (
+                    <FormControlLabel
+                      key={index}
+                      sx={{ margin: 0 }}
+                      control={<Radio />}
+                      label={name}
+                      value={name}
+                    />
+                  ))}
+                </RadioGroup>
               </ScrollBar>
+            </FilterOptionsFormGroup>
+          </Box>
+          <Box>
+            <Typography variant="subtitle1" gutterBottom>
+              Categorías:
+            </Typography>
+            <FilterOptionsFormGroup>
+              {categories.length === 0 ? (
+                <Box
+                  sx={{
+                    minHeight: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <ReportProblemIcon sx={{ fontSize: 50 }} color="primary" />
+                  <Typography variant="body2" sx={{ fontWeight: 400 }}>
+                    Selecciona 1 clasificación
+                  </Typography>
+                </Box>
+              ) : (
+                <ScrollBar sx={{ display: "flex", flexDirection: "column" }}>
+                  {categories.map((name, index) => (
+                    <FormControlLabel
+                      key={index}
+                      sx={{ margin: 0 }}
+                      control={
+                        <Checkbox
+                          checked={selectedCategories.includes(name)}
+                          onChange={() =>
+                            handleSelectedCheckboxes(
+                              selectedCategories,
+                              setSelectedCategories,
+                              name
+                            )
+                          }
+                        />
+                      }
+                      label={name}
+                    />
+                  ))}
+                </ScrollBar>
+              )}
             </FilterOptionsFormGroup>
           </Box>
           {companyFilters && (
@@ -149,6 +198,9 @@ ProductFilterDrawer.propTypes = {
   setPriceFilter: PropTypes.func.isRequired,
   quantityFilter: PropTypes.number.isRequired,
   setQuantityFilter: PropTypes.func.isRequired,
+  setSelectedClassification: PropTypes.func.isRequired,
+  selectedClassification: PropTypes.string.isRequired,
+  classifications: PropTypes.array.isRequired,
   companyNameFilter: PropTypes.string,
   addressFilter: PropTypes.string,
   setCompanyNameFilter: PropTypes.func,

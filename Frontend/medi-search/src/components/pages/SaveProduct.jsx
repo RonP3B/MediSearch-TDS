@@ -13,10 +13,12 @@ import CircularProgress from "@mui/material/CircularProgress";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import InputField from "../custom/InputFields/InputField";
 import MultipleSelectField from "../custom/InputFields/MultipleSelectField";
+import SelectInputField from "../custom/InputFields/SelectInputField";
 import useProductFormik from "../../hooks/formiks/useProductFormik";
 import MultipleFileInputField from "../custom/InputFields/MultipleFileInputField";
 import { getProduct } from "../../services/MediSearchServices/ProductServices";
 import ImageSlider from "../custom/ImageSlider/ImageSlider";
+import useClassificationCategories from "../../hooks/useClassificationCategories";
 
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
@@ -30,6 +32,14 @@ const SaveProduct = ({ edit }) => {
   const showToast = useToast();
   const showToastRef = useRef(showToast);
   const formikRef = useRef(null);
+
+  const {
+    classifications,
+    categories,
+    setSelectedClassification,
+    categoriesSelect,
+    classificationsSelect,
+  } = useClassificationCategories();
 
   const { getInitialValues, getEditInitialValues, validationSchema, onSubmit } =
     useProductFormik(setSubmitLoading, edit);
@@ -45,10 +55,11 @@ const SaveProduct = ({ edit }) => {
     const fetchProduct = async () => {
       try {
         const res = await getProduct(id);
+        const productRes = res.data;
 
         if (isMounted) {
-          setProduct(res.data);
-          setImages(res.data.urlImages.$values.map((url) => ASSETS + url));
+          setProduct(productRes);
+          setImages(productRes.urlImages.$values.map((url) => ASSETS + url));
         }
       } catch (error) {
         if (error.response?.data?.Error === "ERR_JWT") return;
@@ -69,7 +80,13 @@ const SaveProduct = ({ edit }) => {
     return () => {
       isMounted = false;
     };
-  }, [showToastRef, edit, id, navigate]);
+  }, [showToastRef, edit, id, navigate, setSelectedClassification]);
+
+  useEffect(() => {
+    if (product && edit) {
+      setSelectedClassification(product.classification);
+    }
+  }, [product, setSelectedClassification, edit]);
 
   useEffect(() => {
     if (!edit) {
@@ -176,23 +193,27 @@ const SaveProduct = ({ edit }) => {
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
+                    <SelectInputField
+                      label="Clasificación"
+                      name="classification"
+                      variant="filled"
+                      margin="dense"
+                      fullWidth
+                      options={["", ...classifications]}
+                      setSelected={setSelectedClassification}
+                      ref={classificationsSelect}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
                     <MultipleSelectField
                       label="Categorías"
                       name="categories"
                       variant="filled"
                       margin="dense"
                       fullWidth
-                      options={["a", "b", "c"]}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <MultipleSelectField
-                      label="Componentes"
-                      name="components"
-                      variant="filled"
-                      margin="dense"
-                      fullWidth
-                      options={["s", "z", "x"]}
+                      disabled={categories.length === 0}
+                      options={categories}
+                      ref={categoriesSelect}
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>

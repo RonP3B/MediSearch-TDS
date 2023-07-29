@@ -212,12 +212,10 @@ const ProductDetails = ({ logged, client }) => {
               >
                 <Chip
                   sx={{ letterSpacing: "0.1rem" }}
-                  label="Componentes:"
+                  label="Clasificación:"
                   color="primary"
                 />{" "}
-                {product.components.$values
-                  .map((component) => component)
-                  .join(", ")}
+                {product.classification}
               </Typography>
               <Divider sx={{ my: 1 }} />
               <Typography

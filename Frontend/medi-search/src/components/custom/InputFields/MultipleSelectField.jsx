@@ -1,15 +1,21 @@
+import React from "react";
 import { useField } from "formik";
 import PropTypes from "prop-types";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 
-const MultipleSelectField = ({ options, ...props }) => {
+const MultipleSelectField = React.forwardRef(({ options, ...props }, ref) => {
   const [field, meta, helpers] = useField(props);
   const { setValue } = helpers;
 
   const handleChange = (event, values) => {
     setValue(values);
   };
+
+  React.useImperativeHandle(ref, () => ({
+    getValue: () => field.value,
+    setValue: (values) => setValue(values),
+  }));
 
   return (
     <Autocomplete
@@ -20,6 +26,7 @@ const MultipleSelectField = ({ options, ...props }) => {
       options={options}
       getOptionLabel={(option) => option}
       onChange={handleChange}
+      ref={ref}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -30,7 +37,9 @@ const MultipleSelectField = ({ options, ...props }) => {
       )}
     />
   );
-};
+});
+
+MultipleSelectField.displayName = "MultipleSelectField";
 
 MultipleSelectField.propTypes = {
   options: PropTypes.array.isRequired,

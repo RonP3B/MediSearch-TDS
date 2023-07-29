@@ -14,6 +14,7 @@ import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantity
 import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 import ProductCard from "../custom/Cards/ProductCard";
 import useTerritorial from "../../hooks/useTerritorial";
+import useClassificationCategories from "../../hooks/useClassificationCategories";
 
 const Provisions = () => {
   const [openFilter, setOpenFilter] = useState(false);
@@ -36,6 +37,12 @@ const Provisions = () => {
     setSelectedProvince,
     loadingMunicipalities,
   } = useTerritorial();
+  const {
+    classifications,
+    categories,
+    selectedClassification,
+    setSelectedClassification,
+  } = useClassificationCategories();
 
   useEffect(() => {
     console.count("Provisions.jsx"); //borrame
@@ -99,7 +106,7 @@ const Provisions = () => {
         onClear={clearFilters}
         productNameFilter={productNameFilter}
         setProductNameFilter={setProductNameFilter}
-        categories={["categoria a", "categoria b"]}
+        categories={categories}
         selectedCategories={selectedCategories}
         setSelectedCategories={setSelectedCategories}
         priceFilter={priceFilter}
@@ -119,6 +126,9 @@ const Provisions = () => {
         addressFilter={addressFilter}
         setCompanyNameFilter={setCompanyNameFilter}
         setAddressFilter={setAddressFilter}
+        classifications={classifications}
+        selectedClassification={selectedClassification}
+        setSelectedClassification={setSelectedClassification}
       />
       <Stack
         direction="row"
@@ -165,7 +175,7 @@ const Provisions = () => {
             sx={{ fontSize: 200, color: "primary.main" }}
           />
           <Typography variant="h6" sx={{ mt: 2 }}>
-            No hay productos de [tipo empresa] registrados en la plataforma
+            No hay productos de laboratorios registrados en la plataforma
           </Typography>
         </Box>
       )}

@@ -14,8 +14,8 @@ const useProductFormik = (setLoading, edit) => {
     return {
       name: "",
       description: "",
+      classification: "",
       categories: [],
-      components: [],
       price: "",
       quantity: "",
       images: [],
@@ -27,8 +27,8 @@ const useProductFormik = (setLoading, edit) => {
       id: product.id,
       name: product.name,
       description: product.description,
+      classification: product.classification,
       categories: product.categories.$values,
-      components: product.components.$values,
       price: product.price,
       quantity: product.quantity,
       images: [],
@@ -38,8 +38,8 @@ const useProductFormik = (setLoading, edit) => {
   const validationSchema = Yup.object({
     name: Yup.string().trim().required("Nombre requerido"),
     description: Yup.string().trim().required("Descripción requerida"),
+    classification: Yup.string().trim().required("Clasificación requerida"),
     categories: Yup.array().min(1, "Categoría requerida"),
-    components: Yup.array().min(1, "Componente requerido"),
     price: Yup.number("Solo se pueden ingresar números")
       .min(1, "El precio debe ser mayor o igual a 1")
       .required("El precio es requerido"),
@@ -61,7 +61,6 @@ const useProductFormik = (setLoading, edit) => {
       });
     } catch (error) {
       showToast(error.response.data, { type: "error" });
-      console.log(error);
     } finally {
       setLoading(false);
     }
