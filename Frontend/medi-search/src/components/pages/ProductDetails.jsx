@@ -170,10 +170,7 @@ const ProductDetails = ({ logged, client }) => {
             </Grid>
             <Grid item xs={12} md={6} sx={{ overflowWrap: "anywhere" }}>
               <Divider sx={{ my: 1, display: { md: "none" } }} />
-              <Typography
-                variant="subtitle1"
-                sx={{ fontWeight: "bold", mb: 1.5 }}
-              >
+              <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1.5 }}>
                 <Chip
                   sx={{ letterSpacing: "0.1rem" }}
                   label="Nombre:"
@@ -182,10 +179,7 @@ const ProductDetails = ({ logged, client }) => {
                 {product.name}
               </Typography>
               <Divider sx={{ my: 1 }} />
-              <Typography
-                variant="subtitle1"
-                sx={{ fontWeight: "bold", mb: 1.5 }}
-              >
+              <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1.5 }}>
                 <Chip
                   sx={{ letterSpacing: "0.1rem" }}
                   label="Precio:"
@@ -194,10 +188,7 @@ const ProductDetails = ({ logged, client }) => {
                 ${product.price}
               </Typography>
               <Divider sx={{ my: 1 }} />
-              <Typography
-                variant="subtitle1"
-                sx={{ fontWeight: "bold", mb: 1.5 }}
-              >
+              <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1.5 }}>
                 <Chip
                   sx={{ letterSpacing: "0.1rem" }}
                   label="Cantidad disponible:"
@@ -206,10 +197,7 @@ const ProductDetails = ({ logged, client }) => {
                 {product.quantity}
               </Typography>
               <Divider sx={{ my: 1 }} />
-              <Typography
-                variant="subtitle1"
-                sx={{ fontWeight: "bold", mb: 1.5 }}
-              >
+              <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1.5 }}>
                 <Chip
                   sx={{ letterSpacing: "0.1rem" }}
                   label="Clasificación:"
@@ -218,10 +206,7 @@ const ProductDetails = ({ logged, client }) => {
                 {product.classification}
               </Typography>
               <Divider sx={{ my: 1 }} />
-              <Typography
-                variant="subtitle1"
-                sx={{ fontWeight: "bold", mb: 1.5 }}
-              >
+              <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1.5 }}>
                 <Chip
                   sx={{ letterSpacing: "0.1rem" }}
                   label="Categorías:"
@@ -232,7 +217,7 @@ const ProductDetails = ({ logged, client }) => {
                   .join(", ")}
               </Typography>
               <Divider sx={{ my: 1 }} />
-              <Typography variant="body1" sx={{ fontWeight: "bold", mb: 1.5 }}>
+              <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1.5 }}>
                 <Chip
                   sx={{ letterSpacing: "0.1rem" }}
                   label="Descripción:"

@@ -13,36 +13,22 @@ import { getLabProducts } from "../../services/MediSearchServices/HomeServices";
 import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantityLimits";
 import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 import ProductCard from "../custom/Cards/ProductCard";
-import useTerritorial from "../../hooks/useTerritorial";
-import useClassificationCategories from "../../hooks/useClassificationCategories";
+import useFilters from "../../hooks/filters/useFilters";
 
 const Provisions = () => {
   const [openFilter, setOpenFilter] = useState(false);
   const [provisions, setProvisions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [productNameFilter, setProductNameFilter] = useState("");
-  const [selectedMunicipalities, setSelectedMunicipalities] = useState([]);
-  const [companyNameFilter, setCompanyNameFilter] = useState("");
-  const [addressFilter, setAddressFilter] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [priceFilter, setPriceFilter] = useState([]);
-  const [quantityFilter, setQuantityFilter] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(0);
+  const {
+    filters,
+    clearFilters,
+    filteredData: filteredProvisions,
+    setPriceFilter,
+    setMaxPrice,
+  } = useFilters(provisions, true);
+
   const showToast = useToast();
   const showToastRef = useRef(showToast);
-  const {
-    provinces,
-    municipalities,
-    selectedProvince,
-    setSelectedProvince,
-    loadingMunicipalities,
-  } = useTerritorial();
-  const {
-    classifications,
-    categories,
-    selectedClassification,
-    setSelectedClassification,
-  } = useClassificationCategories();
 
   useEffect(() => {
     console.count("Provisions.jsx"); //borrame
@@ -64,7 +50,9 @@ const Provisions = () => {
         }
       } catch (error) {
         if (error.response?.data?.Error === "ERR_JWT") return;
+
         if (error.response.status === 404) return;
+
         showToastRef.current(
           "Ocurrió un error al obtener las provisiones, informelo al equipo técnico",
           { type: "error" }
@@ -79,7 +67,7 @@ const Provisions = () => {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [setMaxPrice, setPriceFilter]);
 
   const handleOpenFilter = () => {
     setOpenFilter(true);
@@ -89,46 +77,14 @@ const Provisions = () => {
     setOpenFilter(false);
   };
 
-  const clearFilters = () => {
-    console.log("a");
-  };
-
-  // add filters
-  const filteredProvisions = provisions.filter(
-    (provision) => provision === provision
-  );
-
   return (
     <Container maxWidth="xl" sx={{ mb: 2 }}>
       <ProductFilterDrawer
         openFilter={openFilter}
         onCloseFilter={handleCloseFilter}
         onClear={clearFilters}
-        productNameFilter={productNameFilter}
-        setProductNameFilter={setProductNameFilter}
-        categories={categories}
-        selectedCategories={selectedCategories}
-        setSelectedCategories={setSelectedCategories}
-        priceFilter={priceFilter}
-        setPriceFilter={setPriceFilter}
-        quantityFilter={quantityFilter}
-        maxPrice={maxPrice}
-        setQuantityFilter={setQuantityFilter}
+        filters={filters}
         companyFilters={true}
-        provinces={provinces}
-        setSelectedProvince={setSelectedProvince}
-        selectedProvince={selectedProvince}
-        municipalities={municipalities}
-        setSelectedMunicipalities={setSelectedMunicipalities}
-        selectedMunicipalities={selectedMunicipalities}
-        loadingMunicipalities={loadingMunicipalities}
-        companyNameFilter={companyNameFilter}
-        addressFilter={addressFilter}
-        setCompanyNameFilter={setCompanyNameFilter}
-        setAddressFilter={setAddressFilter}
-        classifications={classifications}
-        selectedClassification={selectedClassification}
-        setSelectedClassification={setSelectedClassification}
       />
       <Stack
         direction="row"

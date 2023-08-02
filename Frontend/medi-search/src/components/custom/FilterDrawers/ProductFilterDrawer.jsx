@@ -16,36 +16,7 @@ import handleSelectedCheckboxes from "../../../utils/handleSelectedCheckboxes";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 
 const ProductFilterDrawer = (props) => {
-  const {
-    openFilter,
-    onCloseFilter,
-    onClear,
-    maxPrice,
-    productNameFilter,
-    setProductNameFilter,
-    categories,
-    selectedCategories,
-    setSelectedCategories,
-    priceFilter,
-    setPriceFilter,
-    quantityFilter,
-    setQuantityFilter,
-    companyFilters,
-    companyNameFilter,
-    addressFilter,
-    setCompanyNameFilter,
-    setAddressFilter,
-    provinces,
-    selectedProvince,
-    setSelectedProvince,
-    municipalities,
-    selectedMunicipalities,
-    loadingMunicipalities,
-    setSelectedMunicipalities,
-    setSelectedClassification,
-    selectedClassification,
-    classifications,
-  } = props;
+  const { openFilter, onCloseFilter, onClear, filters, companyFilters } = props;
 
   return (
     <FilterDrawerContainer
@@ -63,12 +34,12 @@ const ProductFilterDrawer = (props) => {
               <ScrollBar sx={{ display: "flex", flexDirection: "column" }}>
                 <RadioGroup
                   onChange={(e) => {
-                    setSelectedClassification(e.target.value);
-                    setSelectedCategories([]);
+                    filters.classifications.selectedSetter(e.target.value);
+                    filters.categories.selectedSetter([]);
                   }}
-                  value={selectedClassification}
+                  value={filters.classifications.selected}
                 >
-                  {classifications.map((name, index) => (
+                  {filters.classifications.values.map((name, index) => (
                     <FormControlLabel
                       key={index}
                       sx={{ margin: 0 }}
@@ -86,7 +57,7 @@ const ProductFilterDrawer = (props) => {
               Categorías:
             </Typography>
             <FilterOptionsFormGroup>
-              {categories.length === 0 ? (
+              {filters.categories.values.length === 0 ? (
                 <Box
                   sx={{
                     minHeight: "100%",
@@ -103,17 +74,17 @@ const ProductFilterDrawer = (props) => {
                 </Box>
               ) : (
                 <ScrollBar sx={{ display: "flex", flexDirection: "column" }}>
-                  {categories.map((name, index) => (
+                  {filters.categories.values.map((name, index) => (
                     <FormControlLabel
                       key={index}
                       sx={{ margin: 0 }}
                       control={
                         <Checkbox
-                          checked={selectedCategories.includes(name)}
+                          checked={filters.categories.selected.includes(name)}
                           onChange={() =>
                             handleSelectedCheckboxes(
-                              selectedCategories,
-                              setSelectedCategories,
+                              filters.categories.selected,
+                              filters.categories.selectedSetter,
                               name
                             )
                           }
@@ -126,27 +97,13 @@ const ProductFilterDrawer = (props) => {
               )}
             </FilterOptionsFormGroup>
           </Box>
-          {companyFilters && (
-            <CompanyFilterContent
-              nameFilter={companyNameFilter}
-              addressFilter={addressFilter}
-              setNameFilter={setCompanyNameFilter}
-              setAddressFilter={setAddressFilter}
-              provinces={provinces}
-              selectedProvince={selectedProvince}
-              setSelectedProvince={setSelectedProvince}
-              municipalities={municipalities}
-              selectedMunicipalities={selectedMunicipalities}
-              setSelectedMunicipalities={setSelectedMunicipalities}
-              loadingMunicipalities={loadingMunicipalities}
-            />
-          )}
+          {companyFilters && <CompanyFilterContent filters={filters} />}
           <Box>
             <TextField
               label="Nombre del producto"
               variant="standard"
-              value={productNameFilter}
-              onChange={(e) => setProductNameFilter(e.target.value)}
+              value={filters.product.value}
+              onChange={(e) => filters.product.setter(e.target.value)}
               fullWidth
             />
           </Box>
@@ -155,12 +112,12 @@ const ProductFilterDrawer = (props) => {
               Rango de precio:
             </Typography>
             <Slider
-              value={priceFilter}
+              value={filters.price.value}
               onChange={(event, newValue) => {
-                setPriceFilter(newValue);
+                filters.price.setter(newValue);
               }}
               valueLabelDisplay="auto"
-              max={maxPrice}
+              max={filters.price.maxPrice}
               min={1}
             />
           </Box>
@@ -169,9 +126,9 @@ const ProductFilterDrawer = (props) => {
               Con cantidades a partir de:
             </Typography>
             <Slider
-              value={quantityFilter}
+              value={filters.quantity.value}
               onChange={(event, newValue) => {
-                setQuantityFilter(newValue);
+                filters.quantity.setter(newValue);
               }}
               valueLabelDisplay="auto"
               min={0}
@@ -187,31 +144,8 @@ ProductFilterDrawer.propTypes = {
   openFilter: PropTypes.bool.isRequired,
   onCloseFilter: PropTypes.func.isRequired,
   onClear: PropTypes.func.isRequired,
+  filters: PropTypes.object.isRequired,
   companyFilters: PropTypes.bool.isRequired,
-  maxPrice: PropTypes.number.isRequired,
-  productNameFilter: PropTypes.string.isRequired,
-  setProductNameFilter: PropTypes.func.isRequired,
-  categories: PropTypes.array.isRequired,
-  selectedCategories: PropTypes.array.isRequired,
-  setSelectedCategories: PropTypes.func.isRequired,
-  priceFilter: PropTypes.array.isRequired,
-  setPriceFilter: PropTypes.func.isRequired,
-  quantityFilter: PropTypes.number.isRequired,
-  setQuantityFilter: PropTypes.func.isRequired,
-  setSelectedClassification: PropTypes.func.isRequired,
-  selectedClassification: PropTypes.string.isRequired,
-  classifications: PropTypes.array.isRequired,
-  companyNameFilter: PropTypes.string,
-  addressFilter: PropTypes.string,
-  setCompanyNameFilter: PropTypes.func,
-  setAddressFilter: PropTypes.func,
-  provinces: PropTypes.array,
-  selectedMunicipalities: PropTypes.array,
-  selectedProvince: PropTypes.string,
-  setSelectedProvince: PropTypes.func,
-  municipalities: PropTypes.array,
-  setSelectedMunicipalities: PropTypes.func,
-  loadingMunicipalities: PropTypes.bool.isRequired,
 };
 
 export default ProductFilterDrawer;

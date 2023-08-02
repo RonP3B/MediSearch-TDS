@@ -16,25 +16,20 @@ import TuneIcon from "@mui/icons-material/Tune";
 import DomainDisabledIcon from "@mui/icons-material/DomainDisabled";
 import CompanyCard from "../custom/Cards/CompanyCard";
 import CompanyFilterDrawer from "../custom/FilterDrawers/CompanyFilterDrawer";
-import useTerritorial from "../../hooks/useTerritorial";
 import FilterListOffIcon from "@mui/icons-material/FilterListOff";
+import useFilters from "../../hooks/filters/useFilters";
 
 const Companies = ({ companyType }) => {
   const [openFilter, setOpenFilter] = useState(false);
   const [companies, setCompanies] = useState([]);
-  const [nameFilter, setNameFilter] = useState("");
-  const [addressFilter, setAddressFilter] = useState("");
-  const [selectedMunicipalities, setSelectedMunicipalities] = useState([]);
   const [loading, setLoading] = useState(true);
   const showToast = useToast();
   const showToastRef = useRef(showToast);
   const {
-    provinces,
-    municipalities,
-    selectedProvince,
-    setSelectedProvince,
-    loadingMunicipalities,
-  } = useTerritorial();
+    filters,
+    clearFilters,
+    filteredData: filteredCompanies,
+  } = useFilters(companies, false);
 
   useEffect(() => {
     console.count("Companies.jsx"); //borrame
@@ -73,58 +68,12 @@ const Companies = ({ companyType }) => {
     setOpenFilter(false);
   };
 
-  const clearFilters = () => {
-    setSelectedProvince("");
-    setSelectedMunicipalities([]);
-    setNameFilter("");
-    setAddressFilter("");
-  };
-
-  const filteredCompanies = companies.filter((company) => {
-    if (
-      nameFilter &&
-      !company.name.toLowerCase().includes(nameFilter.toLowerCase())
-    ) {
-      return false;
-    }
-
-    if (
-      addressFilter &&
-      !company.address.toLowerCase().includes(addressFilter.toLowerCase())
-    ) {
-      return false;
-    }
-
-    if (selectedProvince && company.province !== selectedProvince) {
-      return false;
-    }
-
-    if (
-      selectedMunicipalities.length > 0 &&
-      !selectedMunicipalities.includes(company.municipality)
-    ) {
-      return false;
-    }
-
-    return true;
-  });
-
   return (
     <Container maxWidth="xl" sx={{ mb: 2 }}>
       <CompanyFilterDrawer
         openFilter={openFilter}
         onCloseFilter={handleCloseFilter}
-        nameFilter={nameFilter}
-        addressFilter={addressFilter}
-        setNameFilter={setNameFilter}
-        setAddressFilter={setAddressFilter}
-        provinces={provinces}
-        setSelectedProvince={setSelectedProvince}
-        selectedProvince={selectedProvince}
-        municipalities={municipalities}
-        setSelectedMunicipalities={setSelectedMunicipalities}
-        selectedMunicipalities={selectedMunicipalities}
-        loadingMunicipalities={loadingMunicipalities}
+        filters={filters}
         onClear={clearFilters}
       />
       <Stack

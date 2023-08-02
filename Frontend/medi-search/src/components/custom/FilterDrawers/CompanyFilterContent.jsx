@@ -12,21 +12,7 @@ import FilterOptionsFormGroup from "./FilterOptionsFormGroup";
 import handleSelectedCheckboxes from "../../../utils/handleSelectedCheckboxes";
 import CircularProgress from "@mui/material/CircularProgress";
 
-const CompanyFilterContent = (props) => {
-  const {
-    nameFilter,
-    addressFilter,
-    setNameFilter,
-    setAddressFilter,
-    provinces,
-    selectedProvince,
-    setSelectedProvince,
-    municipalities,
-    selectedMunicipalities,
-    setSelectedMunicipalities,
-    loadingMunicipalities,
-  } = props;
-
+const CompanyFilterContent = ({ filters }) => {
   return (
     <>
       <Box>
@@ -37,12 +23,12 @@ const CompanyFilterContent = (props) => {
           <ScrollBar sx={{ display: "flex", flexDirection: "column" }}>
             <RadioGroup
               onChange={(e) => {
-                setSelectedProvince(e.target.value);
-                setSelectedMunicipalities([]);
+                filters.provinces.selectedSetter(e.target.value);
+                filters.municipalities.selectedSetter([]);
               }}
-              value={selectedProvince}
+              value={filters.provinces.selected}
             >
-              {provinces.map(({ name, code }) => (
+              {filters.provinces.values.map(({ name, code }) => (
                 <FormControlLabel
                   key={code}
                   sx={{ margin: 0 }}
@@ -60,7 +46,7 @@ const CompanyFilterContent = (props) => {
           Municipios:
         </Typography>
         <FilterOptionsFormGroup>
-          {municipalities.length === 0 ? (
+          {filters.municipalities.values.length === 0 ? (
             <Box
               sx={{
                 minHeight: "100%",
@@ -70,7 +56,7 @@ const CompanyFilterContent = (props) => {
                 alignItems: "center",
               }}
             >
-              {loadingMunicipalities ? (
+              {filters.municipalities.loading ? (
                 <CircularProgress />
               ) : (
                 <>
@@ -83,17 +69,17 @@ const CompanyFilterContent = (props) => {
             </Box>
           ) : (
             <ScrollBar sx={{ display: "flex", flexDirection: "column" }}>
-              {municipalities.map(({ name, code }) => (
+              {filters.municipalities.values.map(({ name, code }) => (
                 <FormControlLabel
                   key={code}
                   sx={{ margin: 0 }}
                   control={
                     <Checkbox
-                      checked={selectedMunicipalities.includes(name)}
+                      checked={filters.municipalities.selected.includes(name)}
                       onChange={() =>
                         handleSelectedCheckboxes(
-                          selectedMunicipalities,
-                          setSelectedMunicipalities,
+                          filters.municipalities.selected,
+                          filters.municipalities.selectedSetter,
                           name
                         )
                       }
@@ -110,8 +96,8 @@ const CompanyFilterContent = (props) => {
         <TextField
           label="Nombre de la empresa"
           variant="standard"
-          value={nameFilter}
-          onChange={(e) => setNameFilter(e.target.value)}
+          value={filters.company.value}
+          onChange={(e) => filters.company.setter(e.target.value)}
           fullWidth
         />
       </Box>
@@ -119,8 +105,8 @@ const CompanyFilterContent = (props) => {
         <TextField
           label="Dirección de la empresa"
           variant="standard"
-          value={addressFilter}
-          onChange={(e) => setAddressFilter(e.target.value)}
+          value={filters.address.value}
+          onChange={(e) => filters.address.setter(e.target.value)}
           fullWidth
         />
       </Box>
@@ -129,17 +115,7 @@ const CompanyFilterContent = (props) => {
 };
 
 CompanyFilterContent.propTypes = {
-  setNameFilter: PropTypes.func.isRequired,
-  setAddressFilter: PropTypes.func.isRequired,
-  nameFilter: PropTypes.string.isRequired,
-  addressFilter: PropTypes.string.isRequired,
-  provinces: PropTypes.array.isRequired,
-  selectedMunicipalities: PropTypes.array.isRequired,
-  selectedProvince: PropTypes.string.isRequired,
-  setSelectedProvince: PropTypes.func.isRequired,
-  municipalities: PropTypes.array.isRequired,
-  setSelectedMunicipalities: PropTypes.func.isRequired,
-  loadingMunicipalities: PropTypes.bool.isRequired,
+  filters: PropTypes.object.isRequired,
 };
 
 export default CompanyFilterContent;

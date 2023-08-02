@@ -8,6 +8,7 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
 import Chip from "@mui/material/Chip";
 import Divider from "@mui/material/Divider";
@@ -16,6 +17,10 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantityLimits";
 import ProductCard from "../custom/Cards/ProductCard";
 import CompanySocials from "../custom/Socials/CompanySocials";
+import ProductFilterDrawer from "../custom/FilterDrawers/ProductFilterDrawer";
+import useFilters from "../../hooks/filters/useFilters";
+import TuneIcon from "@mui/icons-material/Tune";
+import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
@@ -135,7 +140,23 @@ const CompanyInfo = ({ company }) => {
   );
 };
 
-const CompanyProducts = ({ products, name }) => {
+const CompanyProducts = ({
+  products,
+  name,
+  filters,
+  clearFilters,
+  filteredData,
+}) => {
+  const [openFilter, setOpenFilter] = useState(false);
+
+  const handleOpenFilter = () => {
+    setOpenFilter(true);
+  };
+
+  const handleCloseFilter = () => {
+    setOpenFilter(false);
+  };
+
   if (products.length === 0) {
     return (
       <Box
@@ -158,13 +179,53 @@ const CompanyProducts = ({ products, name }) => {
   }
 
   return (
-    <Grid container spacing={2}>
-      {products.map((product) => (
-        <Grid item key={product.id} xs={12} sm={6} md={4}>
-          <ProductCard product={product} maintenance={false} />
+    <Box>
+      <ProductFilterDrawer
+        openFilter={openFilter}
+        onCloseFilter={handleCloseFilter}
+        onClear={clearFilters}
+        filters={filters}
+        companyFilters={false}
+      />
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="flex-end"
+        mb={5}
+      >
+        <Button
+          variant="contained"
+          startIcon={<TuneIcon />}
+          onClick={handleOpenFilter}
+        >
+          Filtros
+        </Button>
+      </Stack>
+      {filteredData.length > 0 ? (
+        <Grid container spacing={2}>
+          {products.map((product) => (
+            <Grid item key={product.id} xs={12} sm={6} md={4}>
+              <ProductCard product={product} maintenance={false} />
+            </Grid>
+          ))}
         </Grid>
-      ))}
-    </Grid>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "45vh",
+          }}
+        >
+          <FilterListOffIcon sx={{ fontSize: 200, color: "primary.main" }} />
+          <Typography variant="h6" sx={{ mt: 2 }}>
+            No hay productos que cumplan con los filtros
+          </Typography>
+        </Box>
+      )}
+    </Box>
   );
 };
 
@@ -175,6 +236,8 @@ const CompanyDetails = () => {
   const navigate = useNavigate();
   const showToast = useToast();
   const showToastRef = useRef(showToast);
+  const { filters, clearFilters, filteredData, setPriceFilter, setMaxPrice } =
+    useFilters(company, true);
 
   useEffect(() => {
     console.count("CompanyDetails.jsx"); //borrame
@@ -183,7 +246,17 @@ const CompanyDetails = () => {
     const fetchCompany = async () => {
       try {
         const res = await getCompanyById(id);
-        isMounted && setCompany(res.data);
+        const productsArr = res.data.products.$values;
+
+        const highestPrice = productsArr.reduce((max, product) => {
+          return product.price > max ? product.price : max;
+        }, 0);
+
+        if (isMounted) {
+          setCompany(res.data);
+          setPriceFilter([1, highestPrice]);
+          setMaxPrice(highestPrice);
+        }
       } catch (error) {
         if (error.response?.data?.Error === "ERR_JWT") return;
         if (error.response.status === 404) return navigate(-1);
@@ -202,7 +275,7 @@ const CompanyDetails = () => {
     return () => {
       isMounted = false;
     };
-  }, [showToastRef, id, navigate]);
+  }, [showToastRef, id, navigate, setPriceFilter, setMaxPrice]);
 
   return (
     <Container maxWidth="xl" sx={{ mb: 2 }}>
@@ -241,6 +314,9 @@ const CompanyDetails = () => {
                 <CompanyProducts
                   products={company.products.$values}
                   name={company.name}
+                  filters={filters}
+                  clearFilters={clearFilters}
+                  filteredData={filteredData}
                 />
               ),
             },
@@ -258,6 +334,9 @@ CompanyInfo.propTypes = {
 CompanyProducts.propTypes = {
   products: PropTypes.array.isRequired,
   name: PropTypes.string.isRequired,
+  filters: PropTypes.object.isRequired,
+  clearFilters: PropTypes.func.isRequired,
+  filteredData: PropTypes.array.isRequired,
 };
 
 export default CompanyDetails;
