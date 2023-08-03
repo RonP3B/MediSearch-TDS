@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import useToast from "../../hooks/feedback/useToast";
+import useAuth from "../../hooks/persistence/useAuth";
 import { getCompanyById } from "../../services/MediSearchServices/HomeServices";
 import CustomTabs from "../custom/Tabs/CustomTabs";
 import Container from "@mui/material/Container";
@@ -236,11 +237,14 @@ const CompanyProducts = ({
 
 const CompanyDetails = () => {
   const [company, setCompany] = useState([]);
+  const { auth } = useAuth();
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
   const navigate = useNavigate();
   const showToast = useToast();
   const showToastRef = useRef(showToast);
+  const isLaboratory = auth.payload.RoleType === "Laboratorio";
+
   const { filters, clearFilters, filteredData, setPriceFilter, setMaxPrice } =
     useFilters(company, true);
 
@@ -306,6 +310,8 @@ const CompanyDetails = () => {
         >
           <CircularProgress />
         </Box>
+      ) : isLaboratory ? (
+        <CompanyInfo company={company} />
       ) : (
         <CustomTabs
           tabs={[
