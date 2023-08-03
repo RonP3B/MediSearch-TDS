@@ -5,6 +5,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { disableReactDevTools } from "@fvilers/disable-react-devtools";
 import CssBaseline from "@mui/material/CssBaseline";
 import "react-toastify/dist/ReactToastify.css";
+import "react-image-gallery/styles/css/image-gallery.css";
+import "./styles/css/styles.css";
 import { ColorModeProvider } from "./components/contexts/ColorModeContext.jsx";
 import { AuthProvider } from "./components/contexts/AuthContext.jsx";
 import MediSearchInterceptor from "./components/interceptors/MediSearchInterceptor.jsx";

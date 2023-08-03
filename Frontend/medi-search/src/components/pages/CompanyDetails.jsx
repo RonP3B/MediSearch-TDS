@@ -205,7 +205,12 @@ const CompanyProducts = ({
         <Grid container spacing={2}>
           {products.map((product) => (
             <Grid item key={product.id} xs={12} sm={6} md={4}>
-              <ProductCard product={product} maintenance={false} />
+              <ProductCard
+                product={product}
+                maintenance={false}
+                showCompanyInfo={false}
+                to={`/company/products/product-details/${product.id}`}
+              />
             </Grid>
           ))}
         </Grid>

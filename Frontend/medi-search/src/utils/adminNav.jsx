@@ -29,12 +29,12 @@ export const adminNav = [
   {
     item: "Productos",
     icon: <ShoppingCartIcon />,
-    to: "/company/products",
+    to: "/company/my-products",
   },
   {
     item: "Crear Producto",
     icon: <AddShoppingCartIcon />,
-    to: "/company/products/add",
+    to: "/company/my-products/add",
   },
   {
     item: "Mi empresa",

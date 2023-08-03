@@ -140,7 +140,13 @@ const Provisions = () => {
           <Grid container spacing={2}>
             {filteredProvisions.map((provision) => (
               <Grid item key={provision.id} xs={12} sm={6} md={4}>
-                <ProductCard product={provision} maintenance={false} />
+                <ProductCard
+                  product={provision}
+                  maintenance={false}
+                  showCompanyInfo={true}
+                  companyType="Laboratorio"
+                  to={`/company/products/product-details/${provision.id}`}
+                />
               </Grid>
             ))}
           </Grid>

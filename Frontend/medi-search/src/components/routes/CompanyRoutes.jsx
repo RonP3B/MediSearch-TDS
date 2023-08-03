@@ -16,22 +16,26 @@ const CompanyRoutes = () => {
     <Route element={<RequiresCompany />}>
       <Route path="/company/dashboard" element={<Dashboard />} />
       <Route path="/company/users" element={<Users />} />
-      <Route path="/company/products" element={<Products />} />
+      <Route path="/company/my-products" element={<Products />} />
       <Route
         path="/company/my-profile"
         element={<Profile profileType="perfil" />}
       />
       <Route
-        path="/company/products/add"
+        path="/company/my-products/add"
         element={<SaveProduct edit={false} />}
       />
       <Route
-        path="/company/products/edit/:id"
+        path="/company/my-products/edit/:id"
         element={<SaveProduct edit={true} />}
       />
       <Route
+        path="/company/my-products/product-details/:id"
+        element={<ProductDetails logged={true} showCompanyInfo={false} />}
+      />
+      <Route
         path="/company/products/product-details/:id"
-        element={<ProductDetails logged={true} client={false} />}
+        element={<ProductDetails logged={true} showCompanyInfo={true} />}
       />
       <Route path="/company/company-details/:id" element={<CompanyDetails />} />
       {SuperAdminRoutes()}

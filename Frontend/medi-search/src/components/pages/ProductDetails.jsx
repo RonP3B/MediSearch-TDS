@@ -1,30 +1,33 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import ImageGallery from "react-image-gallery";
 import PropTypes from "prop-types";
 import useToast from "../../hooks/feedback/useToast";
 import {
   addComment,
   addReply,
-  getProduct,
 } from "../../services/MediSearchServices/ProductServices";
+import { getCompanyProduct } from "../../services/MediSearchServices/HomeServices";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid";
 import Chip from "@mui/material/Chip";
 import Divider from "@mui/material/Divider";
 import CircularProgress from "@mui/material/CircularProgress";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import CommentsDisabledIcon from "@mui/icons-material/CommentsDisabled";
-import ImageSlider from "../custom/ImageSlider/ImageSlider";
 import CommentsAccordion from "../custom/Comments/CommentsAccordion";
 import Comment from "../custom/Comments/Comment";
 import CommentTextbox from "../custom/Comments/CommentTextbox";
+import MarkUnreadChatAltIcon from "@mui/icons-material/MarkUnreadChatAlt";
+import BusinessIcon from "@mui/icons-material/Business";
 
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
-const ProductDetails = ({ logged, client }) => {
+const ProductDetails = ({ logged, showCompanyInfo }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState({});
@@ -43,18 +46,16 @@ const ProductDetails = ({ logged, client }) => {
 
     const fetchProduct = async () => {
       try {
-        const res = await getProduct(id);
+        const res = await getCompanyProduct(id);
 
         if (isMounted) {
           setProduct(res.data);
-          setImages(res.data.urlImages.$values.map((url) => ASSETS + url));
+          setImages(res.data.images.$values.map((url) => ASSETS + url));
           setComments(res.data.comments.$values);
         }
       } catch (error) {
         if (error.response?.data?.Error === "ERR_JWT") return;
-
         if (error.response.status === 404) return navigate(-1);
-
         showToastRef.current(
           "Ocurrió un error al obtener la información del producto, informelo al equipo técnico",
           { type: "error" }
@@ -114,6 +115,22 @@ const ProductDetails = ({ logged, client }) => {
     }
   };
 
+  const imagesArr = images.map((image) => {
+    return { original: image, thumbnail: image };
+  });
+
+  const productInfo = [
+    { label: "Nombre:", value: product.name },
+    { label: "Precio:", value: `RD$ ${product.price}` },
+    { label: "Cantidad disponible:", value: product.quantity },
+    { label: "Clasificación:", value: product.classification },
+    {
+      label: "Categorías:",
+      value: product.categories?.$values.map((category) => category).join(", "),
+    },
+    { label: "Descripción:", value: product.description },
+  ];
+
   return (
     <Container maxWidth="xl" sx={{ mb: 2 }}>
       <Button
@@ -143,13 +160,8 @@ const ProductDetails = ({ logged, client }) => {
           <Grid container spacing={2} alignItems="center" sx={{ mb: 3 }}>
             <Grid item xs={12} md={6}>
               {images.length > 1 ? (
-                <Box>
-                  <ImageSlider
-                    images={images}
-                    width="100%"
-                    height="400px"
-                    elevation={3}
-                  />
+                <Box className="custom-gallery-container">
+                  <ImageGallery items={imagesArr} />
                 </Box>
               ) : (
                 <Box
@@ -160,7 +172,7 @@ const ProductDetails = ({ logged, client }) => {
                     borderColor: "primary.main",
                     minHeight: "200px",
                     minWidth: "200px",
-                    maxHeight: "400px",
+                    maxHeight: "470px",
                     maxWidth: "100%",
                     display: "block",
                     margin: "0 auto",
@@ -169,62 +181,90 @@ const ProductDetails = ({ logged, client }) => {
               )}
             </Grid>
             <Grid item xs={12} md={6} sx={{ overflowWrap: "anywhere" }}>
-              <Divider sx={{ my: 1, display: { md: "none" } }} />
-              <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1.5 }}>
-                <Chip
-                  sx={{ letterSpacing: "0.1rem" }}
-                  label="Nombre:"
-                  color="primary"
-                />{" "}
-                {product.name}
-              </Typography>
-              <Divider sx={{ my: 1 }} />
-              <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1.5 }}>
-                <Chip
-                  sx={{ letterSpacing: "0.1rem" }}
-                  label="Precio:"
-                  color="primary"
-                />{" "}
-                ${product.price}
-              </Typography>
-              <Divider sx={{ my: 1 }} />
-              <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1.5 }}>
-                <Chip
-                  sx={{ letterSpacing: "0.1rem" }}
-                  label="Cantidad disponible:"
-                  color="primary"
-                />{" "}
-                {product.quantity}
-              </Typography>
-              <Divider sx={{ my: 1 }} />
-              <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1.5 }}>
-                <Chip
-                  sx={{ letterSpacing: "0.1rem" }}
-                  label="Clasificación:"
-                  color="primary"
-                />{" "}
-                {product.classification}
-              </Typography>
-              <Divider sx={{ my: 1 }} />
-              <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1.5 }}>
-                <Chip
-                  sx={{ letterSpacing: "0.1rem" }}
-                  label="Categorías:"
-                  color="primary"
-                />{" "}
-                {product.categories.$values
-                  .map((category) => category)
-                  .join(", ")}
-              </Typography>
-              <Divider sx={{ my: 1 }} />
-              <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1.5 }}>
-                <Chip
-                  sx={{ letterSpacing: "0.1rem" }}
-                  label="Descripción:"
-                  color="primary"
-                />{" "}
-                {product.description}
-              </Typography>
+              {!showCompanyInfo && (
+                <Divider sx={{ my: 1, display: { md: "none" } }} />
+              )}
+              {showCompanyInfo && (
+                <>
+                  <Box
+                    sx={{
+                      border: (theme) =>
+                        `3px solid ${theme.palette.primary.main}`,
+                      borderRadius: "12px",
+                      backgroundColor: "rgba(156, 39, 176, 0.04)",
+                      maxWidth: 500,
+                      margin: "0 auto",
+                      padding: 1.5,
+                    }}
+                  >
+                    <Box display="flex">
+                      <Avatar
+                        alt="Foto de la empresa"
+                        src={`${ASSETS}${product.logo}`}
+                        sx={{
+                          border: (theme) =>
+                            `2px solid ${theme.palette.primary.main}`,
+                          width: 80,
+                          height: 80,
+                        }}
+                      />
+                      <Box ml={2}>
+                        <Typography variant="h5">
+                          {product.nameCompany}
+                        </Typography>
+                        <Typography variant="body2">
+                          {product.province}, {product.municipality}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      startIcon={<MarkUnreadChatAltIcon />}
+                      sx={{ my: 1 }}
+                    >
+                      Chatear con el vendedor
+                    </Button>
+                    <Button
+                      fullWidth
+                      variant="outlined"
+                      startIcon={<BusinessIcon />}
+                    >
+                      Ver perfil del vendedor
+                    </Button>
+                  </Box>
+                  <Divider sx={{ my: 1 }} />
+                </>
+              )}
+              {productInfo.map((info, index) => {
+                const lastIndex = productInfo.length - 1;
+
+                return (
+                  <Box key={index}>
+                    <Box
+                      sx={{
+                        mb: 1.5,
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Chip
+                        sx={{
+                          letterSpacing: "0.1rem",
+                          mr: 0.75,
+                          fontWeight: "bold",
+                        }}
+                        label={info.label}
+                        color="primary"
+                      />
+                      <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                        {info.value}
+                      </Typography>
+                    </Box>
+                    {lastIndex !== index && <Divider sx={{ my: 1 }} />}
+                  </Box>
+                );
+              })}
               <Divider sx={{ my: 1, display: { md: "none" } }} />
             </Grid>
           </Grid>
@@ -301,7 +341,7 @@ const ProductDetails = ({ logged, client }) => {
 
 ProductDetails.propTypes = {
   logged: PropTypes.bool.isRequired,
-  client: PropTypes.bool.isRequired,
+  showCompanyInfo: PropTypes.bool.isRequired,
 };
 
 export default ProductDetails;

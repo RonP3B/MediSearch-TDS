@@ -3,23 +3,37 @@ import CustomCard from "./CustomCard";
 
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
-const ProductCard = ({ product, maintenance, handleDelete }) => {
-  const { name, price, quantity, id, urlImages, nameCompany } = product;
+const ProductCard = (props) => {
+  const {
+    product,
+    maintenance,
+    showCompanyInfo,
+    companyType,
+    handleDelete,
+    to,
+  } = props;
+
+  const { name, price, quantity, id, urlImages, nameCompany, province } =
+    product;
+
   const firstImageUrl = `${ASSETS}${urlImages.$values[0]}`;
 
   const cardInfo = [
     { label: "Precio", val: `$${price}` },
-    { label: "Cantidad", val: quantity },
+    { label: "Cantidad disponible", val: quantity },
   ];
 
-  if (!maintenance) cardInfo.push({ label: "Laboratorio", val: nameCompany });
+  if (showCompanyInfo) {
+    cardInfo.push({ label: companyType, val: nameCompany });
+    cardInfo.push({ label: "Provincia", val: province });
+  }
 
   return (
     <CustomCard
       id={id}
       name={name}
       image={firstImageUrl}
-      to={`/company/products/product-details/${id}`}
+      to={to}
       maintenance={maintenance}
       handleDelete={handleDelete}
       cardInfo={cardInfo}
@@ -31,6 +45,9 @@ ProductCard.propTypes = {
   product: PropTypes.object.isRequired,
   handleDelete: PropTypes.func,
   maintenance: PropTypes.bool.isRequired,
+  showCompanyInfo: PropTypes.bool.isRequired,
+  companyType: PropTypes.string,
+  to: PropTypes.string.isRequired,
 };
 
 export default ProductCard;

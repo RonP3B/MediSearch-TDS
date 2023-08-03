@@ -11,8 +11,8 @@ const PharmacyRoutes = () => {
           path="/company/labs"
           element={<Companies companyType="laboratorio" />}
         />
+        <Route path="/company/provisions" element={<Provisions />} />
       </Route>
-      <Route path="/company/provisions" element={<Provisions />} />
     </>
   );
 };

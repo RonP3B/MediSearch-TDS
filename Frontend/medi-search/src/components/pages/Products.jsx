@@ -182,7 +182,9 @@ const Products = () => {
                 <ProductCard
                   product={product}
                   maintenance={true}
+                  showCompanyInfo={false}
                   handleDelete={handleDelete}
+                  to={`/company/my-products/product-details/${product.id}`}
                 />
               </Grid>
             ))}
