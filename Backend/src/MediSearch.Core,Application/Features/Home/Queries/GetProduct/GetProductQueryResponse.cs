@@ -16,8 +16,10 @@ namespace MediSearch.Core.Application.Features.Home.Queries.GetProduct
         public List<string> Categories { get; set; }
         public string Classification { get; set; }
         public double Price { get; set; }
+        public int Quantity { get; set; }
         public bool Available { get; set; }
         public List<string>? Images { get; set; }
+        public string CompanyId { get; set; }
         public string NameCompany { get; set; }
         public string Ceo { get; set; }
         public string Logo { get; set; }

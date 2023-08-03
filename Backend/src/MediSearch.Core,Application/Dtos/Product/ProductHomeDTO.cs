@@ -17,6 +17,7 @@ namespace MediSearch.Core.Application.Dtos.Product
         public int Quantity { get; set; }
         public List<string>? UrlImages { get; set; }
         public bool Available { get; set; }
+        public string CompanyId { get; set; }
         public string NameCompany { get; set; }
         public string Province { get; set; }
         public string Municipality { get; set; }

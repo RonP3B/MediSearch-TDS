@@ -46,6 +46,7 @@ namespace MediSearch.Core.Application.Features.Home.Queries.GetProductsLaborator
                 Quantity = p.Quantity,
                 Price = p.Price,
                 Available = p.Quantity > 0,
+                CompanyId = p.CompanyId,
                 NameCompany = p.Company.Name,
                 Province = p.Company.Province,
                 Municipality = p.Company.Municipality,
