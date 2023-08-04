@@ -2,6 +2,7 @@
 using MediSearch.Core.Application.Dtos.Product;
 using MediSearch.Core.Application.Features.Home.Queries.GetAllFarmacy;
 using MediSearch.Core.Application.Features.Home.Queries.GetAllLaboratory;
+using MediSearch.Core.Application.Features.Home.Queries.GetCompanyByName;
 using MediSearch.Core.Application.Features.Home.Queries.GetCompanyDetails;
 using MediSearch.Core.Application.Features.Home.Queries.GetProduct;
 using MediSearch.Core.Application.Features.Home.Queries.GetProductsFarmacy;
@@ -170,6 +171,34 @@ namespace MediSearch.WebApi.Controllers.v1
                 var result = await Mediator.Send(new GetCompanyDetailsQuery() { Id = id });
 
                 if (result == null)
+                    return NotFound();
+
+                return Ok(result);
+
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
+        }
+
+        [HttpGet("get-company-name")]
+        [SwaggerOperation(
+           Summary = "Obtener las informaciones de una empresa.",
+            Description = "Nos permite obtener todos los campos de una empresa."
+        )]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetCompanyByNameQueryResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetCompanyByName(GetCompanyByNameQuery query)
+        {
+            try
+            {
+
+                var result = await Mediator.Send(query);
+
+                if (result == null || result.Count == 0)
                     return NotFound();
 
                 return Ok(result);
