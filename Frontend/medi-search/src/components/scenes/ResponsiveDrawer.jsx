@@ -107,12 +107,12 @@ const ResponsiveDrawer = (props) => {
           }
 
           return (
-            <ListItem
-              key={item}
-              disablePadding
-              selected={location.pathname === to}
-            >
-              <ListItemButton component={Link} to={to}>
+            <ListItem key={item} disablePadding>
+              <ListItemButton
+                component={Link}
+                to={to}
+                selected={location.pathname === to}
+              >
                 <ListItemIcon>{icon}</ListItemIcon>
                 <ListItemText primary={item} />
               </ListItemButton>

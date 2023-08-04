@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
 import SendIcon from "@mui/icons-material/Send";
 
 const CommentTextbox = ({
@@ -30,13 +30,13 @@ const CommentTextbox = ({
         multiline
         fullWidth
         disabled={sendingComment}
-        variant="filled"
         label={label}
         sx={sx}
-        maxRows={3}
+        maxRows={6}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         InputProps={{
+          sx: { borderRadius: "25px" },
           endAdornment: (
             <InputAdornment position="end">
               <IconButton

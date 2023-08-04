@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import ImageGallery from "react-image-gallery";
 import PropTypes from "prop-types";
 import useToast from "../../hooks/feedback/useToast";
@@ -226,6 +226,8 @@ const ProductDetails = ({ logged, showCompanyInfo }) => {
                       Chatear con el vendedor
                     </Button>
                     <Button
+                      component={Link}
+                      to={`/company/company-details/${product.companyId}`}
                       fullWidth
                       variant="outlined"
                       startIcon={<BusinessIcon />}

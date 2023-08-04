@@ -10,6 +10,7 @@ import ProductDetails from "../pages/ProductDetails";
 import SuperAdminRoutes from "./SuperAdminRoutes";
 import PharmacyRoutes from "./PharmacyRoutes";
 import LabRoutes from "./LabRoutes";
+import Chat from "../pages/Chat";
 
 const CompanyRoutes = () => {
   return (
@@ -17,6 +18,8 @@ const CompanyRoutes = () => {
       <Route path="/company/dashboard" element={<Dashboard />} />
       <Route path="/company/users" element={<Users />} />
       <Route path="/company/my-products" element={<Products />} />
+      <Route path="/company/company-details/:id" element={<CompanyDetails />} />
+      <Route path="/company/chat" element={<Chat />} />
       <Route
         path="/company/my-profile"
         element={<Profile profileType="perfil" />}
@@ -37,7 +40,6 @@ const CompanyRoutes = () => {
         path="/company/products/product-details/:id"
         element={<ProductDetails logged={true} showCompanyInfo={true} />}
       />
-      <Route path="/company/company-details/:id" element={<CompanyDetails />} />
       {SuperAdminRoutes()}
       {LabRoutes()}
       {PharmacyRoutes()}

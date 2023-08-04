@@ -29,6 +29,9 @@ const StyledScrollbar = styled(SimpleBar)(({ theme }) => ({
   "& .simplebar-mask": {
     zIndex: "inherit",
   },
+  "& .simplebar-placeholder": {
+    width: "auto !important",
+  },
 }));
 
 const ScrollBar = ({ children, sx, ...props }) => {
