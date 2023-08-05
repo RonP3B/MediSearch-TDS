@@ -7,7 +7,16 @@ import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
 import ColorModeContext from "../../contexts/ColorModeContext";
 
-const MessageBox = ({ position, avatarSrc, name, message, time }) => {
+const ASSETS = import.meta.env.VITE_MEDISEARCH;
+
+const MessageBox = ({
+  position,
+  avatarSrc,
+  name,
+  message,
+  time,
+  messageImg,
+}) => {
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
 
@@ -64,7 +73,25 @@ const MessageBox = ({ position, avatarSrc, name, message, time }) => {
         }}
       >
         <Typography variant="subtitle2">{name}</Typography>
-        <Typography variant="body1">{message}</Typography>
+        <Typography variant="body1">
+          {messageImg ? (
+            <Box
+              component="img"
+              src={ASSETS + messageImg}
+              alt="Message Image"
+              sx={{
+                maxWidth: "100%",
+                borderRadius: "10px",
+                marginTop: "8px",
+                height: 300,
+                border: "5px solid rgba(0, 0, 0, 0.2)",
+                boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
+              }}
+            />
+          ) : (
+            message
+          )}
+        </Typography>
         <Typography
           variant="body2"
           color="textSecondary"
@@ -89,6 +116,7 @@ MessageBox.propTypes = {
   name: PropTypes.string.isRequired,
   message: PropTypes.string.isRequired,
   time: PropTypes.string.isRequired,
+  messageImg: PropTypes.any,
 };
 
 export default MessageBox;

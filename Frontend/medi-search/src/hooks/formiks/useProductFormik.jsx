@@ -55,7 +55,7 @@ const useProductFormik = (setLoading, edit) => {
     try {
       setLoading(true);
       edit ? await editProduct(values) : await createProduct(values);
-      navigate("/company/products");
+      navigate("/company/my-products");
       showToast(`Producto ${edit ? "editado" : "creado"} con éxito`, {
         type: "success",
       });

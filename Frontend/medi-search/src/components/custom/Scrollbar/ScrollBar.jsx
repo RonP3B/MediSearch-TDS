@@ -34,7 +34,7 @@ const StyledScrollbar = styled(SimpleBar)(({ theme }) => ({
   },
 }));
 
-const ScrollBar = ({ children, sx, ...props }) => {
+const ScrollBar = ({ children, sx, customRef, ...props }) => {
   const userAgent =
     typeof navigator === "undefined" ? "SSR" : navigator.userAgent;
 
@@ -45,8 +45,23 @@ const ScrollBar = ({ children, sx, ...props }) => {
 
   if (isMobile) {
     return (
-      <Box sx={{ overflowX: "auto", ...sx }} {...props}>
-        {children}
+      <Box
+        sx={{
+          direction: "inherit",
+          boxSizing: "border-box",
+          position: "relative",
+          display: "block",
+          height: "100%",
+          width: "auto",
+          maxWidth: "100%",
+          maxHeight: "100%",
+          overflow: "auto",
+          ...sx,
+        }}
+        ref={customRef}
+        {...props}
+      >
+        <Box>{children}</Box>
       </Box>
     );
   }
@@ -58,6 +73,7 @@ const ScrollBar = ({ children, sx, ...props }) => {
         clickOnTrack={false}
         sx={{ "& .simplebar-content": sx }}
         {...props}
+        ref={customRef}
       >
         {children}
       </StyledScrollbar>
@@ -68,6 +84,7 @@ const ScrollBar = ({ children, sx, ...props }) => {
 ScrollBar.propTypes = {
   sx: PropTypes.object,
   children: PropTypes.node,
+  customRef: PropTypes.object,
 };
 
 export default ScrollBar;

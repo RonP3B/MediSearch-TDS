@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import useToast from "../../hooks/feedback/useToast";
+import useAuth from "../../hooks/persistence/useAuth";
 import ScrollBar from "../custom/Scrollbar/ScrollBar";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
@@ -16,6 +18,7 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
+import CircularProgress from "@mui/material/CircularProgress";
 import ListItemText from "@mui/material/ListItemText";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import AddIcon from "@mui/icons-material/Add";
@@ -25,233 +28,147 @@ import SendIcon from "@mui/icons-material/Send";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SpeakerNotesOffIcon from "@mui/icons-material/SpeakerNotesOff";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import MessageBox from "../custom/Chat/MessageBox";
 import NoChats from "../custom/Chat/NoChat";
+import {
+  getChat,
+  getChats,
+  sendMessage,
+} from "../../services/MediSearchServices/ChatServices";
+
+const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
 const Chat = () => {
+  const { auth } = useAuth();
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
+  const [messages, setMessages] = useState(null);
+  const [msgToSend, setMsgToSend] = useState("");
+  const [loadingChats, setLoadingChats] = useState(true);
+  const [loadingChatMessages, setLoadingChatMessages] = useState(false);
+  const [sendingMsg, setSendingMsg] = useState(false);
   const [filterChat, setFilterChat] = useState("");
+  const [pollingId, setPollingId] = useState("");
+  const showToast = useToast();
+  const showToastRef = useRef(showToast);
+  const scrollBarRef = useRef(null);
+  const fileInputRef = useRef(null);
   const isScreenBelow900px = useMediaQuery("(max-width:899px)");
 
-  const handleArrowBack = () => setSelectedChat(null);
-  const handleChatselection = (id) => setSelectedChat({});
+  useEffect(() => {
+    console.count("Chat.jsx"); //borrame
+    let isMounted = true;
 
-  /* ZONA PRUEBA */
-  const mockChatArray = [
-    {
-      id: "chat1",
-      receiverId: "user1",
-      name: "John Doe",
-      image: "https://material-ui.com/static/images/avatar/1.jpg",
-      lastMessage: {
-        id: "msg1",
-        content: "Hey there!",
-        url: null,
-        date: "10:30 AM",
-        userId: "user1",
-      },
-    },
-    {
-      id: "chat2",
-      receiverId: "user2",
-      name: "Jane Smith",
-      image: "https://material-ui.com/static/images/avatar/2.jpg",
-      lastMessage: {
-        id: "msg2",
-        content: "How's it going?",
-        url: null,
-        date: "11:45 AM",
-        userId: "user2",
-      },
-    },
-    {
-      id: "chat3",
-      receiverId: "user3",
-      name: "Alex Johnson",
-      image: "https://material-ui.com/static/images/avatar/3.jpg",
-      lastMessage: {
-        id: "msg3",
-        content: "Let's meet up later.",
-        url: null,
-        date: "2:15 PM",
-        userId: "user3",
-      },
-    },
-    {
-      id: "chat4",
-      receiverId: "user4",
-      name: "Emily Brown",
-      image: "https://material-ui.com/static/images/avatar/4.jpg",
-      lastMessage: {
-        id: "msg4",
-        content: "Just finished the project!",
-        url: null,
-        date: "3:30 PM",
-        userId: "user4",
-      },
-    },
-    {
-      id: "chat5",
-      receiverId: "user5",
-      name: "Michael Wilson",
-      image: "https://material-ui.com/static/images/avatar/5.jpg",
-      lastMessage: {
-        id: "msg5",
-        content: "Check out this article.",
-        url: "https://example.com/article",
-        date: "4:45 PM",
-        userId: "user5",
-      },
-    },
-    {
-      id: "chat6",
-      receiverId: "user6",
-      name: "Olivia Garcia",
-      image: "https://material-ui.com/static/images/avatar/6.jpg",
-      lastMessage: {
-        id: "msg6",
-        content: "Happy birthday!",
-        url: null,
-        date: "6:20 PM",
-        userId: "user6",
-      },
-    },
-    {
-      id: "chat7",
-      receiverId: "user7",
-      name: "William Martinez",
-      image: "https://material-ui.com/static/images/avatar/7.jpg",
-      lastMessage: {
-        id: "msg7",
-        content: "See you at the party.",
-        url: null,
-        date: "7:55 PM",
-        userId: "user7",
-      },
-    },
-    {
-      id: "chat8",
-      receiverId: "user8",
-      name: "Sophia Anderson",
-      image: "https://material-ui.com/static/images/avatar/8.jpg",
-      lastMessage: {
-        id: "msg8",
-        content: "What's the plan for tomorrow?",
-        url: null,
-        date: "9:10 PM",
-        userId: "user8",
-      },
-    },
-  ];
+    const fetchChats = async () => {
+      try {
+        const res = await getChats();
+        isMounted && setChats(res.data.$values);
+      } catch (error) {
+        if (error.response?.data?.Error === "ERR_JWT") return;
+        if (error.response.status === 404) return;
+        showToastRef.current(
+          "Ocurrió un error al obtener los chats, informelo al equipo técnico",
+          { type: "error" }
+        );
+      } finally {
+        isMounted && setLoadingChats(false);
+      }
+    };
 
-  const mockCharBox = {
-    id: "chat1",
-    receiverId: "user1",
-    name: "Usuario seleccionado",
-    image: "https://material-ui.com/static/images/avatar/1.jpg",
-    messages: {
-      $values: [
-        {
-          id: "msg1",
-          content: "Hey there!",
-          url: null,
-          date: "10:30 AM",
-          userId: "user1",
-        },
-        {
-          id: "msg1",
-          content: "Hey there!",
-          url: null,
-          date: "10:30 AM",
-          userId: "user2",
-        },
-        {
-          id: "msg1",
-          content: "Hey there!",
-          url: null,
-          date: "10:30 AM",
-          userId: "user1",
-        },
-        {
-          id: "msg1",
-          content: "Hey there!",
-          url: null,
-          date: "10:30 AM",
-          userId: "user2",
-        },
-      ],
-    },
-  };
+    fetchChats();
 
-  const mockMessages = [
-    {
-      position: "left",
-      avatarSrc: "https://material-ui.com/static/images/avatar/1.jpg",
-      name: "Remy Sharp",
-      content: "Hello there!",
-      time: "10:30 AM",
-    },
-    {
-      position: "right",
-      avatarSrc: "https://material-ui.com/static/images/avatar/2.jpg",
-      name: "John Doe",
-      content: "Hi, how are you?",
-      time: "11:00 AM",
-    },
-    {
-      position: "left",
-      avatarSrc: "https://material-ui.com/static/images/avatar/1.jpg",
-      name: "Remy Sharp",
-      content: "Hello there! dsfdsfdsf sdf sdf sdf sdf sdfsd",
-      time: "10:30 AM",
-    },
-    {
-      position: "right",
-      avatarSrc: "https://material-ui.com/static/images/avatar/2.jpg",
-      name: "John Doe",
-      content:
-        "Hi, how are you? sdf sdf sdfsd fdsfdfdsfsd sdfsd fdsf sdfsdf sdfsdfsdf",
-      time: "11:00 AM",
-    },
-    {
-      position: "left",
-      avatarSrc: "https://material-ui.com/static/images/avatar/1.jpg",
-      name: "Remy Sharp",
-      content:
-        "Hello there! sdfdsfsdfsdf sdfsd dfsdf dssdfsdfd sdfsdf sdfsdf sdfsd sdfsdf",
-      time: "10:30 AM",
-    },
-    {
-      position: "right",
-      avatarSrc: "https://material-ui.com/static/images/avatar/2.jpg",
-      name: "John Doe",
-      content:
-        "Hi, how are you? sdfdsffddsf fhdsfhsdjk sdhfjkhsdkf ksdfsdjkhfjk jksdfjkdhfkj sdkfksdjhfjk sdkfjksdk",
-      time: "11:00 AM",
-    },
-    {
-      position: "left",
-      avatarSrc: "https://material-ui.com/static/images/avatar/1.jpg",
-      name: "Remy Sharp",
-      content:
-        "Hello there! ljkldgjkld pero compai sdjb jhfgbd dhfdsfndsknfkj kjdsfjksd",
-      time: "10:30 AM",
-    },
-    {
-      position: "right",
-      avatarSrc: "https://material-ui.com/static/images/avatar/2.jpg",
-      name: "John Doe",
-      content:
-        "Hi, how are you? ayer esty  dsfiojio dsfjlsdlkfjkldf lkdsnfklsdflsdkfsdklf klsd fklsd fklsd fkl sdklf sdlkf lksdf klsdf kl flsdflkadnsdfbsjfbsf jkhgiohgfngj kjedhfjk ksdjfiof lkdjflsd",
-      time: "11:00 AM",
-    },
-  ];
-  /* FIN ZONA PRUEBA */
+    return () => {
+      isMounted = false;
+    };
+  }, [showToastRef]);
 
-  const filteredChats = mockChatArray.filter((chat) =>
+  useEffect(() => {
+    const current = scrollBarRef.current;
+
+    if (current) {
+      const scrollElement = current?.contentWrapperEl || current;
+      scrollElement.scrollTop = scrollElement.scrollHeight;
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    return () => {
+      clearInterval(pollingId);
+    };
+  }, [pollingId]);
+
+  const filteredChats = chats.filter((chat) =>
     chat.name.toLowerCase().includes(filterChat.toLowerCase())
   );
+
+  const handleArrowBack = () => {
+    setSelectedChat(null);
+    clearInterval(pollingId);
+  };
+
+  const getHour = (dateVal) => {
+    const date = new Date(dateVal);
+    return `${date.toISOString().substring(11, 16)}`;
+  };
+
+  const handleChatSelection = async (chat) => {
+    try {
+      setSelectedChat(chat);
+      setLoadingChatMessages(true);
+      const res = await getChat(chat.id);
+      setMessages(res.data.messages.$values);
+
+      const pollingId = setInterval(async () => {
+        await getMessagesByPolling(chat);
+      }, 10000);
+
+      setPollingId(pollingId);
+    } catch (error) {
+      showToast(
+        "Ocurrió un error al obtener el chat, informelo al equipo técnico",
+        { type: "error" }
+      );
+    } finally {
+      setLoadingChatMessages(false);
+    }
+  };
+
+  const sendMsg = async (msg) => {
+    try {
+      const isFile = typeof msg === "object";
+      const values = { idReceiver: selectedChat.receiverId };
+      values[isFile ? "file" : "content"] = msg;
+
+      setSendingMsg(true);
+      const res = await sendMessage(values);
+
+      setMessages((currArr) => [res.data, ...currArr]);
+      !isFile && setMsgToSend("");
+    } catch (error) {
+      showToast(
+        "Ocurrió un error al enviar un mensaje, informelo al equipo técnico",
+        { type: "error" }
+      );
+    } finally {
+      setSendingMsg(false);
+    }
+  };
+
+  const getMessagesByPolling = async (chat) => {
+    try {
+      const res = await getChat(chat.id);
+      const newMessages = res.data.messages.$values;
+      setMessages((prevMessages) => {
+        if (newMessages.length > prevMessages.length) {
+          return newMessages;
+        }
+        return prevMessages;
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Container maxWidth="xl" sx={{ mb: 2 }}>
@@ -286,7 +203,19 @@ const Chat = () => {
             overflow: "hidden",
           }}
         >
-          {mockChatArray.length > 0 ? (
+          {loadingChats && (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "70vh",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          )}
+          {!loadingChats && chats.length > 0 ? (
             <>
               <Toolbar>
                 <TextField
@@ -308,16 +237,20 @@ const Chat = () => {
                 <ScrollBar>
                   <List>
                     {filteredChats.length > 0 ? (
-                      filteredChats.map(({ id, name, image, lastMessage }) => (
-                        <ListItem key={id} disablePadding>
+                      filteredChats.map((chat) => (
+                        <ListItem key={chat.id} disablePadding>
                           <ListItemButton
-                            onClick={handleChatselection}
-                            selected={false}
+                            onClick={() => handleChatSelection(chat)}
+                            selected={chat.id === selectedChat?.id}
                           >
                             <ListItemIcon>
-                              <Avatar alt={name} src={image} />
+                              <Avatar
+                                alt={chat.name}
+                                src={ASSETS + chat.image}
+                              />
                             </ListItemIcon>
                             <ListItemText
+                              sx={{ width: "70vw" }}
                               primary={
                                 <Box
                                   display="flex"
@@ -332,14 +265,14 @@ const Chat = () => {
                                       whiteSpace: "nowrap",
                                     }}
                                   >
-                                    {name}
+                                    {chat.name}
                                   </Typography>
                                   <Typography
                                     variant="body2"
                                     color="textSecondary"
                                     sx={{ fontSize: "0.7rem" }}
                                   >
-                                    {lastMessage.date}
+                                    {getHour(chat.lastMessage.date)}
                                   </Typography>
                                 </Box>
                               }
@@ -353,7 +286,7 @@ const Chat = () => {
                                     whiteSpace: "nowrap",
                                   }}
                                 >
-                                  {lastMessage.content}
+                                  {chat.lastMessage.content || "Envió una foto"}
                                 </Typography>
                               }
                             />
@@ -398,16 +331,16 @@ const Chat = () => {
               >
                 <Toolbar>
                   {isScreenBelow900px && (
-                    <IconButton>
-                      <ArrowBackIcon onClick={handleArrowBack} />
+                    <IconButton onClick={handleArrowBack}>
+                      <ArrowBackIcon />
                     </IconButton>
                   )}
                   <Avatar
-                    alt="Remy Sharp"
-                    src="https://material-ui.com/static/images/avatar/1.jpg"
+                    alt={selectedChat.name}
+                    src={ASSETS + selectedChat.image}
                     sx={{ mr: 1, width: 50, height: 50 }}
                   />
-                  <Typography variant="h6">nombre aquí</Typography>
+                  <Typography variant="h6">{selectedChat.name}</Typography>
                 </Toolbar>
               </Box>
               <Box
@@ -418,21 +351,48 @@ const Chat = () => {
                   height: 2,
                 }}
               >
-                <ScrollBar>
-                  {mockMessages.map((message, index) => (
-                    <MessageBox
-                      key={index}
-                      position={message.position}
-                      avatarSrc={message.avatarSrc}
-                      name={message.name}
-                      message={message.content}
-                      time={message.time}
-                    />
-                  ))}
-                </ScrollBar>
+                {loadingChatMessages ? (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      height: "100%",
+                    }}
+                  >
+                    <CircularProgress />
+                  </Box>
+                ) : (
+                  <ScrollBar customRef={scrollBarRef}>
+                    {messages
+                      .slice()
+                      .reverse()
+                      .map((message) => {
+                        const isReceiver =
+                          message.userId === selectedChat.receiverId;
+                        const receiverImg = ASSETS + selectedChat.image;
+                        const userImg = ASSETS + auth.payload.UrlImage;
+                        const userName = auth.payload.sub;
+
+                        return (
+                          <MessageBox
+                            key={message.id}
+                            position={isReceiver ? "left" : "right"}
+                            avatarSrc={isReceiver ? receiverImg : userImg}
+                            name={isReceiver ? selectedChat.name : userName}
+                            message={message.content}
+                            messageImg={message.url}
+                            time={getHour(message.date)}
+                          />
+                        );
+                      })}
+                  </ScrollBar>
+                )}
               </Box>
               <Box sx={{ padding: 1 }}>
                 <TextField
+                  value={msgToSend}
+                  onChange={(e) => setMsgToSend(e.target.value)}
                   multiline
                   fullWidth
                   label="Mensaje"
@@ -445,12 +405,35 @@ const Chat = () => {
                     },
                     endAdornment: (
                       <InputAdornment position="end">
-                        <IconButton color="primary">
-                          <SendIcon />
-                        </IconButton>
+                        {sendingMsg ? (
+                          <CircularProgress size={25} />
+                        ) : (
+                          <>
+                            <IconButton
+                              color="primary"
+                              disabled={!msgToSend}
+                              onClick={() => sendMsg(msgToSend)}
+                            >
+                              <SendIcon />
+                            </IconButton>
+                            <IconButton
+                              color="primary"
+                              onClick={() => fileInputRef.current.click()}
+                            >
+                              <AddPhotoAlternateIcon />
+                            </IconButton>
+                          </>
+                        )}
                       </InputAdornment>
                     ),
                   }}
+                />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={(e) => sendMsg(e.target.files[0])}
                 />
               </Box>
             </>
