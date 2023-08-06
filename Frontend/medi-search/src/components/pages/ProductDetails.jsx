@@ -42,17 +42,14 @@ const ProductDetails = ({ logged, showCompanyInfo }) => {
 
   useEffect(() => {
     console.count("ProductDetails.jsx"); //borrame
-    let isMounted = true;
 
     const fetchProduct = async () => {
       try {
         const res = await getCompanyProduct(id);
 
-        if (isMounted) {
-          setProduct(res.data);
-          setImages(res.data.images.$values.map((url) => ASSETS + url));
-          setComments(res.data.comments.$values);
-        }
+        setProduct(res.data);
+        setImages(res.data.images.$values.map((url) => ASSETS + url));
+        setComments(res.data.comments.$values);
       } catch (error) {
         if (error.response?.data?.Error === "ERR_JWT") return;
         if (error.response.status === 404) return navigate(-1);
@@ -61,15 +58,11 @@ const ProductDetails = ({ logged, showCompanyInfo }) => {
           { type: "error" }
         );
       } finally {
-        isMounted && setLoading(false);
+        setLoading(false);
       }
     };
 
     fetchProduct();
-
-    return () => {
-      isMounted = false;
-    };
   }, [showToastRef, id, navigate]);
 
   const sendComment = async (content, setTextboxVal) => {
@@ -218,6 +211,8 @@ const ProductDetails = ({ logged, showCompanyInfo }) => {
                       </Box>
                     </Box>
                     <Button
+                      component={Link}
+                      to={`/company/chat?receiverId=${product.companyId}&product=${product.name}`}
                       fullWidth
                       variant="contained"
                       startIcon={<MarkUnreadChatAltIcon />}

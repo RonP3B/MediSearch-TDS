@@ -61,12 +61,11 @@ const Users = () => {
 
   useEffect(() => {
     console.count("Users.jsx"); //borrame
-    let isMounted = true;
 
     const fetchEmployees = async () => {
       try {
         const res = await getAllEmployees();
-        isMounted && setUsers(res.data.$values);
+        setUsers(res.data.$values);
       } catch (error) {
         if (error.response?.data?.Error === "ERR_JWT") return;
 
@@ -77,15 +76,11 @@ const Users = () => {
           }
         );
       } finally {
-        isMounted && setLoading(false);
+        setLoading(false);
       }
     };
 
     fetchEmployees();
-
-    return () => {
-      isMounted = false;
-    };
   }, [showToastRef]);
 
   const deleteUser = async () => {

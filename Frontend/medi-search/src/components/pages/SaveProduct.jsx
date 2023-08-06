@@ -50,17 +50,14 @@ const SaveProduct = ({ edit }) => {
 
   useEffect(() => {
     console.count("SaveProduct.jsx"); //borrame
-    let isMounted = true;
 
     const fetchProduct = async () => {
       try {
         const res = await getProduct(id);
         const productRes = res.data;
 
-        if (isMounted) {
-          setProduct(productRes);
-          setImages(productRes.urlImages.$values.map((url) => ASSETS + url));
-        }
+        setProduct(productRes);
+        setImages(productRes.urlImages.$values.map((url) => ASSETS + url));
       } catch (error) {
         if (error.response?.data?.Error === "ERR_JWT") return;
 
@@ -71,15 +68,11 @@ const SaveProduct = ({ edit }) => {
           { type: "error" }
         );
       } finally {
-        isMounted && setLoading(false);
+        setLoading(false);
       }
     };
 
     edit && fetchProduct();
-
-    return () => {
-      isMounted = false;
-    };
   }, [showToastRef, edit, id, navigate, setSelectedClassification]);
 
   useEffect(() => {

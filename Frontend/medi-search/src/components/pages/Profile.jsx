@@ -32,11 +32,10 @@ const Profile = ({ profileType }) => {
 
   useEffect(() => {
     console.count("Profile.jsx"); //Borrame
-    let isMounted = true;
 
     const fetchProfile = async () => {
       try {
-        isMounted && setLoading(true);
+        setLoading(true);
 
         const isCompany = profileType === "empresa";
 
@@ -70,10 +69,8 @@ const Profile = ({ profileType }) => {
           info.push({ label: "Rol", val: auth.payload.roles });
         }
 
-        if (isMounted) {
-          setProfile(data);
-          setProfileInfo(info);
-        }
+        setProfile(data);
+        setProfileInfo(info);
       } catch (error) {
         if (error.response?.data?.Error === "ERR_JWT") return;
         showToastRef.current(
@@ -81,15 +78,11 @@ const Profile = ({ profileType }) => {
           { type: "error" }
         );
       } finally {
-        isMounted && setLoading(false);
+        setLoading(false);
       }
     };
 
     fetchProfile();
-
-    return () => {
-      isMounted = false;
-    };
   }, [
     showToastRef,
     edited,

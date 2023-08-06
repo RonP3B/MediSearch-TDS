@@ -32,7 +32,6 @@ const Provisions = () => {
 
   useEffect(() => {
     console.count("Provisions.jsx"); //borrame
-    let isMounted = true;
 
     const fetchProvisions = async () => {
       try {
@@ -43,11 +42,9 @@ const Provisions = () => {
           return product.price > max ? product.price : max;
         }, 0);
 
-        if (isMounted) {
-          setProvisions(provisionsArr);
-          setPriceFilter([1, highestPrice]);
-          setMaxPrice(highestPrice);
-        }
+        setProvisions(provisionsArr);
+        setPriceFilter([1, highestPrice]);
+        setMaxPrice(highestPrice);
       } catch (error) {
         if (error.response?.data?.Error === "ERR_JWT") return;
 
@@ -58,15 +55,11 @@ const Provisions = () => {
           { type: "error" }
         );
       } finally {
-        isMounted && setLoading(false);
+        setLoading(false);
       }
     };
 
     fetchProvisions();
-
-    return () => {
-      isMounted = false;
-    };
   }, [setMaxPrice, setPriceFilter]);
 
   const handleOpenFilter = () => {

@@ -250,7 +250,6 @@ const CompanyDetails = () => {
 
   useEffect(() => {
     console.count("CompanyDetails.jsx"); //borrame
-    let isMounted = true;
 
     const fetchCompany = async () => {
       try {
@@ -261,11 +260,9 @@ const CompanyDetails = () => {
           return product.price > max ? product.price : max;
         }, 0);
 
-        if (isMounted) {
-          setCompany(res.data);
-          setPriceFilter([1, highestPrice]);
-          setMaxPrice(highestPrice);
-        }
+        setCompany(res.data);
+        setPriceFilter([1, highestPrice]);
+        setMaxPrice(highestPrice);
       } catch (error) {
         if (error.response?.data?.Error === "ERR_JWT") return;
         if (error.response.status === 404) return navigate(-1);
@@ -275,15 +272,11 @@ const CompanyDetails = () => {
           { type: "error" }
         );
       } finally {
-        isMounted && setLoading(false);
+        setLoading(false);
       }
     };
 
     fetchCompany();
-
-    return () => {
-      isMounted = false;
-    };
   }, [showToastRef, id, navigate, setPriceFilter, setMaxPrice]);
 
   return (

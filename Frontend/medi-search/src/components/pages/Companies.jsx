@@ -33,14 +33,13 @@ const Companies = ({ companyType }) => {
 
   useEffect(() => {
     console.count("Companies.jsx"); //borrame
-    let isMounted = true;
 
     const fetchCompanies = async () => {
       try {
         const res = await (companyType === "farmacia"
           ? getAllPharmacies()
           : getAllLabs());
-        isMounted && setCompanies(res.data.$values);
+        setCompanies(res.data.$values);
       } catch (error) {
         if (error.response?.data?.Error === "ERR_JWT") return;
         if (error.response.status === 404) return;
@@ -49,15 +48,11 @@ const Companies = ({ companyType }) => {
           { type: "error" }
         );
       } finally {
-        isMounted && setLoading(false);
+        setLoading(false);
       }
     };
 
     fetchCompanies();
-
-    return () => {
-      isMounted = false;
-    };
   }, [companyType]);
 
   const handleOpenFilter = () => {

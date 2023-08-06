@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import useToast from "../../hooks/feedback/useToast";
 import useAuth from "../../hooks/persistence/useAuth";
 import ScrollBar from "../custom/Scrollbar/ScrollBar";
@@ -36,52 +36,91 @@ import {
   getChats,
   sendMessage,
 } from "../../services/MediSearchServices/ChatServices";
+import NewChatForm from "../custom/Forms/NewChatForm";
 
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
 const Chat = () => {
   const { auth } = useAuth();
+  const [searchParams] = useSearchParams();
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
-  const [messages, setMessages] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [msgToSend, setMsgToSend] = useState("");
   const [loadingChats, setLoadingChats] = useState(true);
   const [loadingChatMessages, setLoadingChatMessages] = useState(false);
   const [sendingMsg, setSendingMsg] = useState(false);
   const [filterChat, setFilterChat] = useState("");
   const [pollingId, setPollingId] = useState("");
+  const [modalOpened, setModalOpened] = useState(false);
   const showToast = useToast();
   const showToastRef = useRef(showToast);
   const scrollBarRef = useRef(null);
   const fileInputRef = useRef(null);
   const isScreenBelow900px = useMediaQuery("(max-width:899px)");
+  const receiverId = searchParams.get("receiverId");
+  const product = searchParams.get("product");
+  const defaultMessage = receiverId && product;
 
   useEffect(() => {
     console.count("Chat.jsx"); //borrame
-    let isMounted = true;
 
     const fetchChats = async () => {
       try {
+        if (defaultMessage) {
+          await sendMessage({
+            idReceiver: receiverId,
+            content: `¡Buenas! Estoy interesado en su producto '${product}'`,
+          });
+        }
+
         const res = await getChats();
-        isMounted && setChats(res.data.$values);
+        const chatsArr = res.data.$values;
+        setChats(chatsArr);
+
+        defaultMessage &&
+          setSelectedChat(
+            chatsArr.find((chat) => chat.receiverId === receiverId)
+          );
       } catch (error) {
         if (error.response?.data?.Error === "ERR_JWT") return;
         if (error.response.status === 404) return;
         showToastRef.current(
-          "Ocurrió un error al obtener los chats, informelo al equipo técnico",
+          "Ocurrió un error al cargar la sección de chats, informelo al equipo técnico",
           { type: "error" }
         );
       } finally {
-        isMounted && setLoadingChats(false);
+        setLoadingChats(false);
       }
     };
 
     fetchChats();
+  }, [defaultMessage, product, receiverId]);
 
-    return () => {
-      isMounted = false;
+  useEffect(() => {
+    const handleChatSelection = async () => {
+      try {
+        setLoadingChatMessages(true);
+        const res = await getChat(selectedChat.id);
+        setMessages(res.data.messages.$values);
+
+        const pollingId = setInterval(async () => {
+          await getMessagesByPolling(selectedChat);
+        }, 10000);
+
+        setPollingId(pollingId);
+      } catch (error) {
+        showToastRef(
+          "Ocurrió un error al obtener el chat, informelo al equipo técnico",
+          { type: "error" }
+        );
+      } finally {
+        setLoadingChatMessages(false);
+      }
     };
-  }, [showToastRef]);
+
+    selectedChat && handleChatSelection();
+  }, [selectedChat]);
 
   useEffect(() => {
     const current = scrollBarRef.current;
@@ -102,6 +141,10 @@ const Chat = () => {
     chat.name.toLowerCase().includes(filterChat.toLowerCase())
   );
 
+  const openNewChatModal = () => {
+    setModalOpened(true);
+  };
+
   const handleArrowBack = () => {
     setSelectedChat(null);
     clearInterval(pollingId);
@@ -110,28 +153,6 @@ const Chat = () => {
   const getHour = (dateVal) => {
     const date = new Date(dateVal);
     return `${date.toISOString().substring(11, 16)}`;
-  };
-
-  const handleChatSelection = async (chat) => {
-    try {
-      setSelectedChat(chat);
-      setLoadingChatMessages(true);
-      const res = await getChat(chat.id);
-      setMessages(res.data.messages.$values);
-
-      const pollingId = setInterval(async () => {
-        await getMessagesByPolling(chat);
-      }, 10000);
-
-      setPollingId(pollingId);
-    } catch (error) {
-      showToast(
-        "Ocurrió un error al obtener el chat, informelo al equipo técnico",
-        { type: "error" }
-      );
-    } finally {
-      setLoadingChatMessages(false);
-    }
   };
 
   const sendMsg = async (msg) => {
@@ -147,7 +168,7 @@ const Chat = () => {
       !isFile && setMsgToSend("");
     } catch (error) {
       showToast(
-        "Ocurrió un error al enviar un mensaje, informelo al equipo técnico",
+        "Ocurrió un error al enviar el mensaje, informelo al equipo técnico",
         { type: "error" }
       );
     } finally {
@@ -182,13 +203,19 @@ const Chat = () => {
           Chat
         </Typography>
         <Button
-          component={Link}
-          to="#"
+          onClick={openNewChatModal}
           variant="contained"
           startIcon={<AddIcon />}
         >
-          Nuevo chat
+          Nuevo mensaje
         </Button>
+        <NewChatForm
+          open={modalOpened}
+          handleClose={() => setModalOpened(false)}
+          handleChatSelection={setSelectedChat}
+          chats={chats}
+          setChats={setChats}
+        />
       </Stack>
       <Grid container component={Paper} sx={{ width: "100%", height: "75vh" }}>
         <Grid
@@ -240,7 +267,7 @@ const Chat = () => {
                       filteredChats.map((chat) => (
                         <ListItem key={chat.id} disablePadding>
                           <ListItemButton
-                            onClick={() => handleChatSelection(chat)}
+                            onClick={() => setSelectedChat(chat)}
                             selected={chat.id === selectedChat?.id}
                           >
                             <ListItemIcon>
@@ -298,6 +325,7 @@ const Chat = () => {
                         msg="No hay chats"
                         chatSection={false}
                         Icon={SpeakerNotesOffIcon}
+                        handleButton={openNewChatModal}
                       />
                     )}
                   </List>
@@ -309,6 +337,7 @@ const Chat = () => {
               msg="No hay chats activos"
               chatSection={false}
               Icon={SpeakerNotesOffIcon}
+              handleButton={openNewChatModal}
             />
           )}
         </Grid>
@@ -442,6 +471,7 @@ const Chat = () => {
               msg="Selecciona un chat"
               chatSection={true}
               Icon={ChatBubbleOutlineIcon}
+              handleButton={openNewChatModal}
             />
           )}
         </Grid>

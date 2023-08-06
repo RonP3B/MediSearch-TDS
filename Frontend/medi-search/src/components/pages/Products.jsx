@@ -32,12 +32,11 @@ const Products = () => {
 
   useEffect(() => {
     console.count("Products.jsx"); //borrame
-    let isMounted = true;
 
     const fetchProducts = async () => {
       try {
         const res = await getAllProducts();
-        isMounted && setProducts(res.data.$values);
+        setProducts(res.data.$values);
       } catch (error) {
         if (error.response?.data?.Error === "ERR_JWT") return;
         if (error.response.status === 404) return;
@@ -46,15 +45,11 @@ const Products = () => {
           { type: "error" }
         );
       } finally {
-        isMounted && setLoading(false);
+        setLoading(false);
       }
     };
 
     fetchProducts();
-
-    return () => {
-      isMounted = false;
-    };
   }, [showToastRef]);
 
   const handleDelete = async (id) => {
