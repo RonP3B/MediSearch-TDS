@@ -490,10 +490,12 @@ namespace MediSearch.Infrastructure.Identity.Services
             var roles = await _userManager.GetRolesAsync(user);
             var isEmployee = await _companyUserRepository.GetByUserAsync(userId);
             string roletype = "Cliente";
+            string nameCompany = "Cliente";
             if(isEmployee != null){
                 var company = await _companyRepository.GetByIdAsync(isEmployee.CompanyId);
                 var type = await _companyTypeRepository.GetByIdAsync(company.CompanyTypeId);
                 roletype = type.Name;
+                nameCompany = company.Name;
             }
 
             var roleClaims = new List<Claim>();
@@ -510,7 +512,8 @@ namespace MediSearch.Infrastructure.Identity.Services
                 new Claim(JwtRegisteredClaimNames.Email,user.Email),
                 new Claim("uid", user.Id),
                 new Claim("UrlImage", user.UrlImage),
-                new Claim("RoleType", roletype)
+                new Claim("RoleType", roletype),
+                new Claim("Company", nameCompany)
             }
             .Union(userClaims)
             .Union(roleClaims);
