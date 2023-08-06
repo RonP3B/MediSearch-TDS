@@ -1,5 +1,6 @@
 ﻿using MediSearch.Core.Application.Dtos.Company;
 using MediSearch.Core.Application.Dtos.Product;
+using MediSearch.Core.Application.Features.Home.Queries.GetAllCompanies;
 using MediSearch.Core.Application.Features.Home.Queries.GetAllFarmacy;
 using MediSearch.Core.Application.Features.Home.Queries.GetAllLaboratory;
 using MediSearch.Core.Application.Features.Home.Queries.GetCompanyByName;
@@ -155,6 +156,34 @@ namespace MediSearch.WebApi.Controllers.v1
 
         }
 
+        [HttpGet("get-all-companies")]
+        [SwaggerOperation(
+           Summary = "Obtener todas las empresas.",
+            Description = "Nos permite obtener todos las empresas en el sistema."
+        )]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<GetAllCompaniesQueryResponse>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAllCompanies()
+        {
+            try
+            {
+
+                var result = await Mediator.Send(new GetAllCompaniesQuery());
+
+                if (result == null || result.Count == 0)
+                    return NotFound();
+
+                return Ok(result);
+
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
+        }
+
         [HttpGet("get-company/{id}")]
         [SwaggerOperation(
            Summary = "Obtener las informaciones de una empresa.",
@@ -185,10 +214,10 @@ namespace MediSearch.WebApi.Controllers.v1
 
         [HttpGet("get-company-name")]
         [SwaggerOperation(
-           Summary = "Obtener las informaciones de una empresa.",
-            Description = "Nos permite obtener todos los campos de una empresa."
+           Summary = "Obtener empresas por nombre.",
+            Description = "Nos permite obtener todas las empresas que coincidan con la busqueda por nombre."
         )]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetCompanyByNameQueryResponse))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<GetCompanyByNameQueryResponse>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetCompanyByName(GetCompanyByNameQuery query)
