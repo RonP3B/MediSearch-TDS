@@ -27,6 +27,7 @@ namespace MediSearch.Core.Domain.Entities
 		public string CompanyTypeId { get; set;}
         public ICollection<Product> Products { get; set; }
         public ICollection<CompanyUser>  CompanyUsers { get; set; }
+        public ICollection<FavoriteCompany> FavoriteCompanies { get; set; }
 
         public Company()
         {

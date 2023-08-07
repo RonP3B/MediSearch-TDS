@@ -18,6 +18,8 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
         public DbSet<Company> Companies { get; set; }
         public DbSet<CompanyType> CompanyTypes { get; set; }
         public DbSet<CompanyUser> CompanyUsers { get; set; }
+        public DbSet<FavoriteCompany> FavoriteCompanies { get; set; }
+        public DbSet<FavoriteProduct> FavoriteProducts { get; set; }
         public DbSet<Hall> Halls { get; set; }
         public DbSet<HallUser> HallUsers { get; set; }
         public DbSet<Message> Messages { get; set; }
@@ -64,6 +66,12 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
 
             modelBuilder.Entity<CompanyUser>()
                 .ToTable("Company_Users");
+            
+            modelBuilder.Entity<FavoriteCompany>()
+                .ToTable("Favorite_Companies");
+            
+            modelBuilder.Entity<FavoriteProduct>()
+                .ToTable("Favorite_Products");
 
             modelBuilder.Entity<Hall>()
                 .ToTable("Halls");
@@ -95,6 +103,12 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
                 .HasKey(x => x.Id);
 
             modelBuilder.Entity<CompanyUser>()
+                .HasKey(x => x.Id);
+            
+            modelBuilder.Entity<FavoriteCompany>()
+                .HasKey(x => x.Id);
+            
+            modelBuilder.Entity<FavoriteProduct>()
                 .HasKey(x => x.Id);
 
             modelBuilder.Entity<Hall>()
@@ -165,6 +179,18 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
                 .WithMany(x => x.Replies)
                 .HasForeignKey(x => x.CommentId)
                 .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<FavoriteCompany>()
+                .HasOne<Company>(x => x.Company)
+                .WithMany(x => x.FavoriteCompanies)
+                .HasForeignKey(x => x.CompanyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<FavoriteProduct>()
+                .HasOne<Product>(x => x.Product)
+                .WithMany(x => x.FavoriteProducts)
+                .HasForeignKey(x => x.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             #endregion
 
@@ -178,6 +204,8 @@ namespace MediSearch.Infrastructure.Persistence.Contexts
             Companies.RemoveRange(Companies);
             CompanyTypes.RemoveRange(CompanyTypes);
             CompanyUsers.RemoveRange(CompanyUsers);
+            FavoriteCompanies.RemoveRange(FavoriteCompanies);
+            FavoriteProducts.RemoveRange(FavoriteProducts);
             Halls.RemoveRange(Halls);
             HallUsers.RemoveRange(HallUsers);
             Messages.RemoveRange(Messages);
