@@ -8,23 +8,40 @@ import { adminNav } from "../../utils/adminNav";
 
 const LoggedLayout = () => {
   const { auth } = useAuth();
+  const role = auth.payload.roles;
 
   const pages = ["opcion a", "opcion b", "opcion c"];
 
-  const options = [
-    { option: "Mi perfil", route: "/company/my-profile" },
+  const clientOptions = [
+    { option: "opcion a", route: "/" },
     { option: "Opcion b", route: "/" },
     { option: "Opcion c", route: "/" },
   ];
 
-  if (auth.payload.roles === "Client") {
+  const companyAdminOptions = [
+    { option: "Dashboard", route: "/company/dashboard" },
+    { option: "Mi perfil", route: "/company/my-profile" },
+  ];
+
+  if (role === "SuperAdmin") {
+    companyAdminOptions.push({
+      option: "Mi empresa",
+      route: "/company/my-company",
+    });
+  }
+
+  if (role === "Client") {
     return (
       <ConfirmProvider
         defaultOptions={{
           confirmationButtonProps: { autoFocus: true },
         }}
       >
-        <ResponsiveHeader pages={pages} settings={options} logged={true} />
+        <ResponsiveHeader
+          pages={pages}
+          settings={clientOptions}
+          logged={true}
+        />
         <main>
           <Outlet />
         </main>
@@ -46,7 +63,7 @@ const LoggedLayout = () => {
           </main>
         }
         nav={adminNav}
-        settings={options}
+        settings={companyAdminOptions}
       />
       <ToastContainer />
     </ConfirmProvider>

@@ -274,6 +274,10 @@ const Chat = () => {
                               <Avatar
                                 alt={chat.name}
                                 src={ASSETS + chat.image}
+                                sx={{
+                                  border: (theme) =>
+                                    `1px solid ${theme.palette.primary.main}`,
+                                }}
                               />
                             </ListItemIcon>
                             <ListItemText
@@ -367,7 +371,13 @@ const Chat = () => {
                   <Avatar
                     alt={selectedChat.name}
                     src={ASSETS + selectedChat.image}
-                    sx={{ mr: 1, width: 50, height: 50 }}
+                    sx={{
+                      mr: 1,
+                      width: 50,
+                      height: 50,
+                      border: (theme) =>
+                        `1px solid ${theme.palette.primary.main}`,
+                    }}
                   />
                   <Typography variant="h6">{selectedChat.name}</Typography>
                 </Toolbar>

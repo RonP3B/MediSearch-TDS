@@ -82,7 +82,10 @@ const ResponsiveDrawer = (props) => {
         <Avatar
           alt="Foto del usuario"
           src={`${ASSETS}${auth.payload.UrlImage}`}
-          sx={{ marginRight: 1 }}
+          sx={{
+            marginRight: 1,
+            border: (theme) => `1px solid ${theme.palette.primary.main}`,
+          }}
         />
         <Typography sx={{ fontWeight: "bold" }}>{auth.payload.sub}</Typography>
       </Paper>
@@ -167,7 +170,14 @@ const ResponsiveDrawer = (props) => {
 
             <>
               <Tooltip title="Abrir opciones">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <IconButton
+                  onClick={handleOpenUserMenu}
+                  sx={{
+                    p: 0,
+                    border: (theme) =>
+                      `1px solid ${theme.palette.primary.main}`,
+                  }}
+                >
                   <Avatar
                     alt="Foto del usuario"
                     src={`${ASSETS}${auth.payload.UrlImage}`}

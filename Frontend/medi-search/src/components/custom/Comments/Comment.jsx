@@ -15,7 +15,11 @@ const Comment = ({ isReply, userAvatar, userName, comment, onClick }) => {
         padding: 1,
       }}
     >
-      <Avatar src={userAvatar} alt={userName} />
+      <Avatar
+        src={userAvatar}
+        alt={userName}
+        sx={{ border: (theme) => `1px solid ${theme.palette.primary.main}` }}
+      />
       <Box sx={{ ml: 1, width: "100%" }}>
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Typography variant="subtitle2">{userName}</Typography>

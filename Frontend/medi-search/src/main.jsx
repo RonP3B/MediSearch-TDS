@@ -10,6 +10,7 @@ import "./styles/css/styles.css";
 import { ColorModeProvider } from "./components/contexts/ColorModeContext.jsx";
 import { AuthProvider } from "./components/contexts/AuthContext.jsx";
 import MediSearchInterceptor from "./components/interceptors/MediSearchInterceptor.jsx";
+import StyledChart from "./components/custom/Dashboard/StyledChart.jsx";
 
 if (import.meta.env.VITE_REACT_ENV === "production") {
   disableReactDevTools();
@@ -19,6 +20,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ColorModeProvider>
       <CssBaseline />
+      <StyledChart />
       <BrowserRouter>
         <AuthProvider>
           <MediSearchInterceptor>

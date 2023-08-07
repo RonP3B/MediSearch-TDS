@@ -43,7 +43,12 @@ const MessageBox = ({
       <Avatar
         alt={name}
         src={avatarSrc}
-        sx={{ width: 32, height: 32, mt: 0.5 }}
+        sx={{
+          width: 32,
+          height: 32,
+          mt: 0.5,
+          border: (theme) => `1px solid ${theme.palette.primary.main}`,
+        }}
       />
       <Paper
         sx={{
