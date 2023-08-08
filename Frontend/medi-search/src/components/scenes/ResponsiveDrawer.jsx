@@ -27,6 +27,7 @@ import Logo from "../../assets/images/Logo.png";
 import Avatar from "@mui/material/Avatar";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
@@ -213,7 +214,7 @@ const ResponsiveDrawer = (props) => {
                   </Typography>
                 </Box>
                 <Divider sx={{ borderStyle: "dashed" }} />
-                {settings.map(({ option, route }) => (
+                {settings.map(({ option, route, Icon }) => (
                   <MenuItem
                     key={option}
                     onClick={handleCloseUserMenu}
@@ -221,11 +222,17 @@ const ResponsiveDrawer = (props) => {
                     to={route}
                     sx={{ textDecoration: "none", color: "inherit" }}
                   >
+                    <ListItemIcon>
+                      <Icon fontSize="small" />
+                    </ListItemIcon>
                     <Typography textAlign="center">{option}</Typography>
                   </MenuItem>
                 ))}
                 <Divider />
                 <MenuItem onClick={logoutUser}>
+                  <ListItemIcon>
+                    <LogoutIcon fontSize="small" />
+                  </ListItemIcon>
                   <Typography textAlign="center">Cerrar sesión</Typography>
                 </MenuItem>
               </Menu>

@@ -6,6 +6,8 @@ const GET_COMPANIES_ENDPOINT = import.meta.env.VITE_MEDISEARCH_COMPANIES;
 const GET_COMPANY_ENDPOINT = import.meta.env.VITE_MEDISEARCH_COMPANY;
 const GET_PRODUCT_ENDPOINT = import.meta.env.VITE_MEDISEARCH_PRODUCT;
 const GET_LAB_PRODUCTS_ENDPOINT = import.meta.env.VITE_MEDISEARCH_LAB_PRODUCTS;
+const GET_PHARMACY_PRODUCTS_ENDPOINT = import.meta.env
+  .VITE_MEDISEARCH_PHARMACY_PRODUCTS;
 
 export const getAllLabs = () => {
   return MediSearchApi.get(GET_LABORATORIES_ENDPOINT);
@@ -21,6 +23,10 @@ export const getAllCompanies = () => {
 
 export const getLabProducts = () => {
   return MediSearchApi.get(GET_LAB_PRODUCTS_ENDPOINT);
+};
+
+export const getPharmacyProducts = () => {
+  return MediSearchApi.get(GET_PHARMACY_PRODUCTS_ENDPOINT);
 };
 
 export const getCompanyById = (id) => {

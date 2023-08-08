@@ -7,7 +7,9 @@ const LabRoutes = () => {
     <Route element={<RequiresLab />}>
       <Route
         path="/company/pharmacies"
-        element={<Companies companyType="farmacia" />}
+        element={
+          <Companies companyType="farmacia" logged={true} isCompany={true} />
+        }
       />
     </Route>
   );

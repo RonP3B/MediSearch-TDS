@@ -19,7 +19,7 @@ import CompanyFilterDrawer from "../custom/FilterDrawers/CompanyFilterDrawer";
 import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 import useFilters from "../../hooks/filters/useFilters";
 
-const Companies = ({ companyType }) => {
+const Companies = ({ companyType, logged, isCompany }) => {
   const [openFilter, setOpenFilter] = useState(false);
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -64,7 +64,7 @@ const Companies = ({ companyType }) => {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ mb: 2 }}>
+    <Container maxWidth="xl" sx={{ mb: 2, mt: isCompany ? 0 : 3 }}>
       <CompanyFilterDrawer
         openFilter={openFilter}
         onCloseFilter={handleCloseFilter}
@@ -123,7 +123,12 @@ const Companies = ({ companyType }) => {
           <Grid container spacing={2}>
             {filteredCompanies.map((company) => (
               <Grid item key={company.id} xs={12} sm={6} md={4}>
-                <CompanyCard company={company} />
+                <CompanyCard
+                  company={company}
+                  to={`/compan${logged ? "y" : "ies"}/company-details/${
+                    company.id
+                  }`}
+                />
               </Grid>
             ))}
           </Grid>
@@ -149,6 +154,8 @@ const Companies = ({ companyType }) => {
 
 Companies.propTypes = {
   companyType: PropTypes.string.isRequired,
+  logged: PropTypes.bool.isRequired,
+  isCompany: PropTypes.bool.isRequired,
 };
 
 export default Companies;

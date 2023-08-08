@@ -6,6 +6,7 @@ import { disableReactDevTools } from "@fvilers/disable-react-devtools";
 import CssBaseline from "@mui/material/CssBaseline";
 import "react-toastify/dist/ReactToastify.css";
 import "react-image-gallery/styles/css/image-gallery.css";
+import "react-multi-carousel/lib/styles.css";
 import "./styles/css/styles.css";
 import { ColorModeProvider } from "./components/contexts/ColorModeContext.jsx";
 import { AuthProvider } from "./components/contexts/AuthContext.jsx";

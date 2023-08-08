@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import FormGroup from "@mui/material/FormGroup";
+import { alpha } from "@mui/material/styles";
 
 const FilterOptionsFormGroup = ({ children }) => {
   return (
@@ -7,7 +8,7 @@ const FilterOptionsFormGroup = ({ children }) => {
       sx={{
         border: (theme) => `2px solid ${theme.palette.primary.main}`,
         borderRadius: "12px",
-        backgroundColor: "rgba(156, 39, 176, 0.04)",
+        backgroundColor: (theme) => alpha(theme.palette.primary.light, 0.1),
         height: 165,
         overflowY: "auto",
         overflowX: "hidden",

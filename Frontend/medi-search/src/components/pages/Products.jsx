@@ -1,47 +1,63 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
-import { useConfirm } from "material-ui-confirm";
+import PropTypes from "prop-types";
 import useToast from "../../hooks/feedback/useToast";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import CircularProgress from "@mui/material/CircularProgress";
 import Grid from "@mui/material/Grid";
-import AddIcon from "@mui/icons-material/Add";
-import SearchIcon from "@mui/icons-material/Search";
-import SearchOffIcon from "@mui/icons-material/SearchOff";
-import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantityLimits";
-import ProductCard from "../custom/Cards/ProductCard";
+import CircularProgress from "@mui/material/CircularProgress";
+import Button from "@mui/material/Button";
+import TuneIcon from "@mui/icons-material/Tune";
+import ProductFilterDrawer from "../custom/FilterDrawers/ProductFilterDrawer";
 import {
-  deleteProduct,
-  getAllProducts,
-} from "../../services/MediSearchServices/ProductServices";
+  getLabProducts,
+  getPharmacyProducts,
+} from "../../services/MediSearchServices/HomeServices";
+import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantityLimits";
+import FilterListOffIcon from "@mui/icons-material/FilterListOff";
+import ProductCard from "../custom/Cards/ProductCard";
+import useFilters from "../../hooks/filters/useFilters";
 
-const Products = () => {
+const Products = ({ isCompany, logged, companyType }) => {
+  const [openFilter, setOpenFilter] = useState(false);
   const [products, setProducts] = useState([]);
-  const [filterTerm, setFilterTerm] = useState("");
-  const [showFilter, setShowFilter] = useState(false);
   const [loading, setLoading] = useState(true);
+  const {
+    filters,
+    clearFilters,
+    filteredData: filteredProducts,
+    setPriceFilter,
+    setMaxPrice,
+  } = useFilters(products, true);
+
   const showToast = useToast();
   const showToastRef = useRef(showToast);
-  const confirm = useConfirm();
 
   useEffect(() => {
-    console.count("Products.jsx"); //borrame
+    console.count("products.jsx"); //borrame
 
     const fetchProducts = async () => {
       try {
-        const res = await getAllProducts();
-        setProducts(res.data.$values);
+        const res = await (companyType === "Laboratorio"
+          ? getLabProducts()
+          : getPharmacyProducts());
+        const productsArr = res.data.$values;
+
+        const highestPrice = productsArr.reduce((max, product) => {
+          return product.price > max ? product.price : max;
+        }, 0);
+
+        setProducts(productsArr);
+        setPriceFilter([1, highestPrice]);
+        setMaxPrice(highestPrice);
       } catch (error) {
         if (error.response?.data?.Error === "ERR_JWT") return;
+
         if (error.response.status === 404) return;
+
         showToastRef.current(
-          "Ocurrió un error al obtener los productos, informelo al equipo técnico",
+          "Ocurrió un error al obtener las productos, informelo al equipo técnico",
           { type: "error" }
         );
       } finally {
@@ -50,53 +66,45 @@ const Products = () => {
     };
 
     fetchProducts();
-  }, [showToastRef]);
+  }, [setMaxPrice, setPriceFilter]);
 
-  const handleDelete = async (id) => {
-    try {
-      await confirm({
-        title: "Confirmación",
-        description: "¿Estás seguro que deseas eliminar este producto?",
-        cancellationText: "Cancelar",
-      });
-      await deleteProduct(id);
-
-      setProducts((prevProducts) =>
-        prevProducts.filter((product) => product.id !== id)
-      );
-      showToast("Producto eliminado con éxito", { type: "success" });
-    } catch (error) {
-      if (error?.response)
-        showToast(
-          "Ocurrió un error al intentar eliminar un producto, informelo al equipo técnico",
-          { type: "error" }
-        );
-    }
+  const handleOpenFilter = () => {
+    setOpenFilter(true);
   };
 
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(filterTerm.toLowerCase())
-  );
+  const handleCloseFilter = () => {
+    setOpenFilter(false);
+  };
 
   return (
     <Container maxWidth="xl" sx={{ mb: 2 }}>
+      <ProductFilterDrawer
+        openFilter={openFilter}
+        onCloseFilter={handleCloseFilter}
+        onClear={clearFilters}
+        filters={filters}
+        companyFilters={true}
+      />
       <Stack
         direction="row"
         alignItems="center"
-        justifyContent="space-between"
+        justifyContent={logged ? "space-between" : "flex-end"}
         mb={5}
       >
-        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-          Productos
-        </Typography>
-        <Button
-          component={Link}
-          to="add"
-          variant="contained"
-          startIcon={<AddIcon />}
-        >
-          Nuevo producto
-        </Button>
+        {logged && (
+          <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+            {isCompany ? "Provisiones" : "Productos"}
+          </Typography>
+        )}
+        {!loading && products.length > 0 && (
+          <Button
+            variant="contained"
+            startIcon={<TuneIcon />}
+            onClick={handleOpenFilter}
+          >
+            Filtros
+          </Button>
+        )}
       </Stack>
       {loading && (
         <Box
@@ -110,39 +118,7 @@ const Products = () => {
           <CircularProgress />
         </Box>
       )}
-      {!loading && products.length > 0 && (
-        <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-          <IconButton
-            onClick={() => setShowFilter((prev) => !prev)}
-            sx={{ mr: 0.75 }}
-            size="medium"
-          >
-            <SearchIcon size="medium" />
-          </IconButton>
-          <TextField
-            label="Filtrar por nombre"
-            value={filterTerm}
-            onChange={(event) => setFilterTerm(event.target.value)}
-            variant="outlined"
-            size="small"
-            fullWidth
-            sx={{
-              boxShadow: 2,
-              transition: "width 0.3s ease-in-out",
-              width: showFilter ? { xs: "210px", sm: "300px" } : "0",
-              ".css-1d3z3hw-MuiOutlinedInput-notchedOutline, .css-9425fu-MuiOutlinedInput-notchedOutline":
-                {
-                  display: showFilter ? "block" : "none",
-                },
-              "label[data-shrink=false]+.MuiInputBase-formControl .css-p51h6s-MuiInputBase-input-MuiOutlinedInput-input":
-                {
-                  visibility: showFilter ? "visible" : "hidden",
-                },
-            }}
-          />
-        </Box>
-      )}
-      {products.length === 0 && !loading && (
+      {!loading && products.length === 0 && (
         <Box
           sx={{
             display: "flex",
@@ -156,17 +132,8 @@ const Products = () => {
             sx={{ fontSize: 200, color: "primary.main" }}
           />
           <Typography variant="h6" sx={{ mt: 2 }}>
-            No hay productos registrados
+            No hay productos de laboratorios registrados en la plataforma
           </Typography>
-          <Button
-            component={Link}
-            to="add"
-            variant="contained"
-            startIcon={<AddIcon />}
-            sx={{ mt: 2 }}
-          >
-            Nuevo producto
-          </Button>
         </Box>
       )}
       {products.length > 0 &&
@@ -176,10 +143,12 @@ const Products = () => {
               <Grid item key={product.id} xs={12} sm={6} md={4}>
                 <ProductCard
                   product={product}
-                  maintenance={true}
-                  showCompanyInfo={false}
-                  handleDelete={handleDelete}
-                  to={`/company/my-products/product-details/${product.id}`}
+                  maintenance={false}
+                  showCompanyInfo={true}
+                  companyType={companyType}
+                  to={`${
+                    isCompany ? "/company/" : "/"
+                  }products/product-details/${product.id}`}
                 />
               </Grid>
             ))}
@@ -194,14 +163,20 @@ const Products = () => {
               height: "55vh",
             }}
           >
-            <SearchOffIcon sx={{ fontSize: 200, color: "primary.main" }} />
+            <FilterListOffIcon sx={{ fontSize: 200, color: "primary.main" }} />
             <Typography variant="h6" sx={{ mt: 2 }}>
-              No hay productos con el nombre &apos;{filterTerm}&apos;
+              No hay productos que cumplan con los filtros
             </Typography>
           </Box>
         ))}
     </Container>
   );
+};
+
+Products.propTypes = {
+  logged: PropTypes.bool.isRequired,
+  isCompany: PropTypes.bool.isRequired,
+  companyType: PropTypes.string.isRequired,
 };
 
 export default Products;

@@ -6,7 +6,14 @@ import Paper from "@mui/material/Paper";
 import Avatar from "@mui/material/Avatar";
 import ReplyIcon from "@mui/icons-material/Reply";
 
-const Comment = ({ isReply, userAvatar, userName, comment, onClick }) => {
+const Comment = ({
+  isReply,
+  userAvatar,
+  userName,
+  comment,
+  onClick,
+  logged,
+}) => {
   return (
     <Paper
       sx={{
@@ -23,7 +30,7 @@ const Comment = ({ isReply, userAvatar, userName, comment, onClick }) => {
       <Box sx={{ ml: 1, width: "100%" }}>
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Typography variant="subtitle2">{userName}</Typography>
-          {!isReply && (
+          {!isReply && logged && (
             <IconButton sx={{ padding: 0, ml: 0.2 }} onClick={onClick}>
               <ReplyIcon />
             </IconButton>
@@ -40,6 +47,7 @@ Comment.propTypes = {
   userName: PropTypes.string.isRequired,
   userAvatar: PropTypes.string.isRequired,
   comment: PropTypes.string.isRequired,
+  logged: PropTypes.bool.isRequired,
   onClick: PropTypes.func,
 };
 

@@ -147,6 +147,7 @@ const CompanyProducts = ({
   filters,
   clearFilters,
   filteredData,
+  isLogged,
 }) => {
   const [openFilter, setOpenFilter] = useState(false);
 
@@ -210,7 +211,9 @@ const CompanyProducts = ({
                 product={product}
                 maintenance={false}
                 showCompanyInfo={false}
-                to={`/company/products/product-details/${product.id}`}
+                to={`${isLogged ? "/company/" : "/"}products/product-details/${
+                  product.id
+                }`}
               />
             </Grid>
           ))}
@@ -235,7 +238,7 @@ const CompanyProducts = ({
   );
 };
 
-const CompanyDetails = () => {
+const CompanyDetails = ({ isCompany }) => {
   const [company, setCompany] = useState([]);
   const { auth } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -243,7 +246,8 @@ const CompanyDetails = () => {
   const navigate = useNavigate();
   const showToast = useToast();
   const showToastRef = useRef(showToast);
-  const isLaboratory = auth.payload.RoleType === "Laboratorio";
+  const isLogged = !!auth?.payload;
+  const isLaboratory = isLogged && auth.payload.RoleType === "Laboratorio";
 
   const { filters, clearFilters, filteredData, setPriceFilter, setMaxPrice } =
     useFilters(company, true);
@@ -280,7 +284,7 @@ const CompanyDetails = () => {
   }, [showToastRef, id, navigate, setPriceFilter, setMaxPrice]);
 
   return (
-    <Container maxWidth="xl" sx={{ mb: 2 }}>
+    <Container maxWidth="xl" sx={{ mb: 2, mt: isCompany ? 0 : 3 }}>
       <Button
         startIcon={<KeyboardBackspaceIcon />}
         onClick={() => navigate(-1)}
@@ -321,6 +325,7 @@ const CompanyDetails = () => {
                   filters={filters}
                   clearFilters={clearFilters}
                   filteredData={filteredData}
+                  isLogged={isLogged}
                 />
               ),
             },
@@ -329,6 +334,10 @@ const CompanyDetails = () => {
       )}
     </Container>
   );
+};
+
+CompanyDetails.propTypes = {
+  isCompany: PropTypes.bool.isRequired,
 };
 
 CompanyInfo.propTypes = {
@@ -341,6 +350,7 @@ CompanyProducts.propTypes = {
   filters: PropTypes.object.isRequired,
   clearFilters: PropTypes.func.isRequired,
   filteredData: PropTypes.array.isRequired,
+  filteredData: PropTypes.bool.isRequired,
 };
 
 export default CompanyDetails;

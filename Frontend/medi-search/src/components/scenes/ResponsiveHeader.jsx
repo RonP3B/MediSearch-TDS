@@ -12,12 +12,14 @@ import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
+import ListItemIcon from "@mui/material/ListItemIcon";
 import MenuItem from "@mui/material/MenuItem";
 import PropTypes from "prop-types";
 import ColorModeContext from "../contexts/ColorModeContext";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import LogoutIcon from "@mui/icons-material/Logout";
 import useAuth from "../../hooks/persistence/useAuth";
 import useLogout from "../../hooks/persistence/useLogout";
 
@@ -87,8 +89,14 @@ const ResponsiveHeader = ({ pages, settings, logged }) => {
                 display: { xs: "block", md: "none" },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+              {pages.map(({ page, route }) => (
+                <MenuItem
+                  key={page}
+                  onClick={handleCloseUserMenu}
+                  component={Link}
+                  to={route}
+                  sx={{ textDecoration: "none", color: "inherit" }}
+                >
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
@@ -113,9 +121,11 @@ const ResponsiveHeader = ({ pages, settings, logged }) => {
             MediSearch
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
+            {pages.map(({ page, route }) => (
               <Button
                 key={page}
+                component={Link}
+                to={route}
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
@@ -178,7 +188,7 @@ const ResponsiveHeader = ({ pages, settings, logged }) => {
                     </Box>
                   )}
                   {logged && <Divider sx={{ borderStyle: "dashed" }} />}
-                  {settings.map(({ option, route }) => (
+                  {settings.map(({ option, route, Icon }) => (
                     <MenuItem
                       key={option}
                       onClick={handleCloseUserMenu}
@@ -186,12 +196,18 @@ const ResponsiveHeader = ({ pages, settings, logged }) => {
                       to={route}
                       sx={{ textDecoration: "none", color: "inherit" }}
                     >
+                      <ListItemIcon>
+                        <Icon fontSize="small" />
+                      </ListItemIcon>
                       <Typography textAlign="center">{option}</Typography>
                     </MenuItem>
                   ))}
                   {logged && <Divider />}
                   {logged && (
                     <MenuItem onClick={logoutUser}>
+                      <ListItemIcon>
+                        <LogoutIcon fontSize="small" />
+                      </ListItemIcon>
                       <Typography textAlign="center">Cerrar sesión</Typography>
                     </MenuItem>
                   )}

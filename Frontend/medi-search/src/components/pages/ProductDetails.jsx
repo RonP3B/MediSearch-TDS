@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { alpha } from "@mui/material/styles";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import ImageGallery from "react-image-gallery";
 import PropTypes from "prop-types";
@@ -27,7 +28,7 @@ import BusinessIcon from "@mui/icons-material/Business";
 
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
-const ProductDetails = ({ logged, showCompanyInfo }) => {
+const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState({});
@@ -125,7 +126,7 @@ const ProductDetails = ({ logged, showCompanyInfo }) => {
   ];
 
   return (
-    <Container maxWidth="xl" sx={{ mb: 2 }}>
+    <Container maxWidth="xl" sx={{ mb: 2, mt: isCompany ? 0 : 3 }}>
       <Button
         startIcon={<KeyboardBackspaceIcon />}
         onClick={() => navigate(-1)}
@@ -184,7 +185,8 @@ const ProductDetails = ({ logged, showCompanyInfo }) => {
                       border: (theme) =>
                         `3px solid ${theme.palette.primary.main}`,
                       borderRadius: "12px",
-                      backgroundColor: "rgba(156, 39, 176, 0.04)",
+                      backgroundColor: (theme) =>
+                        alpha(theme.palette.primary.light, 0.1),
                       maxWidth: 500,
                       margin: "0 auto",
                       padding: 1.5,
@@ -210,22 +212,27 @@ const ProductDetails = ({ logged, showCompanyInfo }) => {
                         </Typography>
                       </Box>
                     </Box>
+                    {logged && (
+                      <Button
+                        component={Link}
+                        to={`/company/chat?receiverId=${product.companyId}&product=${product.name}`}
+                        fullWidth
+                        variant="contained"
+                        startIcon={<MarkUnreadChatAltIcon />}
+                        sx={{ mt: 1 }}
+                      >
+                        Chatear con el vendedor
+                      </Button>
+                    )}
                     <Button
                       component={Link}
-                      to={`/company/chat?receiverId=${product.companyId}&product=${product.name}`}
-                      fullWidth
-                      variant="contained"
-                      startIcon={<MarkUnreadChatAltIcon />}
-                      sx={{ my: 1 }}
-                    >
-                      Chatear con el vendedor
-                    </Button>
-                    <Button
-                      component={Link}
-                      to={`/company/company-details/${product.companyId}`}
+                      to={`/compan${logged ? "y" : "ies"}/company-details/${
+                        product.companyId
+                      }`}
                       fullWidth
                       variant="outlined"
                       startIcon={<BusinessIcon />}
+                      sx={{ mt: 1 }}
                     >
                       Ver perfil del vendedor
                     </Button>
@@ -266,13 +273,15 @@ const ProductDetails = ({ logged, showCompanyInfo }) => {
             </Grid>
           </Grid>
           <CommentsAccordion>
-            <CommentTextbox
-              label="Escribe un comentario"
-              sx={{ mb: 1 }}
-              onClick={sendComment}
-              show={true}
-              sendingComment={sendingComment}
-            />
+            {logged && (
+              <CommentTextbox
+                label="Escribe un comentario"
+                sx={{ mb: 1 }}
+                onClick={sendComment}
+                show={true}
+                sendingComment={sendingComment}
+              />
+            )}
             {comments.length > 0 ? (
               comments.map((comment, index) => {
                 const replies = comment.replies.$values;
@@ -290,16 +299,19 @@ const ProductDetails = ({ logged, showCompanyInfo }) => {
                       }
                       comment={comment.content}
                       isReply={false}
+                      logged={logged}
                     />
                     <Box sx={{ ml: "2rem" }}>
-                      <CommentTextbox
-                        label="Escribe una respuesta"
-                        sx={{ mb: 1.5 }}
-                        onClick={sendReply}
-                        show={showReplyTextBox}
-                        sendingComment={sendingReply}
-                        parentCommentId={comment.id}
-                      />
+                      {logged && (
+                        <CommentTextbox
+                          label="Escribe una respuesta"
+                          sx={{ mb: 1.5 }}
+                          onClick={sendReply}
+                          show={showReplyTextBox}
+                          sendingComment={sendingReply}
+                          parentCommentId={comment.id}
+                        />
+                      )}
                       {replies.length > 0 &&
                         replies.map((reply) => (
                           <Comment
@@ -308,6 +320,7 @@ const ProductDetails = ({ logged, showCompanyInfo }) => {
                             userAvatar={`${ASSETS}${reply.ownerImage}`}
                             comment={reply.content}
                             isReply={true}
+                            logged={logged}
                           />
                         ))}
                     </Box>
@@ -339,6 +352,7 @@ const ProductDetails = ({ logged, showCompanyInfo }) => {
 ProductDetails.propTypes = {
   logged: PropTypes.bool.isRequired,
   showCompanyInfo: PropTypes.bool.isRequired,
+  isCompany: PropTypes.bool.isRequired,
 };
 
 export default ProductDetails;

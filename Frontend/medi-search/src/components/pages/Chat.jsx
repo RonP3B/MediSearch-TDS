@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { alpha } from "@mui/material/styles";
 import { useSearchParams } from "react-router-dom";
 import useToast from "../../hooks/feedback/useToast";
 import useAuth from "../../hooks/persistence/useAuth";
@@ -349,7 +350,7 @@ const Chat = () => {
           item
           xs={!isScreenBelow900px ? 8.2 : selectedChat ? 12 : 0}
           sx={{
-            backgroundColor: "rgba(156, 39, 176, 0.04)",
+            backgroundColor: (theme) => alpha(theme.palette.primary.light, 0.1),
             display: isScreenBelow900px && !selectedChat ? "none" : "flex",
             flexDirection: "column",
           }}
