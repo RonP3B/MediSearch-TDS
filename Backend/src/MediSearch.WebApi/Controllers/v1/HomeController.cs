@@ -1,21 +1,41 @@
 ﻿using MediSearch.Core.Application.Dtos.Company;
 using MediSearch.Core.Application.Dtos.Product;
+using MediSearch.Core.Application.Enums;
+using MediSearch.Core.Application.Features.Home.Command.AddFavoriteCompany;
+using MediSearch.Core.Application.Features.Home.Command.AddFavoriteProduct;
+using MediSearch.Core.Application.Features.Home.Command.DeleteFavoriteCompany;
+using MediSearch.Core.Application.Features.Home.Command.DeleteFavoriteProduct;
 using MediSearch.Core.Application.Features.Home.Queries.GetAllCompanies;
 using MediSearch.Core.Application.Features.Home.Queries.GetAllFarmacy;
+using MediSearch.Core.Application.Features.Home.Queries.GetAllFavoriteCompanies;
+using MediSearch.Core.Application.Features.Home.Queries.GetAllFavoriteProducts;
 using MediSearch.Core.Application.Features.Home.Queries.GetAllLaboratory;
 using MediSearch.Core.Application.Features.Home.Queries.GetCompanyByName;
 using MediSearch.Core.Application.Features.Home.Queries.GetCompanyDetails;
 using MediSearch.Core.Application.Features.Home.Queries.GetProduct;
 using MediSearch.Core.Application.Features.Home.Queries.GetProductsFarmacy;
 using MediSearch.Core.Application.Features.Home.Queries.GetProductsLaboratory;
+using MediSearch.Core.Application.Features.Product.Command.DeleteProduct;
+using MediSearch.Core.Application.Features.Product.CreateProduct;
+using MediSearch.WebApi.Middlewares;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Bcpg;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Net.Mime;
 
 namespace MediSearch.WebApi.Controllers.v1
 {
     [SwaggerTag("Inicio")]
     public class HomeController : BaseApiController
     {
+
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+        public HomeController(IServiceScopeFactory serviceScopeFactory)
+        {
+            _serviceScopeFactory = serviceScopeFactory;
+        }
+
         [HttpGet("get-products-farmacy")]
         [SwaggerOperation(
            Summary = "Obtener todos los productos de las farmacias.",
@@ -232,6 +252,170 @@ namespace MediSearch.WebApi.Controllers.v1
 
                 return Ok(result);
 
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
+        }
+
+        [Authorize]
+        [HttpGet("get-all-favorite-company")]
+        [SwaggerOperation(
+           Summary = "Obtener empresas favoritas.",
+            Description = "Nos permite obtener todas las empresas que tenemos en la sección de favoritos."
+        )]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<GetAllFavoriteCompaniesQueryResponse>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAllFavoriteCompanies()
+        {
+            try
+            {
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                var result = await Mediator.Send(new GetAllFavoriteCompaniesQuery() { UserId = user.CompanyId != "Client" ? user.CompanyId : user.Id});
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
+        }
+
+        [Authorize]
+        [HttpGet("get-all-favorite-product")]
+        [SwaggerOperation(
+           Summary = "Obtener productos favoritos.",
+            Description = "Nos permite obtener todos los productos que tenemos en la sección de favoritos."
+        )]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<GetAllFavoriteProductsQueryResponse>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAllFavoriteProducts()
+        {
+            try
+            {
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                var result = await Mediator.Send(new GetAllFavoriteProductsQuery() { UserId = user.CompanyId != "Client" ? user.CompanyId : user.Id });
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
+        }
+
+        [Authorize]
+        [HttpPost("add-favorite-company")]
+        [SwaggerOperation(
+           Summary = "Añade una empresa a tus favoritos.",
+            Description = "Permite colocar a una empresa en la sección de favoritos."
+        )]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProductResponse))]
+        public async Task<IActionResult> AddFavoriteCompany([FromBody] AddFavoriteCompanyCommand command)
+        {
+
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest();
+
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                command.UserId = user.CompanyId != "Client" ? user.CompanyId : user.Id;
+                var result = await Mediator.Send(command);
+
+                return Ok(result.IsSuccess);
+
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
+        }
+
+        [Authorize]
+        [HttpPost("add-favorite-product")]
+        [SwaggerOperation(
+           Summary = "Añade un producto a tus favoritos.",
+            Description = "Permite colocar a un producto en la sección de favoritos."
+        )]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProductResponse))]
+        public async Task<IActionResult> AddFavoriteProduct([FromBody] AddFavoriteProductCommand command)
+        {
+
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest();
+
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                command.UserId = user.CompanyId != "Client" ? user.CompanyId : user.Id;
+                var result = await Mediator.Send(command);
+
+                return Ok(result.IsSuccess);
+
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
+        }
+        
+        [Authorize]
+        [HttpDelete("delete-favorite-company/{id}")]
+        [SwaggerOperation(
+            Summary = "Permite eliminar una empresa de favoritos.",
+            Description = "Maneja el apartado de eliminación de favoritos, debe de especificar los parametros correspondientes."
+        )]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteFavoriteCompany(string id)
+        {
+            try
+            {
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                var result = await Mediator.Send(new DeleteFavoriteCompanyCommand() { Id = id });
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
+        }
+
+        [Authorize]
+        [HttpDelete("delete-favorite-product/{id}")]
+        [SwaggerOperation(
+            Summary = "Permite eliminar un producto de favoritos.",
+            Description = "Maneja el apartado de eliminación de favoritos, debe de especificar los parametros correspondientes."
+        )]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteFavoriteProduct(string id)
+        {
+            try
+            {
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                var result = await Mediator.Send(new DeleteFavoriteProductCommand() { Id = id });
+
+                return NoContent();
             }
             catch (Exception e)
             {

@@ -8,6 +8,8 @@ using MediSearch.Core.Application.Features.Account.Commands.RegisterCompany;
 using MediSearch.Core.Application.Features.Admin.Commands.EditProfile;
 using MediSearch.Core.Application.Features.Admin.Commands.EditProfileCompany;
 using MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee;
+using MediSearch.Core.Application.Features.Home.Command.AddFavoriteCompany;
+using MediSearch.Core.Application.Features.Home.Command.AddFavoriteProduct;
 using MediSearch.Core.Application.Features.Product.Command.AddComment;
 using MediSearch.Core.Application.Features.Product.Command.AddReply;
 using MediSearch.Core.Application.Features.Product.Command.UpdateProduct;
@@ -135,6 +137,24 @@ namespace MediSearch.Core.Application.Mappings
                 .ForMember(x => x.LastModified, opt => opt.Ignore())
                 .ForMember(x => x.LastModifiedBy, opt => opt.Ignore())
                 .ForMember(x => x.Comment, opt => opt.Ignore());
+            #endregion
+
+            #region Favorites
+            CreateMap<FavoriteCompany, AddFavoriteCompanyCommand>()
+                .ReverseMap()
+                .ForMember(x => x.Company, opt => opt.Ignore())
+                .ForMember(x => x.Created, opt => opt.Ignore())
+                .ForMember(x => x.CreatedBy, opt => opt.Ignore())
+                .ForMember(x => x.LastModified, opt => opt.Ignore())
+                .ForMember(x => x.LastModifiedBy, opt => opt.Ignore());
+
+            CreateMap<FavoriteProduct, AddFavoriteProductCommand>()
+                .ReverseMap()
+                .ForMember(x => x.Product, opt => opt.Ignore())
+                .ForMember(x => x.Created, opt => opt.Ignore())
+                .ForMember(x => x.CreatedBy, opt => opt.Ignore())
+                .ForMember(x => x.LastModified, opt => opt.Ignore())
+                .ForMember(x => x.LastModifiedBy, opt => opt.Ignore());
             #endregion
         }
     }

@@ -52,6 +52,8 @@ namespace MediSearch.Infrastructure.Persistence
 			services.AddTransient<ICompanyRepository, CompanyRepository>();
 			services.AddTransient<ICompanyTypeRepository, CompanyTypeRepository>();
 			services.AddTransient<ICompanyUserRepository, CompanyUserRepository>();
+			services.AddTransient<IFavoriteCompanyRepository, FavoriteCompanyRepository>();
+			services.AddTransient<IFavoriteProductRepository, FavoriteProductRepository>();
 			services.AddTransient<IHallRepository, HallRepository>();
 			services.AddTransient<IHallUserRepository, HallUserRepository>();
 			services.AddTransient<IMessageRepository, MessageRepository>();

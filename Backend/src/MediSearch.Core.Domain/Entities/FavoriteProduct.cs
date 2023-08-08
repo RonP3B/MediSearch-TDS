@@ -14,5 +14,10 @@ namespace MediSearch.Core.Domain.Entities
         //Navigation Properties
         public Product Product { get; set; }
         public string ProductId { get; set; }
+
+        public FavoriteProduct()
+        {
+            this.Id = "";
+        }
     }
 }
