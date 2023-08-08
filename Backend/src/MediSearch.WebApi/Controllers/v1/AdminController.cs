@@ -4,6 +4,7 @@ using MediSearch.Core.Application.Features.Admin.Commands.DeleteEmployee;
 using MediSearch.Core.Application.Features.Admin.Commands.EditProfile;
 using MediSearch.Core.Application.Features.Admin.Commands.EditProfileCompany;
 using MediSearch.Core.Application.Features.Admin.Commands.RegisterEmployee;
+using MediSearch.Core.Application.Features.Admin.Queries.GetDataDashboard;
 using MediSearch.Core.Application.Features.Admin.Queries.GetProfile;
 using MediSearch.Core.Application.Features.Admin.Queries.GetProfileCompany;
 using MediSearch.Core.Application.Features.Admin.Queries.GetUsersCompany;
@@ -105,6 +106,32 @@ namespace MediSearch.WebApi.Controllers.v1
 
                 if (result == null)
                     return NotFound("No se encontró la empresa");
+
+                return Ok(result);
+
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
+        }
+
+        [Authorize(Roles = "SuperAdmin, Admin")]
+        [HttpGet("get-data-dashboard")]
+        [SwaggerOperation(
+            Summary = "Datos estadísticos para tableros",
+            Description = "Permite obtener los datos que se van a visualizar en los tableros."
+        )]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<GetDataDashboardQueryResponse>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetDataDashboard()
+        {
+            try
+            {
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                var result = await Mediator.Send(new GetDataDashboardQuery() { CompanyId = user.CompanyId });
 
                 return Ok(result);
 

@@ -81,7 +81,7 @@ namespace MediSearch.Infrastructure.Identity.Services
             if (!result.Succeeded)
             {
                 response.HasError = true;
-                response.Error = $"Credenciales invalidas para el usuario: {request.UserName}";
+                response.Error = $"Usuario o contraseña inválidos";
                 return response;
             }
 
