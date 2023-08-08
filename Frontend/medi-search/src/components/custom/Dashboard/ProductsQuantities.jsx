@@ -6,8 +6,8 @@ import CardHeader from "@mui/material/CardHeader";
 import useChart from "../../../hooks/chart/useChart";
 
 const ProductsQuantities = ({ title, chartData, subheader, ...props }) => {
-  const chartLabels = chartData.map((i) => i.label);
-  const chartSeries = chartData.map((i) => i.value);
+  const chartLabels = chartData.map((data) => data.product);
+  const chartSeries = chartData.map((data) => data.quantity);
 
   const chartOptions = useChart({
     tooltip: {

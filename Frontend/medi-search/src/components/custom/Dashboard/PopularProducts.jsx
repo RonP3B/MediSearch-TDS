@@ -8,8 +8,8 @@ import useChart from "../../../hooks/chart/useChart";
 
 const CategoriesQuantities = ({ title, chartData, subheader, ...props }) => {
   const theme = useTheme();
-  const chartSeries = chartData.map((i) => i.value);
-  const chartLabels = chartData.map((i) => i.label);
+  const chartSeries = chartData.map((data) => data.quantity);
+  const chartLabels = chartData.map((data) => data.product);
 
   const polarOptions = useChart({
     chart: {

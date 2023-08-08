@@ -11,8 +11,8 @@ const ClassificationsQuantities = ({
   subheader,
   ...props
 }) => {
-  const chartLabels = chartData.map((i) => i.label);
-  const chartSeries = chartData.map((i) => i.value);
+  const chartLabels = chartData.map((data) => data.classification);
+  const chartSeries = chartData.map((data) => data.quantity);
 
   const chartOptions = useChart({
     chart: {

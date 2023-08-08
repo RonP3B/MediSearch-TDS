@@ -1,5 +1,6 @@
 import MediSearchApi from "../../APIs/MediSearchApi";
 
+const GET_STATS_ENDPOINT = import.meta.env.VITE_MEDISEARCH_STATS;
 const EMPLOYEES_ENDPOINT = import.meta.env.VITE_MEDISEARCH_EMPLOYEES;
 const PROFILE_ENDPOINT = import.meta.env.VITE_MEDISEARCH_PROFILE;
 const EDIT_PROFILE_ENDPOINT = import.meta.env.VITE_MEDISEARCH_EDIT_PROFILE;
@@ -13,6 +14,10 @@ const EDIT_COMPANY_PROFILE_ENDPOINT = import.meta.env
 
 const DELETE_EMPLOYEES_ENDPOINT = import.meta.env
   .VITE_MEDISEARCH_DELETE_EMPLOYEE;
+
+export const getStats = () => {
+  return MediSearchApi.get(GET_STATS_ENDPOINT);
+};
 
 export const getAllEmployees = () => {
   return MediSearchApi.get(EMPLOYEES_ENDPOINT);

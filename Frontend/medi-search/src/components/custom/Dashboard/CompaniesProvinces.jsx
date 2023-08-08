@@ -14,8 +14,8 @@ const CompaniesProvinces = ({
   ...props
 }) => {
   const theme = useTheme();
-  const chartLabels = chartData.map((i) => i.label);
-  const chartSeries = chartData.map((i) => i.value);
+  const chartLabels = chartData.map((data) => data.province);
+  const chartSeries = chartData.map((data) => data.quantity);
 
   const chartOptions = useChart({
     colors: chartColors,
