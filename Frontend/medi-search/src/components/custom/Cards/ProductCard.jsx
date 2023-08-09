@@ -11,6 +11,7 @@ const ProductCard = (props) => {
     companyType,
     handleDelete,
     to,
+    favorite,
   } = props;
 
   const { name, price, quantity, id, urlImages, nameCompany, province } =
@@ -37,6 +38,7 @@ const ProductCard = (props) => {
       maintenance={maintenance}
       handleDelete={handleDelete}
       cardInfo={cardInfo}
+      favorite={favorite}
     />
   );
 };
@@ -48,6 +50,7 @@ ProductCard.propTypes = {
   showCompanyInfo: PropTypes.bool.isRequired,
   companyType: PropTypes.string,
   to: PropTypes.string.isRequired,
+  favorite: PropTypes.bool.isRequired,
 };
 
 export default ProductCard;

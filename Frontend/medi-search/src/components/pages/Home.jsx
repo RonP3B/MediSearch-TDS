@@ -244,6 +244,7 @@ const Home = () => {
             <CardsCarousel>
               {pharmacies.map((pharmacy) => (
                 <CompanyCard
+                  favorite={false}
                   key={pharmacy.id}
                   company={pharmacy}
                   to={`/companies/company-details/${pharmacy.id}`}
@@ -274,6 +275,7 @@ const Home = () => {
               {labs.map((lab) => (
                 <CompanyCard
                   key={lab.id}
+                  favorite={false}
                   company={lab}
                   to={`/companies/company-details/${lab.id}`}
                 />
@@ -303,6 +305,7 @@ const Home = () => {
               {labProducts.map((product) => (
                 <ProductCard
                   key={product.id}
+                  favorite={false}
                   product={product}
                   maintenance={false}
                   showCompanyInfo={false}
@@ -312,6 +315,7 @@ const Home = () => {
               {pharmProducts.map((product) => (
                 <ProductCard
                   key={product.id}
+                  favorite={false}
                   product={product}
                   maintenance={false}
                   showCompanyInfo={false}

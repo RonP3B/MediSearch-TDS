@@ -70,7 +70,7 @@ const Dashboard = () => {
         >
           {!loading ? (
             <WidgetSummary
-              title="Mi productos"
+              title="Mis productos"
               total={stats.myProducts}
               Icon={ShoppingCartIcon}
             />

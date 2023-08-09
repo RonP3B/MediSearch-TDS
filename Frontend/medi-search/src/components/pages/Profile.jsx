@@ -20,7 +20,7 @@ import CompanySocials from "../custom/Socials/CompanySocials";
 
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
-const Profile = ({ profileType }) => {
+const Profile = ({ profileType, isCompany }) => {
   const { auth } = useAuth();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -103,7 +103,7 @@ const Profile = ({ profileType }) => {
   const handleClose = () => setOpen(false);
 
   return (
-    <Container maxWidth="xl" sx={{ mb: 2 }}>
+    <Container maxWidth="xl" sx={{ mb: 2, mt: isCompany ? 0 : 3 }}>
       <Stack
         direction="row"
         alignItems="center"
@@ -197,6 +197,7 @@ const Profile = ({ profileType }) => {
 
 Profile.propTypes = {
   profileType: PropTypes.string.isRequired,
+  isCompany: PropTypes.bool.isRequired,
 };
 
 export default Profile;

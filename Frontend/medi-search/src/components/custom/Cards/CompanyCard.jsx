@@ -3,7 +3,7 @@ import CustomCard from "./CustomCard";
 
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
-const CompanyCard = ({ company, to }) => {
+const CompanyCard = ({ company, to, favorite }) => {
   const { id, name, municipality, province, address, urlImage } = company;
   const companyImg = `${ASSETS}${urlImage}`;
   const cardInfo = [
@@ -20,6 +20,7 @@ const CompanyCard = ({ company, to }) => {
       to={to}
       maintenance={false}
       cardInfo={cardInfo}
+      favorite={favorite}
     />
   );
 };
@@ -27,6 +28,7 @@ const CompanyCard = ({ company, to }) => {
 CompanyCard.propTypes = {
   company: PropTypes.object.isRequired,
   to: PropTypes.string.isRequired,
+  favorite: PropTypes.bool.isRequired,
 };
 
 export default CompanyCard;

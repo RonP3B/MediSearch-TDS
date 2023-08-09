@@ -19,7 +19,7 @@ import CompanyFilterDrawer from "../custom/FilterDrawers/CompanyFilterDrawer";
 import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 import useFilters from "../../hooks/filters/useFilters";
 
-const Companies = ({ companyType, logged, isCompany }) => {
+const Companies = ({ companyType, logged, isCompany, hideTitle }) => {
   const [openFilter, setOpenFilter] = useState(false);
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -78,7 +78,8 @@ const Companies = ({ companyType, logged, isCompany }) => {
         mb={5}
       >
         <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-          {companyType.charAt(0).toUpperCase() + companyType.slice(1)}s
+          {!hideTitle &&
+            `${companyType.charAt(0).toUpperCase() + companyType.slice(1)}s`}
         </Typography>
         {!loading && companies.length > 0 && (
           <Button
@@ -124,10 +125,15 @@ const Companies = ({ companyType, logged, isCompany }) => {
             {filteredCompanies.map((company) => (
               <Grid item key={company.id} xs={12} sm={6} md={4}>
                 <CompanyCard
+                  favorite={logged && !isCompany}
                   company={company}
-                  to={`/compan${logged ? "y" : "ies"}/company-details/${
-                    company.id
-                  }`}
+                  to={`${
+                    isCompany
+                      ? "/company"
+                      : logged
+                      ? "/client/companies"
+                      : "/companies"
+                  }/company-details/${company.id}`}
                 />
               </Grid>
             ))}
@@ -156,6 +162,7 @@ Companies.propTypes = {
   companyType: PropTypes.string.isRequired,
   logged: PropTypes.bool.isRequired,
   isCompany: PropTypes.bool.isRequired,
+  hideTitle: PropTypes.bool,
 };
 
 export default Companies;

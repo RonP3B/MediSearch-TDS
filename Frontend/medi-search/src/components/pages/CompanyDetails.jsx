@@ -148,6 +148,7 @@ const CompanyProducts = ({
   clearFilters,
   filteredData,
   isLogged,
+  isCompany,
 }) => {
   const [openFilter, setOpenFilter] = useState(false);
 
@@ -208,12 +209,13 @@ const CompanyProducts = ({
           {products.map((product) => (
             <Grid item key={product.id} xs={12} sm={6} md={4}>
               <ProductCard
+                favorite={isLogged && !isCompany}
                 product={product}
                 maintenance={false}
                 showCompanyInfo={false}
-                to={`${isLogged ? "/company/" : "/"}products/product-details/${
-                  product.id
-                }`}
+                to={`${
+                  isCompany ? "/company/" : isLogged ? "/client/" : "/"
+                }products/product-details/${product.id}`}
               />
             </Grid>
           ))}
@@ -326,6 +328,7 @@ const CompanyDetails = ({ isCompany }) => {
                   clearFilters={clearFilters}
                   filteredData={filteredData}
                   isLogged={isLogged}
+                  isCompany={isCompany}
                 />
               ),
             },
@@ -350,7 +353,7 @@ CompanyProducts.propTypes = {
   filters: PropTypes.object.isRequired,
   clearFilters: PropTypes.func.isRequired,
   filteredData: PropTypes.array.isRequired,
-  filteredData: PropTypes.bool.isRequired,
+  isCompany: PropTypes.bool.isRequired,
 };
 
 export default CompanyDetails;

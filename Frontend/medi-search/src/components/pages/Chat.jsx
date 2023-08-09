@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { alpha } from "@mui/material/styles";
 import { useSearchParams } from "react-router-dom";
+import PropTypes from "prop-types";
 import useToast from "../../hooks/feedback/useToast";
 import useAuth from "../../hooks/persistence/useAuth";
 import ScrollBar from "../custom/Scrollbar/ScrollBar";
@@ -41,7 +42,7 @@ import NewChatForm from "../custom/Forms/NewChatForm";
 
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
-const Chat = () => {
+const Chat = ({ isCompany }) => {
   const { auth } = useAuth();
   const [searchParams] = useSearchParams();
   const [chats, setChats] = useState([]);
@@ -193,7 +194,7 @@ const Chat = () => {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ mb: 2 }}>
+    <Container maxWidth="xl" sx={{ mb: 2, mt: isCompany ? 0 : 3 }}>
       <Stack
         direction="row"
         alignItems="center"
@@ -489,6 +490,10 @@ const Chat = () => {
       </Grid>
     </Container>
   );
+};
+
+Chat.propTypes = {
+  isCompany: PropTypes.bool.isRequired,
 };
 
 export default Chat;

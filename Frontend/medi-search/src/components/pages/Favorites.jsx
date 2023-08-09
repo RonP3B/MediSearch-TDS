@@ -2,32 +2,35 @@ import CustomTabs from "../custom/Tabs/CustomTabs";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Products from "./Products";
+import Companies from "./Companies";
 
-const HomeProducts = () => {
+const Favorites = () => {
   return (
     <Container maxWidth="xl" sx={{ my: 3 }}>
       <Typography variant="h5" sx={{ fontWeight: "bold", mb: 3 }}>
-        Productos
+        Mis favoritos
       </Typography>
       <CustomTabs
         tabs={[
           {
-            label: "de farmacias",
+            label: "productos",
             content: (
               <Products
                 isCompany={false}
-                logged={false}
+                logged={true}
                 companyType="Farmacia"
+                hideTitle={true}
               />
             ),
           },
           {
-            label: "de laboratorios",
+            label: "farmacias",
             content: (
-              <Products
+              <Companies
+                companyType="farmacia"
+                logged={true}
                 isCompany={false}
-                logged={false}
-                companyType="Laboratorio"
+                hideTitle={true}
               />
             ),
           },
@@ -37,4 +40,4 @@ const HomeProducts = () => {
   );
 };
 
-export default HomeProducts;
+export default Favorites;

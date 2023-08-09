@@ -19,7 +19,7 @@ import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 import ProductCard from "../custom/Cards/ProductCard";
 import useFilters from "../../hooks/filters/useFilters";
 
-const Products = ({ isCompany, logged, companyType }) => {
+const Products = ({ isCompany, logged, companyType, hideTitle }) => {
   const [openFilter, setOpenFilter] = useState(false);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,6 +42,7 @@ const Products = ({ isCompany, logged, companyType }) => {
         const res = await (companyType === "Laboratorio"
           ? getLabProducts()
           : getPharmacyProducts());
+
         const productsArr = res.data.$values;
 
         const highestPrice = productsArr.reduce((max, product) => {
@@ -77,7 +78,7 @@ const Products = ({ isCompany, logged, companyType }) => {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ mb: 2 }}>
+    <Container maxWidth="xl" sx={{ mb: 2, mt: isCompany ? 0 : 3 }}>
       <ProductFilterDrawer
         openFilter={openFilter}
         onCloseFilter={handleCloseFilter}
@@ -88,12 +89,16 @@ const Products = ({ isCompany, logged, companyType }) => {
       <Stack
         direction="row"
         alignItems="center"
-        justifyContent={logged ? "space-between" : "flex-end"}
+        justifyContent={!hideTitle && logged ? "space-between" : "flex-end"}
         mb={5}
       >
-        {logged && (
+        {!hideTitle && logged && (
           <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-            {isCompany ? "Provisiones" : "Productos"}
+            {isCompany
+              ? "Provisiones"
+              : logged
+              ? "Productos farmacéuticos"
+              : "Productos"}
           </Typography>
         )}
         {!loading && products.length > 0 && (
@@ -142,12 +147,13 @@ const Products = ({ isCompany, logged, companyType }) => {
             {filteredProducts.map((product) => (
               <Grid item key={product.id} xs={12} sm={6} md={4}>
                 <ProductCard
+                  favorite={logged && !isCompany}
                   product={product}
                   maintenance={false}
                   showCompanyInfo={true}
                   companyType={companyType}
                   to={`${
-                    isCompany ? "/company/" : "/"
+                    isCompany ? "/company/" : logged ? "/client/" : "/"
                   }products/product-details/${product.id}`}
                 />
               </Grid>
@@ -177,6 +183,7 @@ Products.propTypes = {
   logged: PropTypes.bool.isRequired,
   isCompany: PropTypes.bool.isRequired,
   companyType: PropTypes.string.isRequired,
+  hideTitle: PropTypes.bool,
 };
 
 export default Products;

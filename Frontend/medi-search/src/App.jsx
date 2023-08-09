@@ -1,5 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 
+//NotFound page
+import NotFound from "./components/pages/NotFound";
+
 //Persistence
 import PersistLogin from "./components/persistence/PersistLogin";
 import useAuth from "./hooks/persistence/useAuth";
@@ -24,7 +27,7 @@ const App = () => {
         <Route element={<PersistLogin />}>
           {UnauthRoutes()}
           {AuthRoutes()}
-          <Route path="*" element={<h1>404 page</h1>} />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Route>
     </Routes>

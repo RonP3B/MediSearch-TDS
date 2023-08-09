@@ -22,10 +22,10 @@ const CompanyRoutes = () => {
         path="/company/company-details/:id"
         element={<CompanyDetails isCompany={true} />}
       />
-      <Route path="/company/chat" element={<Chat />} />
+      <Route path="/company/chat" element={<Chat isCompany={true} />} />
       <Route
         path="/company/my-profile"
-        element={<Profile profileType="perfil" />}
+        element={<Profile profileType="perfil" isCompany={true} />}
       />
       <Route
         path="/company/my-products/add"

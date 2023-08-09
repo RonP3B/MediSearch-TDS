@@ -215,7 +215,11 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
                     {logged && (
                       <Button
                         component={Link}
-                        to={`/company/chat?receiverId=${product.companyId}&product=${product.name}`}
+                        to={`/${
+                          isCompany ? "company" : "client"
+                        }/chat?receiverId=${product.companyId}&product=${
+                          product.name
+                        }`}
                         fullWidth
                         variant="contained"
                         startIcon={<MarkUnreadChatAltIcon />}
@@ -226,9 +230,13 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
                     )}
                     <Button
                       component={Link}
-                      to={`/compan${logged ? "y" : "ies"}/company-details/${
-                        product.companyId
-                      }`}
+                      to={`/${
+                        isCompany
+                          ? "company"
+                          : logged
+                          ? "client/companies"
+                          : "companies"
+                      }/company-details/${product.companyId}`}
                       fullWidth
                       variant="outlined"
                       startIcon={<BusinessIcon />}

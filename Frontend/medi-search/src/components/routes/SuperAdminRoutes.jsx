@@ -9,7 +9,7 @@ const SuperAdminRoutes = () => {
       <Route path="/company/users/add" element={<SaveUser />} />
       <Route
         path="/company/my-company"
-        element={<Profile profileType="empresa" />}
+        element={<Profile profileType="empresa" isCompany={true} />}
       />
     </Route>
   );
