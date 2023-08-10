@@ -49,7 +49,17 @@ namespace MediSearch.WebApi.Controllers.v1
 
             try
             {
-                var result = await Mediator.Send(new GetProductsFarmacyQuery());
+                List<ProductHomeDTO> result = new();
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                if(user == null)
+                {
+                    result = await Mediator.Send(new GetProductsFarmacyQuery());
+                }
+                else
+                {
+                    result = await Mediator.Send(new GetProductsFarmacyQuery() { UserId = user.CompanyId != "Client" ? user.CompanyId : user.Id });
+                }
 
                 if (result == null || result.Count == 0)
                     return NotFound();
@@ -77,7 +87,17 @@ namespace MediSearch.WebApi.Controllers.v1
 
             try
             {
-                var result = await Mediator.Send(new GetProductsLaboratoryQuery());
+                List<ProductHomeDTO> result = new();
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                if (user == null)
+                {
+                    result = await Mediator.Send(new GetProductsLaboratoryQuery());
+                }
+                else
+                {
+                    result = await Mediator.Send(new GetProductsLaboratoryQuery() { UserId = user.CompanyId != "Client" ? user.CompanyId : user.Id });
+                }
 
                 if (result == null || result.Count == 0)
                     return NotFound();
@@ -104,8 +124,17 @@ namespace MediSearch.WebApi.Controllers.v1
         {
             try
             {
-
-                var result = await Mediator.Send(new GetProductQuery() { Id = id });
+                GetProductQueryResponse result = new();
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                if (user == null)
+                {
+                    result = await Mediator.Send(new GetProductQuery() { Id = id });
+                }
+                else
+                {
+                    result = await Mediator.Send(new GetProductQuery() {Id = id, UserId = user.CompanyId != "Client" ? user.CompanyId : user.Id });
+                }
 
                 if (result == null)
                     return NotFound();

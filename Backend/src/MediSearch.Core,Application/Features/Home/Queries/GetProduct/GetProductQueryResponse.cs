@@ -33,5 +33,6 @@ namespace MediSearch.Core.Application.Features.Home.Queries.GetProduct
         public string? Instagram { get; set; }
         public string? Twitter { get; set; }
         public List<CommentDTO> Comments { get; set; }
+        public bool IsFavorite { get; set; }
     }
 }

@@ -22,5 +22,6 @@ namespace MediSearch.Core.Application.Dtos.Product
         public string Province { get; set; }
         public string Municipality { get; set; }
         public string Address { get; set; }
+        public bool IsFavorite { get; set; }
     }
 }

@@ -15,6 +15,8 @@ namespace MediSearch.Core.Application.Features.Home.Queries.GetProduct
     public class GetProductQuery : IRequest<GetProductQueryResponse>
     {
         public string Id { get; set; }
+        public string? UserId { get; set; }
+
     }
 
     public class GetProductQueryHandler : IRequestHandler<GetProductQuery, GetProductQueryResponse>
@@ -22,26 +24,28 @@ namespace MediSearch.Core.Application.Features.Home.Queries.GetProduct
         private readonly IProductRepository _productRepository;
         private readonly IAccountService _accountService;
         private readonly ICompanyRepository _companyRepository;
+        private readonly IFavoriteProductRepository _favoriteProductRepository;
         private readonly ICompanyUserRepository _companyUserRepository;
         private readonly ICommentRepository _commentRepository;
 
-        public GetProductQueryHandler(IProductRepository productRepository, IAccountService accountService, ICompanyRepository companyRepository, ICompanyUserRepository companyUserRepository, ICommentRepository commentRepository)
+        public GetProductQueryHandler(IProductRepository productRepository, IAccountService accountService, ICompanyRepository companyRepository, IFavoriteProductRepository favoriteProductRepository, ICompanyUserRepository companyUserRepository, ICommentRepository commentRepository)
         {
             _productRepository = productRepository;
             _accountService = accountService;
             _companyRepository = companyRepository;
+            _favoriteProductRepository = favoriteProductRepository;
             _companyUserRepository = companyUserRepository;
             _commentRepository = commentRepository;
         }
 
-        public async Task<GetProductQueryResponse> Handle(GetProductQuery request, CancellationToken cancellationToken)
+        public async Task<GetProductQueryResponse> Handle(GetProductQuery query, CancellationToken cancellationToken)
         {
-            var result = await GetProductById(request.Id);
+            var result = await GetProductById(query.Id, query.UserId);
 
             return result;
         }
 
-        public async Task<GetProductQueryResponse> GetProductById(string id)
+        public async Task<GetProductQueryResponse> GetProductById(string id, string? userLogged)
         {
             List<CommentDTO> resultDTO = new();
             var products = await _productRepository.GetAllWithIncludeAsync(new List<string>() { "Company" });
@@ -75,9 +79,16 @@ namespace MediSearch.Core.Application.Features.Home.Queries.GetProduct
                 Twitter = p.Company.Twitter,
                 WebSite = p.Company.WebSite
             }).FirstOrDefault();
+
             if(response == null)
             {
                 return null;
+            }
+
+            if(userLogged != null)
+            {
+                var favorite = await _favoriteProductRepository.ValidateFavorite(response.Id, userLogged);
+                response.IsFavorite = favorite != null;
             }
 
             var comments = await _commentRepository.GetCommentsByProduct(response.Id);
