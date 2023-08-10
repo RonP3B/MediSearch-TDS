@@ -27,14 +27,14 @@ namespace MediSearch.Core.Application.Features.Admin.Queries.GetDataDashboard
         public async Task<GetDataDashboardQueryResponse> Handle(GetDataDashboardQuery query, CancellationToken cancellationToken)
         {
             GetDataDashboardQueryResponse response = new();
-            var companies = await _companyRepository.GetAllWithIncludeAsync(new List<string> () { "Products", "CompanyType"});
+            var companies = await _companyRepository.GetAllWithIncludeAsync(new List<string>() { "Products", "CompanyType" });
             var company = companies.Find(p => p.Id == query.CompanyId);
             var companyUser = await _companyUserRepository.GetAllAsync();
             var hallUser = await _hallUserRepository.GetAllAsync();
 
             List<MaxInteraction> maxes = new();
             List<ProductFavorites> favorites = new();
-            if(company.Products.Count != 0)
+            if (company.Products.Count != 0)
             {
                 foreach (var product in company.Products)
                 {
@@ -54,8 +54,15 @@ namespace MediSearch.Core.Application.Features.Admin.Queries.GetDataDashboard
                         maxInteraction.Quantity = maxInteraction.Quantity + comment.Replies.Count;
                     }
 
-                    maxes.Add(maxInteraction);
-                    favorites.Add(favorite);
+                    if (maxInteraction.Quantity != 0)
+                    {
+                        maxes.Add(maxInteraction);
+                    }
+
+                    if (favorite.Quantity != 0)
+                    {
+                        favorites.Add(favorite);
+                    }
                 }
             }
             response.MyProducts = company.Products.Count;
@@ -78,7 +85,7 @@ namespace MediSearch.Core.Application.Features.Admin.Queries.GetDataDashboard
                 Quantity = p.Count()
             }).OrderByDescending(p => p.Quantity).Take(8).ToList();
             response.MaxInteractions = maxes.OrderByDescending(m => m.Quantity).Take(5).ToList();
-            response.ProductFavorites = favorites.OrderByDescending(p => p.Quantity).Take(5).ToList();
+            response.ProductFavorites = favorites.OrderByDescending(p => p.Quantity).Take(6).ToList();
 
             return response;
         }
