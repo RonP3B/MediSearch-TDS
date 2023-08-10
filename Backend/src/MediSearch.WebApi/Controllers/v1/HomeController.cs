@@ -375,22 +375,22 @@ namespace MediSearch.WebApi.Controllers.v1
         }
         
         [Authorize]
-        [HttpDelete("delete-favorite-company/{id}")]
+        [HttpDelete("delete-favorite-company/{companyId}")]
         [SwaggerOperation(
             Summary = "Permite eliminar una empresa de favoritos.",
             Description = "Maneja el apartado de eliminación de favoritos, debe de especificar los parametros correspondientes."
         )]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DeleteFavoriteCompanyResponse))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteFavoriteCompany(string id)
+        public async Task<IActionResult> DeleteFavoriteCompany(string companyId)
         {
             try
             {
                 UserDataAccess userData = new(_serviceScopeFactory);
                 var user = await userData.GetUserSession();
-                var result = await Mediator.Send(new DeleteFavoriteCompanyCommand() { Id = id });
+                var result = await Mediator.Send(new DeleteFavoriteCompanyCommand() { CompanyId = companyId, UserId = user.CompanyId != "Client" ? user.CompanyId : user.Id });
 
-                return NoContent();
+                return Ok(result);
             }
             catch (Exception e)
             {
@@ -400,22 +400,22 @@ namespace MediSearch.WebApi.Controllers.v1
         }
 
         [Authorize]
-        [HttpDelete("delete-favorite-product/{id}")]
+        [HttpDelete("delete-favorite-product/{productId}")]
         [SwaggerOperation(
             Summary = "Permite eliminar un producto de favoritos.",
             Description = "Maneja el apartado de eliminación de favoritos, debe de especificar los parametros correspondientes."
         )]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DeleteFavoriteProductResponse))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteFavoriteProduct(string id)
+        public async Task<IActionResult> DeleteFavoriteProduct(string productId)
         {
             try
             {
                 UserDataAccess userData = new(_serviceScopeFactory);
                 var user = await userData.GetUserSession();
-                var result = await Mediator.Send(new DeleteFavoriteProductCommand() { Id = id });
+                var result = await Mediator.Send(new DeleteFavoriteProductCommand() { ProductId = productId, UserId = user.CompanyId != "Client" ? user.CompanyId : user.Id });
 
-                return NoContent();
+                return Ok(result);
             }
             catch (Exception e)
             {

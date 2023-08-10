@@ -17,5 +17,13 @@ namespace MediSearch.Infrastructure.Persistence.Repositories
             _dbContext = dbContext;
         }
 
+        public async Task<FavoriteCompany> ValidateFavorite(string company, string user)
+        {
+            var companies = await GetAllAsync();
+            var favorite = companies.Find(x => x.CompanyId == company && x.UserId == user);
+
+            return favorite;
+        }
+
     }
 }

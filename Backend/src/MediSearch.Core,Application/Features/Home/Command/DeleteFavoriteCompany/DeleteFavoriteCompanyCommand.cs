@@ -1,17 +1,15 @@
 ﻿using MediatR;
-using MediSearch.Core.Application.Dtos.Company;
-using MediSearch.Core.Application.Dtos.Product;
-using MediSearch.Core.Application.Helpers;
 using MediSearch.Core.Application.Interfaces.Repositories;
 
 namespace MediSearch.Core.Application.Features.Home.Command.DeleteFavoriteCompany
 {
-    public class DeleteFavoriteCompanyCommand : IRequest<ProductResponse>
+    public class DeleteFavoriteCompanyCommand : IRequest<DeleteFavoriteCompanyResponse>
     {
-        public string Id { get; set; }
+        public string CompanyId { get; set; }
+        public string UserId { get; set; }
     }
 
-    public class DeleteFavoriteCompanyCommandHandler : IRequestHandler<DeleteFavoriteCompanyCommand, ProductResponse>
+    public class DeleteFavoriteCompanyCommandHandler : IRequestHandler<DeleteFavoriteCompanyCommand, DeleteFavoriteCompanyResponse>
     {
         private readonly IFavoriteCompanyRepository _favoriteCompanyRepository;
 
@@ -21,23 +19,20 @@ namespace MediSearch.Core.Application.Features.Home.Command.DeleteFavoriteCompan
         }
 
 
-        public async Task<ProductResponse> Handle(DeleteFavoriteCompanyCommand command, CancellationToken cancellationToken)
+        public async Task<DeleteFavoriteCompanyResponse> Handle(DeleteFavoriteCompanyCommand command, CancellationToken cancellationToken)
         {
-            ProductResponse response = new()
-            {
-                HasError = false
-            };
+            DeleteFavoriteCompanyResponse response = new();
 
             try
             {
-                var company = await _favoriteCompanyRepository.GetByIdAsync(command.Id);
-                if (company == null)
+                var favorite = await _favoriteCompanyRepository.ValidateFavorite(command.CompanyId, command.UserId);
+                if (favorite == null)
                 {
-                    throw new Exception("Empresa no encontrada");
+                    throw new Exception("Favorito no encontrado");
                 }
 
-                await _favoriteCompanyRepository.DeleteAsync(company);
-                response.IsSuccess = true;
+                await _favoriteCompanyRepository.DeleteAsync(favorite);
+                response.CompanyId = favorite.CompanyId;
                 return response;
             }
             catch (Exception ex)

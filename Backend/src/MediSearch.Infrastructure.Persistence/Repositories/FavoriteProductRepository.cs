@@ -1,11 +1,6 @@
 ﻿using MediSearch.Core.Application.Interfaces.Repositories;
 using MediSearch.Core.Domain.Entities;
 using MediSearch.Infrastructure.Persistence.Contexts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MediSearch.Infrastructure.Persistence.Repositories
 {
@@ -17,5 +12,12 @@ namespace MediSearch.Infrastructure.Persistence.Repositories
             _dbContext = dbContext;
         }
 
+        public async Task<FavoriteProduct> ValidateFavorite(string product, string user)
+        {
+            var products = await GetAllAsync();
+            var favorite = products.Find(x => x.ProductId == product && x.UserId == user);
+
+            return favorite;
+        }
     }
 }

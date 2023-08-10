@@ -1,16 +1,15 @@
 ﻿using MediatR;
-using MediSearch.Core.Application.Dtos.Product;
-using MediSearch.Core.Application.Helpers;
 using MediSearch.Core.Application.Interfaces.Repositories;
 
 namespace MediSearch.Core.Application.Features.Home.Command.DeleteFavoriteProduct
 {
-    public class DeleteFavoriteProductCommand : IRequest<ProductResponse>
+    public class DeleteFavoriteProductCommand : IRequest<DeleteFavoriteProductResponse>
     {
-        public string Id { get; set; }
+        public string ProductId { get; set; }
+        public string UserId { get; set; }
     }
 
-    public class DeleteFavoriteProductCommandHandler : IRequestHandler<DeleteFavoriteProductCommand, ProductResponse>
+    public class DeleteFavoriteProductCommandHandler : IRequestHandler<DeleteFavoriteProductCommand, DeleteFavoriteProductResponse>
     {
         private readonly IFavoriteProductRepository _favoriteProductRepository;
 
@@ -20,23 +19,20 @@ namespace MediSearch.Core.Application.Features.Home.Command.DeleteFavoriteProduc
         }
 
 
-        public async Task<ProductResponse> Handle(DeleteFavoriteProductCommand command, CancellationToken cancellationToken)
+        public async Task<DeleteFavoriteProductResponse> Handle(DeleteFavoriteProductCommand command, CancellationToken cancellationToken)
         {
-            ProductResponse response = new()
-            {
-                HasError = false
-            };
+            DeleteFavoriteProductResponse response = new();
 
             try
             {
-                var product = await _favoriteProductRepository.GetByIdAsync(command.Id);
-                if (product == null)
+                var favorite = await _favoriteProductRepository.ValidateFavorite(command.ProductId, command.UserId);
+                if (favorite == null)
                 {
-                    throw new Exception("Producto no encontrado");
+                    throw new Exception("Favorito no encontrado");
                 }
 
-                await _favoriteProductRepository.DeleteAsync(product);
-                response.IsSuccess = true;
+                await _favoriteProductRepository.DeleteAsync(favorite);
+                response.ProductId = favorite.ProductId;
                 return response;
             }
             catch (Exception ex)
