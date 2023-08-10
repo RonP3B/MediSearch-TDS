@@ -14,12 +14,14 @@ namespace MediSearch.Core.Application.Features.Admin.Queries.GetDataDashboard
         private readonly ICompanyUserRepository _companyUserRepository;
         private readonly IHallUserRepository _hallUserRepository;
         private readonly ICommentRepository _commentRepository;
-        public GetDataDashboardQueryHandler(ICompanyRepository companyRepository, ICompanyUserRepository companyUserRepository, IHallUserRepository hallUserRepository, ICommentRepository commentRepository)
+        private readonly IFavoriteProductRepository _favoriteProductRepository;
+        public GetDataDashboardQueryHandler(ICompanyRepository companyRepository, ICompanyUserRepository companyUserRepository, IHallUserRepository hallUserRepository, ICommentRepository commentRepository, IFavoriteProductRepository favoriteProductRepository)
         {
             _companyRepository = companyRepository;
             _companyUserRepository = companyUserRepository;
             _hallUserRepository = hallUserRepository;
             _commentRepository = commentRepository;
+            _favoriteProductRepository = favoriteProductRepository;
         }
 
         public async Task<GetDataDashboardQueryResponse> Handle(GetDataDashboardQuery query, CancellationToken cancellationToken)
@@ -31,13 +33,19 @@ namespace MediSearch.Core.Application.Features.Admin.Queries.GetDataDashboard
             var hallUser = await _hallUserRepository.GetAllAsync();
 
             List<MaxInteraction> maxes = new();
+            List<ProductFavorites> favorites = new();
             if(company.Products.Count != 0)
             {
                 foreach (var product in company.Products)
                 {
                     MaxInteraction maxInteraction = new();
+                    ProductFavorites favorite = new();
                     maxInteraction.Product = product.Name;
-                    
+                    favorite.Product = product.Name;
+
+                    var counFavorites = await _favoriteProductRepository.GetAllByProduct(product.Id);
+                    favorite.Quantity = counFavorites.Count;
+
                     var comments = await _commentRepository.GetCommentsByProduct(product.Id);
                     maxInteraction.Quantity = comments.Count;
 
@@ -47,6 +55,7 @@ namespace MediSearch.Core.Application.Features.Admin.Queries.GetDataDashboard
                     }
 
                     maxes.Add(maxInteraction);
+                    favorites.Add(favorite);
                 }
             }
             response.MyProducts = company.Products.Count;
@@ -69,6 +78,7 @@ namespace MediSearch.Core.Application.Features.Admin.Queries.GetDataDashboard
                 Quantity = p.Count()
             }).OrderByDescending(p => p.Quantity).Take(8).ToList();
             response.MaxInteractions = maxes.OrderByDescending(m => m.Quantity).Take(5).ToList();
+            response.ProductFavorites = favorites.OrderByDescending(p => p.Quantity).Take(5).ToList();
 
             return response;
         }

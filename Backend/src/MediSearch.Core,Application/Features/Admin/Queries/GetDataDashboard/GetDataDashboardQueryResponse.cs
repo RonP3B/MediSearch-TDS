@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authentication;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,7 @@ namespace MediSearch.Core.Application.Features.Admin.Queries.GetDataDashboard
         public List<MaxProduct> MaxProducts { get; set; }
         public List<MaxClassification> MaxClassifications { get; set; }
         public List<MaxInteraction> MaxInteractions { get; set; }
+        public List<ProductFavorites> ProductFavorites { get; set; }
     }
 
     public class ProvinceCompany
@@ -37,6 +39,12 @@ namespace MediSearch.Core.Application.Features.Admin.Queries.GetDataDashboard
     }
 
     public class MaxInteraction
+    {
+        public string Product { get; set; }
+        public int Quantity { get; set; }
+    }
+
+    public class ProductFavorites
     {
         public string Product { get; set; }
         public int Quantity { get; set; }

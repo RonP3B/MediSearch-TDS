@@ -19,5 +19,13 @@ namespace MediSearch.Infrastructure.Persistence.Repositories
 
             return favorite;
         }
+
+        public async Task<List<FavoriteProduct>> GetAllByProduct(string product)
+        {
+            var products = await GetAllAsync();
+            var favorite = products.FindAll(x => x.ProductId == product);
+
+            return favorite;
+        }
     }
 }
