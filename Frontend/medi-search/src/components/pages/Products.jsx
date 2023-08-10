@@ -19,7 +19,14 @@ import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 import ProductCard from "../custom/Cards/ProductCard";
 import useFilters from "../../hooks/filters/useFilters";
 
-const Products = ({ isCompany, logged, companyType, hideTitle }) => {
+const Products = ({
+  isCompany,
+  logged,
+  companyType,
+  hideTitle,
+  initialValues,
+  initialHighestPrice,
+}) => {
   const [openFilter, setOpenFilter] = useState(false);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -54,9 +61,7 @@ const Products = ({ isCompany, logged, companyType, hideTitle }) => {
         setMaxPrice(highestPrice);
       } catch (error) {
         if (error.response?.data?.Error === "ERR_JWT") return;
-
         if (error.response.status === 404) return;
-
         showToastRef.current(
           "Ocurrió un error al obtener las productos, informelo al equipo técnico",
           { type: "error" }
@@ -66,8 +71,21 @@ const Products = ({ isCompany, logged, companyType, hideTitle }) => {
       }
     };
 
-    fetchProducts();
-  }, [setMaxPrice, setPriceFilter]);
+    if (initialValues) {
+      setProducts(initialValues.values);
+      setPriceFilter([1, initialHighestPrice]);
+      setMaxPrice(initialHighestPrice);
+      setLoading(false);
+    } else {
+      fetchProducts();
+    }
+  }, [
+    companyType,
+    initialHighestPrice,
+    initialValues,
+    setMaxPrice,
+    setPriceFilter,
+  ]);
 
   const handleOpenFilter = () => {
     setOpenFilter(true);
@@ -137,7 +155,10 @@ const Products = ({ isCompany, logged, companyType, hideTitle }) => {
             sx={{ fontSize: 200, color: "primary.main" }}
           />
           <Typography variant="h6" sx={{ mt: 2 }}>
-            No hay productos de laboratorios registrados en la plataforma
+            No hay productos{" "}
+            {initialValues
+              ? "en tus favoritos"
+              : "de laboratorios registrados en la plataforma"}
           </Typography>
         </Box>
       )}
@@ -147,7 +168,14 @@ const Products = ({ isCompany, logged, companyType, hideTitle }) => {
             {filteredProducts.map((product) => (
               <Grid item key={product.id} xs={12} sm={6} md={4}>
                 <ProductCard
-                  favorite={logged && !isCompany}
+                  favorite={
+                    logged &&
+                    !isCompany && {
+                      isFavorite: product.isFavorite,
+                      favoriteType: "product",
+                    }
+                  }
+                  favoritesManager={initialValues}
                   product={product}
                   maintenance={false}
                   showCompanyInfo={true}
@@ -184,6 +212,8 @@ Products.propTypes = {
   isCompany: PropTypes.bool.isRequired,
   companyType: PropTypes.string.isRequired,
   hideTitle: PropTypes.bool,
+  initialValues: PropTypes.object,
+  initialHighestPrice: PropTypes.number,
 };
 
 export default Products;

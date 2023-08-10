@@ -19,7 +19,13 @@ import CompanyFilterDrawer from "../custom/FilterDrawers/CompanyFilterDrawer";
 import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 import useFilters from "../../hooks/filters/useFilters";
 
-const Companies = ({ companyType, logged, isCompany, hideTitle }) => {
+const Companies = ({
+  companyType,
+  logged,
+  isCompany,
+  hideTitle,
+  initialValues,
+}) => {
   const [openFilter, setOpenFilter] = useState(false);
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -52,8 +58,13 @@ const Companies = ({ companyType, logged, isCompany, hideTitle }) => {
       }
     };
 
-    fetchCompanies();
-  }, [companyType]);
+    if (initialValues) {
+      setCompanies(initialValues.values);
+      setLoading(false);
+    } else {
+      fetchCompanies();
+    }
+  }, [companyType, initialValues]);
 
   const handleOpenFilter = () => {
     setOpenFilter(true);
@@ -115,7 +126,8 @@ const Companies = ({ companyType, logged, isCompany, hideTitle }) => {
         >
           <DomainDisabledIcon sx={{ fontSize: 200, color: "primary.main" }} />
           <Typography variant="h6" sx={{ mt: 2 }}>
-            No hay {companyType}s registrados en la plataforma
+            No hay {companyType}s{" "}
+            {initialValues ? "en tus favoritos" : "en la plataforma"}
           </Typography>
         </Box>
       )}
@@ -125,7 +137,14 @@ const Companies = ({ companyType, logged, isCompany, hideTitle }) => {
             {filteredCompanies.map((company) => (
               <Grid item key={company.id} xs={12} sm={6} md={4}>
                 <CompanyCard
-                  favorite={logged && !isCompany}
+                  favorite={
+                    logged &&
+                    !isCompany && {
+                      isFavorite: company.isFavorite,
+                      favoriteType: "company",
+                    }
+                  }
+                  favoritesManager={initialValues}
                   company={company}
                   to={`${
                     isCompany
@@ -163,6 +182,7 @@ Companies.propTypes = {
   logged: PropTypes.bool.isRequired,
   isCompany: PropTypes.bool.isRequired,
   hideTitle: PropTypes.bool,
+  initialValues: PropTypes.object,
 };
 
 export default Companies;

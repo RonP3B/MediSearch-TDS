@@ -25,7 +25,9 @@ const CompanyRoutes = () => {
       <Route path="/company/chat" element={<Chat isCompany={true} />} />
       <Route
         path="/company/my-profile"
-        element={<Profile profileType="perfil" isCompany={true} />}
+        element={
+          <Profile profileType="perfil" isCompany={true} isClient={false} />
+        }
       />
       <Route
         path="/company/my-products/add"

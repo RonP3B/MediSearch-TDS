@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import Card from "@mui/material/Card";
@@ -16,24 +16,53 @@ import Checkbox from "@mui/material/Checkbox";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import Favorite from "@mui/icons-material/Favorite";
 import {
+  addCompanyFav,
   addProductFav,
+  removeCompanyFav,
   removeProductFav,
 } from "../../../services/MediSearchServices/HomeServices";
 
 const CustomCard = (props) => {
-  const { to, maintenance, handleDelete, image, name, cardInfo, id, favorite } =
-    props;
+  const {
+    to,
+    maintenance,
+    handleDelete,
+    image,
+    name,
+    cardInfo,
+    id,
+    favorite,
+    favoritesManager,
+  } = props;
 
   const [loading, setLoading] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
 
+  useEffect(() => {
+    setIsChecked(favorite?.isFavorite ?? false);
+  }, [favorite]);
+
   const handleCheckboxChange = async () => {
     try {
+      const isFavCompany = favorite.favoriteType === "company";
+      const idProp = isFavCompany ? "companyId" : "productId";
+      const addFavFunction = isFavCompany ? addCompanyFav : addProductFav;
+
+      const removeFavFunction = isFavCompany
+        ? removeCompanyFav
+        : removeProductFav;
+
       setLoading(true);
 
-      await (isChecked
-        ? addProductFav({ idProduct: id })
-        : removeProductFav({ id: id }));
+      const res = await (isChecked
+        ? removeFavFunction(id)
+        : addFavFunction({ [idProp]: id }));
+
+      if (res.data?.[idProp] && favoritesManager) {
+        favoritesManager.setter((prev) =>
+          prev.filter((val) => val[idProp] !== res.data?.[idProp])
+        );
+      }
 
       setIsChecked(!isChecked);
     } catch (error) {
@@ -58,7 +87,7 @@ const CustomCard = (props) => {
           {name}
         </Typography>
         {cardInfo.map((info, index) => (
-          <Typography key={index} variant="body2" color="text.secondary">
+          <Typography key={index} variant="body2" color="text.secondary" noWrap>
             {info.label}: {info.val}
           </Typography>
         ))}
@@ -123,8 +152,9 @@ CustomCard.propTypes = {
   id: PropTypes.string.isRequired,
   cardInfo: PropTypes.array.isRequired,
   maintenance: PropTypes.bool.isRequired,
-  favorite: PropTypes.bool.isRequired,
+  favorite: PropTypes.any.isRequired,
   handleDelete: PropTypes.func,
+  favoritesManager: PropTypes.object,
 };
 
 export default CustomCard;

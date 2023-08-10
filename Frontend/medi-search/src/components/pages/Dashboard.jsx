@@ -219,7 +219,7 @@ const Dashboard = () => {
             <PopularProducts
               sx={{ boxShadow: 3 }}
               title="Mis productos populares"
-              subheader="Mis productos con más comentarios"
+              subheader="Mis productos con más interacciones"
               chartData={stats.maxInteractions.$values}
             />
           ) : (

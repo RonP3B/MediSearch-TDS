@@ -209,7 +209,13 @@ const CompanyProducts = ({
           {products.map((product) => (
             <Grid item key={product.id} xs={12} sm={6} md={4}>
               <ProductCard
-                favorite={isLogged && !isCompany}
+                favorite={
+                  isLogged &&
+                  !isCompany && {
+                    isFavorite: product.isFavorite,
+                    favoriteType: "product",
+                  }
+                }
                 product={product}
                 maintenance={false}
                 showCompanyInfo={false}
@@ -354,6 +360,7 @@ CompanyProducts.propTypes = {
   clearFilters: PropTypes.func.isRequired,
   filteredData: PropTypes.array.isRequired,
   isCompany: PropTypes.bool.isRequired,
+  isLogged: PropTypes.bool.isRequired,
 };
 
 export default CompanyDetails;

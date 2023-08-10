@@ -106,8 +106,9 @@ const Home = () => {
           backgroundColor: (theme) => alpha(theme.palette.primary.light, 0.1),
           mt: 0.5,
         }}
+        alignItems="center"
       >
-        <Grid item xs={12} md={6} p={2} sx={{ maxHeight: "100%" }}>
+        <Grid item xs={12} sm={8} md={6} p={2} sx={{ maxHeight: "100%" }}>
           <Box
             sx={{
               display: "flex",
@@ -144,7 +145,7 @@ const Home = () => {
             </Box>
           </Box>
         </Grid>
-        <Grid item xs={12} md={6} sx={{ maxHeight: "100%" }}>
+        <Grid item xs={12} sm={4} md={6} sx={{ maxHeight: "100%" }}>
           <Box
             component="img"
             src={Logo}
@@ -152,6 +153,7 @@ const Home = () => {
             sx={{
               maxHeight: 420,
               maxWidth: "100%",
+              height: { xs: 200, sm: "auto" },
               display: "block",
               margin: "0 auto",
             }}

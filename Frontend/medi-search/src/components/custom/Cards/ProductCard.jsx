@@ -12,6 +12,7 @@ const ProductCard = (props) => {
     handleDelete,
     to,
     favorite,
+    favoritesManager,
   } = props;
 
   const { name, price, quantity, id, urlImages, nameCompany, province } =
@@ -39,6 +40,7 @@ const ProductCard = (props) => {
       handleDelete={handleDelete}
       cardInfo={cardInfo}
       favorite={favorite}
+      favoritesManager={favoritesManager}
     />
   );
 };
@@ -50,7 +52,8 @@ ProductCard.propTypes = {
   showCompanyInfo: PropTypes.bool.isRequired,
   companyType: PropTypes.string,
   to: PropTypes.string.isRequired,
-  favorite: PropTypes.bool.isRequired,
+  favorite: PropTypes.any.isRequired,
+  favoritesManager: PropTypes.object,
 };
 
 export default ProductCard;

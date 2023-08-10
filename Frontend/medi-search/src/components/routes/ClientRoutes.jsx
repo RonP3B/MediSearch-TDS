@@ -43,7 +43,9 @@ const ClientRoutes = () => {
       />
       <Route
         path="/client/my-profile"
-        element={<Profile profileType="perfil" isCompany={false} />}
+        element={
+          <Profile profileType="perfil" isCompany={false} isClient={true} />
+        }
       />
     </Route>
   );

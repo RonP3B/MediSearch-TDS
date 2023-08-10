@@ -5,7 +5,6 @@ import { Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { ConfirmProvider } from "material-ui-confirm";
 import { adminNav } from "../../utils/adminNav";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import HomeWorkIcon from "@mui/icons-material/HomeWork";
 import PersonIcon from "@mui/icons-material/Person";
