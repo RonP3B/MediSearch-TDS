@@ -42,7 +42,8 @@ namespace MediSearch.Core.Application.Features.Home.Queries.GetAllFavoriteCompan
                     Phone = item.Company.Phone,
                     Province = item.Company.Province,
                     Municipality = item.Company.Municipality,
-                    Address = item.Company.Address                    
+                    Address = item.Company.Address,
+                    IsFavorite = true
                 };
 
                 response.Add(favorite);
