@@ -19,7 +19,7 @@ namespace MediSearch.Infrastructure.Persistence.Repositories
 
         public async Task<FavoriteCompany> ValidateFavorite(string company, string user)
         {
-            var companies = await GetAllAsync();
+            var companies = await GetAllWithIncludeAsync(new List<string>());
             var favorite = companies.Find(x => x.CompanyId == company && x.UserId == user);
 
             return favorite;

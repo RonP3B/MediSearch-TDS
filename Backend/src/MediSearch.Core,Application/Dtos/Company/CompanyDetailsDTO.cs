@@ -23,5 +23,6 @@ namespace MediSearch.Core.Application.Dtos.Company
         public string? Instagram { get; set; }
         public string? Twitter { get; set; }
         public List<ProductHomeDTO> Products { get; set; }
+        public bool IsFavorite { get; set; }
     }
 }

@@ -85,6 +85,7 @@ namespace MediSearch.Core.Application.Mappings
 
             #region Company
             CreateMap<Company, CompanyDTO>()
+                .ForMember(x => x.IsFavorite, opt => opt.Ignore())
                 .ReverseMap()
                 .ForMember(x => x.Ceo, opt => opt.Ignore())
                 .ForMember(x => x.Email, opt => opt.Ignore())
@@ -103,6 +104,7 @@ namespace MediSearch.Core.Application.Mappings
             
             CreateMap<Company, CompanyDetailsDTO>()
                 .ForMember(x => x.Products, opt => opt.Ignore())
+                .ForMember(x => x.IsFavorite, opt => opt.Ignore())
                 .ReverseMap()
                 .ForMember(x => x.CompanyType, opt => opt.Ignore())
                 .ForMember(x => x.CompanyTypeId, opt => opt.Ignore())

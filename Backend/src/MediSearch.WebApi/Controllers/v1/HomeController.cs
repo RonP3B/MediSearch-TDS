@@ -133,7 +133,18 @@ namespace MediSearch.WebApi.Controllers.v1
 
             try
             {
-                var result = await Mediator.Send(new GetAllFarmacyQuery());
+                List<CompanyDTO> result = new();
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                if (user != null)
+                {
+                    result = await Mediator.Send(new GetAllFarmacyQuery() { UserId = user.CompanyId != "Client" ? user.CompanyId : user.Id});
+                }
+                else
+                {
+                    result = await Mediator.Send(new GetAllFarmacyQuery());
+                }
+
 
                 if (result == null || result.Count == 0)
                     return NotFound();
@@ -161,7 +172,17 @@ namespace MediSearch.WebApi.Controllers.v1
 
             try
             {
-                var result = await Mediator.Send(new GetAllLaboratoryQuery());
+                List<CompanyDTO> result = new();
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                if (user != null)
+                {
+                    result = await Mediator.Send(new GetAllLaboratoryQuery() { UserId = user.CompanyId != "Client" ? user.CompanyId : user.Id });
+                }
+                else
+                {
+                    result = await Mediator.Send(new GetAllLaboratoryQuery());
+                }
 
                 if (result == null || result.Count == 0)
                     return NotFound();
@@ -216,8 +237,17 @@ namespace MediSearch.WebApi.Controllers.v1
         {
             try
             {
-
-                var result = await Mediator.Send(new GetCompanyDetailsQuery() { Id = id });
+                CompanyDetailsDTO result = new();
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                if (user != null)
+                {
+                    result = await Mediator.Send(new GetCompanyDetailsQuery() { Id = id, UserId = user.CompanyId != "Client" ? user.CompanyId : user.Id });
+                }
+                else
+                {
+                    result = await Mediator.Send(new GetCompanyDetailsQuery() { Id = id});
+                }
 
                 if (result == null)
                     return NotFound();
@@ -274,7 +304,7 @@ namespace MediSearch.WebApi.Controllers.v1
             {
                 UserDataAccess userData = new(_serviceScopeFactory);
                 var user = await userData.GetUserSession();
-                var result = await Mediator.Send(new GetAllFavoriteCompaniesQuery() { UserId = user.CompanyId != "Client" ? user.CompanyId : user.Id});
+                var result = await Mediator.Send(new GetAllFavoriteCompaniesQuery() { UserId = user.CompanyId != "Client" ? user.CompanyId : user.Id });
 
                 return Ok(result);
             }
@@ -373,7 +403,7 @@ namespace MediSearch.WebApi.Controllers.v1
             }
 
         }
-        
+
         [Authorize]
         [HttpDelete("delete-favorite-company/{companyId}")]
         [SwaggerOperation(

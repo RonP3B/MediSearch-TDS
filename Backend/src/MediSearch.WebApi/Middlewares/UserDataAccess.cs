@@ -32,9 +32,13 @@ namespace MediSearch.WebApi.Middlewares
                 var jwtSettings = scope.ServiceProvider.GetRequiredService<IOptions<JWTSettings>>();
                 var _jwtSettings = jwtSettings.Value;
 
-                string authorizationHeader = context.HttpContext.Request.Headers["Authorization"];
+                string? authorizationHeader = context.HttpContext.Request.Headers["Authorization"];
                 string token = "";
-                token = authorizationHeader.Substring("Bearer ".Length);
+                if (authorizationHeader != null)
+                {
+                    token = authorizationHeader.Substring("Bearer ".Length);
+
+                }
 
                 JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
                 TokenValidationParameters tokenValidationParameters = new TokenValidationParameters
