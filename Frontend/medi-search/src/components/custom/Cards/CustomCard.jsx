@@ -60,7 +60,7 @@ const CustomCard = (props) => {
 
       if (res.data?.[idProp] && favoritesManager) {
         favoritesManager.setter((prev) =>
-          prev.filter((val) => val[idProp] !== res.data?.[idProp])
+          prev.filter((val) => val.id !== res.data?.[idProp])
         );
       }
 

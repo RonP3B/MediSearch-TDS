@@ -17,6 +17,7 @@ const PharmacyRoutes = () => {
             />
           }
         />
+
         <Route
           path="/company/provisions"
           element={

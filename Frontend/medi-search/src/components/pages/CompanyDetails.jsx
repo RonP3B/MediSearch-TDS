@@ -210,8 +210,7 @@ const CompanyProducts = ({
             <Grid item key={product.id} xs={12} sm={6} md={4}>
               <ProductCard
                 favorite={
-                  isLogged &&
-                  !isCompany && {
+                  isLogged && {
                     isFavorite: product.isFavorite,
                     favoriteType: "product",
                   }

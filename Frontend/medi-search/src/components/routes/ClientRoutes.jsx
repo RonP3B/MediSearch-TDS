@@ -13,14 +13,21 @@ const ClientRoutes = () => {
   return (
     <Route element={<RequiresClient />}>
       <Route path="/client/home" element={<ClientHome />} />
+
       <Route path="/client/chat" element={<Chat isCompany={false} />} />
-      <Route path="/client/favs" element={<Favorites />} />
+
+      <Route
+        path="/client/favs"
+        element={<Favorites isPharmacy={false} isLab={false} />}
+      />
+
       <Route
         path="/client/products"
         element={
           <Products isCompany={false} logged={true} companyType="Farmacia" />
         }
       />
+
       <Route
         path="client/products/product-details/:id"
         element={
@@ -31,16 +38,19 @@ const ClientRoutes = () => {
           />
         }
       />
+
       <Route
         path="client/companies/company-details/:id"
         element={<CompanyDetails isCompany={false} />}
       />
+
       <Route
         path="client/companies/pharmacies"
         element={
           <Companies companyType="farmacia" logged={true} isCompany={false} />
         }
       />
+
       <Route
         path="/client/my-profile"
         element={

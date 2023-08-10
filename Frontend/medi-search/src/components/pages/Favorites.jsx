@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import CustomTabs from "../custom/Tabs/CustomTabs";
@@ -12,11 +13,12 @@ import {
 } from "../../services/MediSearchServices/HomeServices";
 import useToast from "../../hooks/feedback/useToast";
 
-const Favorites = () => {
+const Favorites = ({ isPharmacy, isLab }) => {
   const [products, setProducts] = useState([]);
-  const [pharmacies, setPharmacies] = useState([]);
+  const [companies, setCompanies] = useState([]);
   const [highestPrice, setHighestPrice] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loadingProducts, setLoadingPropducts] = useState(!isLab);
+  const [loadingCompanies, setLoadingCompanies] = useState(true);
   const showToast = useToast();
   const showToastRef = useRef(showToast);
 
@@ -30,25 +32,44 @@ const Favorites = () => {
           return product.price > max ? product.price : max;
         }, 0);
 
+        const modifiedArray = productsArr.map((item) => {
+          const { productId, ...rest } = item;
+          return {
+            ...rest,
+            id: productId,
+          };
+        });
+
         setHighestPrice(highestPrice);
-        setProducts(productsArr);
+        setProducts(modifiedArray);
       } catch (error) {
         if (error.response?.data?.Error === "ERR_JWT") return;
         showToastRef.current(
           "Ocurrió un error al obtener tus productos favoritos, informelo al equipo técnico",
           { type: "error" }
         );
+      } finally {
+        setLoadingPropducts(false);
       }
     };
 
-    fetchProducts();
-  }, []);
+    !isLab && fetchProducts();
+  }, [isLab]);
 
   useEffect(() => {
-    const fetchPharmacies = async () => {
+    const fetchCompanies = async () => {
       try {
         const res = await getFavoriteCompanies();
-        setPharmacies(res.data.$values);
+
+        const modifiedArray = res.data.$values.map((item) => {
+          const { companyId, ...rest } = item;
+          return {
+            ...rest,
+            id: companyId,
+          };
+        });
+
+        setCompanies(modifiedArray);
       } catch (error) {
         if (error.response?.data?.Error === "ERR_JWT") return;
         showToastRef.current(
@@ -56,19 +77,19 @@ const Favorites = () => {
           { type: "error" }
         );
       } finally {
-        setLoading(false);
+        setLoadingCompanies(false);
       }
     };
 
-    fetchPharmacies();
+    fetchCompanies();
   }, []);
 
   return (
     <Container maxWidth="xl" sx={{ my: 3 }}>
       <Typography variant="h5" sx={{ fontWeight: "bold", mb: 3 }}>
-        Mis favoritos
+        Mis {isLab && "farmacias"} favorit{isLab ? "a" : "o"}s
       </Typography>
-      {loading ? (
+      {loadingProducts || loadingCompanies ? (
         <Box
           sx={{
             display: "flex",
@@ -79,16 +100,24 @@ const Favorites = () => {
         >
           <CircularProgress />
         </Box>
+      ) : isLab ? (
+        <Companies
+          companyType="farmacia"
+          logged={true}
+          isCompany={true}
+          hideTitle={true}
+          initialValues={{ values: companies, setter: setCompanies }}
+        />
       ) : (
         <CustomTabs
           tabs={[
             {
-              label: "productos",
+              label: isPharmacy ? "provisiones" : "productos",
               content: (
                 <Products
-                  isCompany={false}
+                  isCompany={isPharmacy || isLab}
                   logged={true}
-                  companyType="Farmacia"
+                  companyType={isPharmacy ? "Laboratorio" : "Farmacia"}
                   hideTitle={true}
                   initialValues={{ values: products, setter: setProducts }}
                   initialHighestPrice={highestPrice}
@@ -96,14 +125,14 @@ const Favorites = () => {
               ),
             },
             {
-              label: "farmacias",
+              label: isPharmacy ? "laboratorios" : "farmacias",
               content: (
                 <Companies
-                  companyType="farmacia"
+                  companyType={isPharmacy ? "laboratorio" : "farmacia"}
                   logged={true}
-                  isCompany={false}
+                  isCompany={isPharmacy || isLab}
                   hideTitle={true}
-                  initialValues={{ values: pharmacies, setter: setPharmacies }}
+                  initialValues={{ values: companies, setter: setCompanies }}
                 />
               ),
             },
@@ -112,6 +141,11 @@ const Favorites = () => {
       )}
     </Container>
   );
+};
+
+Favorites.propTypes = {
+  isPharmacy: PropTypes.bool.isRequired,
+  isLab: PropTypes.bool.isRequired,
 };
 
 export default Favorites;

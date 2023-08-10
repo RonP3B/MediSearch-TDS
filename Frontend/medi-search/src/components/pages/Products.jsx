@@ -155,10 +155,8 @@ const Products = ({
             sx={{ fontSize: 200, color: "primary.main" }}
           />
           <Typography variant="h6" sx={{ mt: 2 }}>
-            No hay productos{" "}
-            {initialValues
-              ? "en tus favoritos"
-              : "de laboratorios registrados en la plataforma"}
+            No hay productos {isCompany && "de laboratorios "}
+            {initialValues && "en tus favoritos"}
           </Typography>
         </Box>
       )}
@@ -169,8 +167,7 @@ const Products = ({
               <Grid item key={product.id} xs={12} sm={6} md={4}>
                 <ProductCard
                   favorite={
-                    logged &&
-                    !isCompany && {
+                    logged && {
                       isFavorite: product.isFavorite,
                       favoriteType: "product",
                     }

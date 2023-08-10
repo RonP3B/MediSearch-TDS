@@ -138,8 +138,7 @@ const Companies = ({
               <Grid item key={company.id} xs={12} sm={6} md={4}>
                 <CompanyCard
                   favorite={
-                    logged &&
-                    !isCompany && {
+                    logged && {
                       isFavorite: company.isFavorite,
                       favoriteType: "company",
                     }

@@ -9,6 +9,7 @@ import MedicationIcon from "@mui/icons-material/Medication";
 import MarkUnreadChatAltIcon from "@mui/icons-material/MarkUnreadChatAlt";
 import LocalPharmacyIcon from "@mui/icons-material/LocalPharmacy";
 import HomeWorkIcon from "@mui/icons-material/HomeWork";
+import Favorite from "@mui/icons-material/Favorite";
 
 export const adminNav = [
   {
@@ -61,5 +62,10 @@ export const adminNav = [
     item: "Chat",
     icon: <MarkUnreadChatAltIcon />,
     to: "/company/chat",
+  },
+  {
+    item: "Mis favoritos",
+    icon: <Favorite />,
+    to: "/company/favs",
   },
 ];
