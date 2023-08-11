@@ -24,9 +24,13 @@ import CompanyCard from "../custom/Cards/CompanyCard";
 
 const Home = () => {
   const [pharmacies, setPharmacies] = useState([]);
+  const [loadingPharmacies, setLoadingPharmacies] = useState(true);
   const [labs, setLabs] = useState([]);
+  const [loadingLabs, setLoadingLabs] = useState(true);
   const [pharmProducts, setPharmProducts] = useState([]);
+  const [loadingPharmProducts, setLoadingPharmProducts] = useState(true);
   const [labProducts, setLabProducts] = useState([]);
+  const [loadingLabProducts, setLoadingLabProducts] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,7 +39,9 @@ const Home = () => {
         const pharmaciesData = pharmaciesRes.data.$values.slice(0, 10);
         setPharmacies(pharmaciesData);
       } catch (error) {
-        setPharmacies(null);
+        //console.log(error);
+      } finally {
+        setLoadingPharmacies(false);
       }
     };
 
@@ -49,7 +55,9 @@ const Home = () => {
         const labsData = labsRes.data.$values.slice(0, 10);
         setLabs(labsData);
       } catch (error) {
-        setLabs(null);
+        //console.log(error);
+      } finally {
+        setLoadingLabs(false);
       }
     };
 
@@ -63,7 +71,9 @@ const Home = () => {
         const pharmProductsData = pharmProductsRes.data.$values.slice(0, 5);
         setPharmProducts(pharmProductsData);
       } catch (error) {
-        setPharmProducts(null);
+        //console.log(error);
+      } finally {
+        setLoadingPharmProducts(false);
       }
     };
 
@@ -77,7 +87,9 @@ const Home = () => {
         const labProductsData = labProductsRes.data.$values.slice(0, 5);
         setLabProducts(labProductsData);
       } catch (error) {
-        setLabProducts(null);
+        //console.log(error);
+      } finally {
+        setLoadingLabProducts(false);
       }
     };
 
@@ -240,7 +252,7 @@ const Home = () => {
           >
             Últimas farmacias registradas en nuestra plataforma
           </Typography>
-          {pharmacies?.length === 0 ? (
+          {loadingPharmacies ? (
             <LoadingSkeleton />
           ) : pharmacies ? (
             <CardsCarousel>
@@ -270,7 +282,7 @@ const Home = () => {
           >
             Últimos laboratorios registrados en nuestra plataforma
           </Typography>
-          {labs?.length === 0 ? (
+          {loadingLabs ? (
             <LoadingSkeleton />
           ) : labs ? (
             <CardsCarousel>
@@ -300,11 +312,11 @@ const Home = () => {
           >
             Últimos productos agregados en nuestra plataforma
           </Typography>
-          {labProducts?.length === 0 || pharmProducts?.length === 0 ? (
+          {loadingPharmProducts || loadingLabProducts ? (
             <LoadingSkeleton />
           ) : labProducts || pharmProducts ? (
             <CardsCarousel>
-              {labProducts.map((product) => (
+              {labProducts?.map((product) => (
                 <ProductCard
                   key={product.id}
                   favorite={false}
@@ -314,7 +326,7 @@ const Home = () => {
                   to={`/products/product-details/${product.id}`}
                 />
               ))}
-              {pharmProducts.map((product) => (
+              {pharmProducts?.map((product) => (
                 <ProductCard
                   key={product.id}
                   favorite={false}

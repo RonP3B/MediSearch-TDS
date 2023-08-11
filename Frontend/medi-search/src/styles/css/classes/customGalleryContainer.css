@@ -11,11 +11,15 @@
   .image-gallery-slide img {
     min-height: 200px;
     min-width: 200px;
-    max-height: 470px;
+    max-height: 470px !important;
     max-width: 100%;
   }
 
   .fullscreen .image-gallery-slide img {
     max-height: 85vh;
+  }
+
+  .image-gallery-thumbnails .image-gallery-thumbnails-container {
+    max-width: 450px;
   }
 }

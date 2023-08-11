@@ -206,7 +206,7 @@ const CompanyProducts = ({
       </Stack>
       {filteredData.length > 0 ? (
         <Grid container spacing={2}>
-          {products.map((product) => (
+          {filteredData.map((product) => (
             <Grid item key={product.id} xs={12} sm={6} md={4}>
               <ProductCard
                 favorite={

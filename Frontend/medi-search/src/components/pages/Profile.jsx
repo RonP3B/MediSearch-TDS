@@ -24,7 +24,7 @@ const Profile = ({ profileType, isCompany, isClient }) => {
   const { auth } = useAuth();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState({});
+  const [profile, setProfile] = useState(null);
   const [edited, setEdited] = useState(0);
   const [profileInfo, setProfileInfo] = useState([]);
   const showToast = useToast();
@@ -95,6 +95,7 @@ const Profile = ({ profileType, isCompany, isClient }) => {
 
   const hasSocials =
     profileType === "empresa" &&
+    profile &&
     (profile.webSite ||
       profile.facebook ||
       profile.twitter ||
@@ -114,7 +115,7 @@ const Profile = ({ profileType, isCompany, isClient }) => {
         <Typography variant="h5" sx={{ fontWeight: "bold" }}>
           Mi {profileType}
         </Typography>
-        {!loading && (
+        {!loading && profile && (
           <>
             <Button
               variant="contained"
@@ -133,7 +134,7 @@ const Profile = ({ profileType, isCompany, isClient }) => {
           </>
         )}
       </Stack>
-      {loading ? (
+      {loading || !profile ? (
         <Box
           sx={{
             display: "flex",

@@ -207,7 +207,7 @@ const ClientHome = () => {
           >
             Últimos productos farmacéuticos agregados
           </Typography>
-          {pharmProducts.length === 0 ? (
+          {pharmProducts?.length === 0 ? (
             <LoadingSkeleton />
           ) : pharmProducts ? (
             <CardsCarousel>
@@ -252,7 +252,7 @@ const ClientHome = () => {
                   maintenance={false}
                   showCompanyInfo={true}
                   companyType={"Farmacia"}
-                  to={`/client/products/product-details/${product.id}`}
+                  to={`/client/products/product-details/${product.productId}`}
                 />
               ))}
             </CardsCarousel>
@@ -282,7 +282,7 @@ const ClientHome = () => {
                   favorite={false}
                   key={pharmacy.id}
                   company={pharmacy}
-                  to={`/client/companies/company-details/${pharmacy.id}`}
+                  to={`/client/companies/company-details/${pharmacy.companyId}`}
                 />
               ))}
             </CardsCarousel>

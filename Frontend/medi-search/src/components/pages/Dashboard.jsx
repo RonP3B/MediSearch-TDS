@@ -69,7 +69,7 @@ const Dashboard = () => {
           to={!loading ? "/company/my-products" : ""}
           sx={{ textDecoration: "none" }}
         >
-          {!loading ? (
+          {!loading && stats.myProducts !== undefined ? (
             <WidgetSummary
               title="Mis productos"
               total={stats.myProducts}
@@ -92,10 +92,10 @@ const Dashboard = () => {
           to={!loading ? "/company/users" : ""}
           sx={{ textDecoration: "none" }}
         >
-          {!loading ? (
+          {!loading && stats.myUsers ? (
             <WidgetSummary
               title="Mis usuarios"
-              total={stats.myUsers}
+              total={stats.myUsers - 1}
               color="info"
               Icon={GroupIcon}
             />
@@ -120,7 +120,7 @@ const Dashboard = () => {
           }
           sx={{ textDecoration: "none" }}
         >
-          {!loading ? (
+          {!loading && stats.opposingCompanies !== undefined ? (
             <WidgetSummary
               title={companyType === "Farmacia" ? "Laboratorios" : "Farmacias"}
               total={stats.opposingCompanies}
@@ -144,7 +144,7 @@ const Dashboard = () => {
           to={!loading ? "/company/chat" : ""}
           sx={{ textDecoration: "none" }}
         >
-          {!loading ? (
+          {!loading && stats.myChats !== undefined ? (
             <WidgetSummary
               title="Chats activos"
               total={stats.myChats}
@@ -160,7 +160,7 @@ const Dashboard = () => {
           )}
         </Grid>
         <Grid item xs={12} md={6} lg={4}>
-          {!loading ? (
+          {!loading && stats.provinceCompanies ? (
             <CompaniesProvinces
               sx={{ boxShadow: 3 }}
               title="Provincias destacadas"
@@ -184,7 +184,7 @@ const Dashboard = () => {
           )}
         </Grid>
         <Grid item xs={12} md={6} lg={8}>
-          {!loading ? (
+          {!loading && stats.maxProducts ? (
             <ProductsQuantities
               sx={{ boxShadow: 3 }}
               title="Mis productos destacados"
@@ -200,7 +200,7 @@ const Dashboard = () => {
           )}
         </Grid>
         <Grid item xs={12} md={6} lg={8}>
-          {!loading ? (
+          {!loading && stats.productFavorites ? (
             <FavoriteProductsQuantity
               sx={{ boxShadow: 3 }}
               title="Mis productos populares"
@@ -216,7 +216,7 @@ const Dashboard = () => {
           )}
         </Grid>
         <Grid item xs={12} md={6} lg={4}>
-          {!loading ? (
+          {!loading && stats.maxInteractions ? (
             <PopularProducts
               sx={{ boxShadow: 3 }}
               title="Mis productos con mayor interacción"
@@ -232,7 +232,7 @@ const Dashboard = () => {
           )}
         </Grid>
         <Grid item xs={12}>
-          {!loading ? (
+          {!loading && stats.maxClassifications ? (
             <ClassificationsQuantities
               sx={{ boxShadow: 3 }}
               title="Mis clasificaciones destacadas"
