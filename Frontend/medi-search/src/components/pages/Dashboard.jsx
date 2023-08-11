@@ -16,6 +16,7 @@ import CompaniesProvinces from "../custom/Dashboard/CompaniesProvinces";
 import ProductsQuantities from "../custom/Dashboard/ProductsQuantities";
 import ClassificationsQuantities from "../custom/Dashboard/ClassificationsQuantities";
 import PopularProducts from "../custom/Dashboard/PopularProducts";
+import FavoriteProductsQuantity from "../custom/Dashboard/FavoriteProductsQuantity";
 import useToast from "../../hooks/feedback/useToast";
 
 const Dashboard = () => {
@@ -200,6 +201,38 @@ const Dashboard = () => {
         </Grid>
         <Grid item xs={12} md={6} lg={8}>
           {!loading ? (
+            <FavoriteProductsQuantity
+              sx={{ boxShadow: 3 }}
+              title="Mis productos populares"
+              subheader="Mis productos con más me gustas"
+              chartData={stats.productFavorites.$values}
+            />
+          ) : (
+            <Skeleton
+              variant="rectangular"
+              height={350}
+              sx={{ borderRadius: 3 }}
+            />
+          )}
+        </Grid>
+        <Grid item xs={12} md={6} lg={4}>
+          {!loading ? (
+            <PopularProducts
+              sx={{ boxShadow: 3 }}
+              title="Mis productos con mayor interacción"
+              subheader="Mis productos con más comentarios"
+              chartData={stats.maxInteractions.$values}
+            />
+          ) : (
+            <Skeleton
+              variant="rectangular"
+              height={398}
+              sx={{ borderRadius: 3 }}
+            />
+          )}
+        </Grid>
+        <Grid item xs={12}>
+          {!loading ? (
             <ClassificationsQuantities
               sx={{ boxShadow: 3 }}
               title="Mis clasificaciones destacadas"
@@ -210,22 +243,6 @@ const Dashboard = () => {
             <Skeleton
               variant="rectangular"
               height={453}
-              sx={{ borderRadius: 3 }}
-            />
-          )}
-        </Grid>
-        <Grid item xs={12} md={6} lg={4}>
-          {!loading ? (
-            <PopularProducts
-              sx={{ boxShadow: 3 }}
-              title="Mis productos populares"
-              subheader="Mis productos con más interacciones"
-              chartData={stats.maxInteractions.$values}
-            />
-          ) : (
-            <Skeleton
-              variant="rectangular"
-              height={398}
               sx={{ borderRadius: 3 }}
             />
           )}

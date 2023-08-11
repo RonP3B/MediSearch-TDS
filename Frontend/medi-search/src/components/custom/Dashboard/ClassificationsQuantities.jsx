@@ -48,7 +48,6 @@ const ClassificationsQuantities = ({
       },
     },
     title: {
-      text: "Pyramid Chart",
       align: "middle",
     },
     xaxis: {
@@ -65,7 +64,7 @@ const ClassificationsQuantities = ({
       <Box sx={{ mx: 3 }} dir="ltr">
         <ReactApexChart
           type="bar"
-          series={[{ data: chartSeries }]}
+          series={[{ name: "Cantidad", data: chartSeries }]}
           options={chartOptions}
           height={350}
         />
