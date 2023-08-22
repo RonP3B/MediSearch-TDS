@@ -65,8 +65,6 @@ const Chat = ({ isCompany }) => {
   const defaultMessage = receiverId && product;
 
   useEffect(() => {
-    console.count("Chat.jsx"); //borrame
-
     const fetchChats = async () => {
       try {
         if (defaultMessage) {

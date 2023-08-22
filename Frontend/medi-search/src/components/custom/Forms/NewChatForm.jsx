@@ -50,9 +50,6 @@ const NewChatForm = ({
   const showToastRef = useRef(showToast);
 
   useEffect(() => {
-    console.count("NewChatForm.jsx"); //borrame
-    let isMounted = true;
-
     const fetchCompanies = async () => {
       try {
         setLoadingCompanies(true);
@@ -76,7 +73,7 @@ const NewChatForm = ({
           return true;
         });
 
-        isMounted && setCompanies(filteredCompanies);
+        setCompanies(filteredCompanies);
       } catch (error) {
         if (error.response?.data?.Error === "ERR_JWT") return;
         if (error.response.status === 404) return;
@@ -85,15 +82,11 @@ const NewChatForm = ({
           { type: "error" }
         );
       } finally {
-        isMounted && setLoadingCompanies(false);
+        setLoadingCompanies(false);
       }
     };
 
     fetchCompanies();
-
-    return () => {
-      isMounted = false;
-    };
   }, [userCompanyName, userType]);
 
   const filteredCompanies = companies.filter((company) =>

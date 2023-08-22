@@ -30,8 +30,6 @@ const Dashboard = () => {
   const showToastRef = useRef(showToast);
 
   useEffect(() => {
-    console.count("Dashboard.jsx"); //borrame
-
     const fetchStats = async () => {
       try {
         const res = await getStats();

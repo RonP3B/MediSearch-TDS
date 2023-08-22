@@ -260,8 +260,6 @@ const CompanyDetails = ({ isCompany }) => {
     useFilters(company, true);
 
   useEffect(() => {
-    console.count("CompanyDetails.jsx"); //borrame
-
     const fetchCompany = async () => {
       try {
         const res = await getCompanyById(id);

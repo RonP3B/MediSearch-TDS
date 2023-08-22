@@ -42,8 +42,6 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
   const showToastRef = useRef(showToast);
 
   useEffect(() => {
-    console.count("ProductDetails.jsx"); //borrame
-
     const fetchProduct = async () => {
       try {
         const res = await getCompanyProduct(id);

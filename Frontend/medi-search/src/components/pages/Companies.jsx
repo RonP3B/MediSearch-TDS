@@ -38,8 +38,6 @@ const Companies = ({
   } = useFilters(companies, false);
 
   useEffect(() => {
-    console.count("Companies.jsx"); //borrame
-
     const fetchCompanies = async () => {
       try {
         const res = await (companyType === "farmacia"

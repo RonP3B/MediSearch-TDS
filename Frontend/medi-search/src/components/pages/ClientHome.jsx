@@ -1,3 +1,5 @@
+//Agregar endpoint
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getLoggedProfile } from "../../services/MediSearchServices/AdminServices";

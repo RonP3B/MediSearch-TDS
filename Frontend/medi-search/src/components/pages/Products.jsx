@@ -42,8 +42,6 @@ const Products = ({
   const showToastRef = useRef(showToast);
 
   useEffect(() => {
-    console.count("products.jsx"); //borrame
-
     const fetchProducts = async () => {
       try {
         const res = await (companyType === "Laboratorio"

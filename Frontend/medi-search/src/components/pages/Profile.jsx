@@ -31,8 +31,6 @@ const Profile = ({ profileType, isCompany, isClient }) => {
   const showToastRef = useRef(showToast);
 
   useEffect(() => {
-    console.count("Profile.jsx"); //Borrame
-
     const fetchProfile = async () => {
       try {
         setLoading(true);

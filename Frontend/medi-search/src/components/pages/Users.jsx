@@ -60,8 +60,6 @@ const Users = () => {
   const confirm = useConfirm();
 
   useEffect(() => {
-    console.count("Users.jsx"); //borrame
-
     const fetchEmployees = async () => {
       try {
         const res = await getAllEmployees();

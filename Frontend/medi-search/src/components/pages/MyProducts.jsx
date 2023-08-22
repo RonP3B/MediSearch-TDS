@@ -31,8 +31,6 @@ const MyProducts = () => {
   const confirm = useConfirm();
 
   useEffect(() => {
-    console.count("Products.jsx"); //borrame
-
     const fetchProducts = async () => {
       try {
         const res = await getAllProducts();

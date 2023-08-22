@@ -49,8 +49,6 @@ const SaveProduct = ({ edit }) => {
   };
 
   useEffect(() => {
-    console.count("SaveProduct.jsx"); //borrame
-
     const fetchProduct = async () => {
       try {
         const res = await getProduct(id);

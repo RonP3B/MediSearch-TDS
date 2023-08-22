@@ -5,6 +5,8 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+//Agregar endpoint
+
 import Skeleton from "@mui/material/Skeleton";
 import Button from "@mui/material/Button";
 import Logo from "../../assets/images/Logo.png";
@@ -39,7 +41,7 @@ const Home = () => {
         const pharmaciesData = pharmaciesRes.data.$values.slice(0, 10);
         setPharmacies(pharmaciesData);
       } catch (error) {
-        //console.log(error);
+        console.log(error);
       } finally {
         setLoadingPharmacies(false);
       }
@@ -55,7 +57,7 @@ const Home = () => {
         const labsData = labsRes.data.$values.slice(0, 10);
         setLabs(labsData);
       } catch (error) {
-        //console.log(error);
+        console.log(error);
       } finally {
         setLoadingLabs(false);
       }
@@ -71,7 +73,7 @@ const Home = () => {
         const pharmProductsData = pharmProductsRes.data.$values.slice(0, 5);
         setPharmProducts(pharmProductsData);
       } catch (error) {
-        //console.log(error);
+        console.log(error);
       } finally {
         setLoadingPharmProducts(false);
       }
@@ -87,7 +89,7 @@ const Home = () => {
         const labProductsData = labProductsRes.data.$values.slice(0, 5);
         setLabProducts(labProductsData);
       } catch (error) {
-        //console.log(error);
+        console.log(error);
       } finally {
         setLoadingLabProducts(false);
       }
