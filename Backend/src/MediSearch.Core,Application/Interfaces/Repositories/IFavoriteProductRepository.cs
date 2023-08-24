@@ -8,5 +8,6 @@ namespace MediSearch.Core.Application.Interfaces.Repositories
     {
         Task<FavoriteProduct> ValidateFavorite(string product, string user);
         Task<List<FavoriteProduct>> GetAllByProduct(string product);
+        Task<List<FavoriteProduct>> GetAllByUser(string user);
     }
 }
