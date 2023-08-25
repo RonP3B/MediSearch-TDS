@@ -39,20 +39,12 @@ namespace MediSearch.Core.Application.Features.Home.Queries.GetDataClient
             var farmacies = companies.FindAll(c => c.CompanyType.Name == "Farmacia");
             var companiesFav = await _favoriteCompanyRepository.GetAllByUser(query.User.Id);
             var productsFav = await _favoriteProductRepository.GetAllByUser(query.User.Id);
+            var products = await _productRepository.GetAllAsync();
 
             List<ProductHomeDTO> lastProducts = new();
             List<ProductHomeDTO> favoriteProducts = new();
             List<CompanyDTO> favoriteCompanies = new();
             List<CompanyDTO> sameProvinceFarmacies = new();
-
-            List<Domain.Entities.Product> products = new();
-            foreach (var farmacy in farmacies)
-            {
-                foreach (var product in farmacy.Products)
-                {
-                    products.Add(product);
-                }
-            }
 
             foreach(var item in products.OrderBy(p => p.Created))
             {
