@@ -308,7 +308,7 @@ namespace MediSearch.WebApi.Controllers
             <p>Hola [Nombre],</p>
             <p>Gracias por confirmar tu cuenta. Ahora tienes acceso completo a todas las funcionalidades del sistema.</p>
             <p>Disfruta de todas las características y no dudes en ponerte en contacto con nosotros si tienes alguna pregunta o necesitas asistencia.</p>
-            <p><a href='[URL]' class='button'>Acceder al Sistema</a></p>
+            <p><a href='http://localhost:5173/' class='button'>Acceder al Sistema</a></p>
         </div>
         <div class='footer'>
             <p>Atentamente,</p>

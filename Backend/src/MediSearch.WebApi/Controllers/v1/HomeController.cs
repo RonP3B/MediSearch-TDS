@@ -12,6 +12,7 @@ using MediSearch.Core.Application.Features.Home.Queries.GetAllFavoriteProducts;
 using MediSearch.Core.Application.Features.Home.Queries.GetAllLaboratory;
 using MediSearch.Core.Application.Features.Home.Queries.GetCompanyByName;
 using MediSearch.Core.Application.Features.Home.Queries.GetCompanyDetails;
+using MediSearch.Core.Application.Features.Home.Queries.GetDataClient;
 using MediSearch.Core.Application.Features.Home.Queries.GetProduct;
 using MediSearch.Core.Application.Features.Home.Queries.GetProductsFarmacy;
 using MediSearch.Core.Application.Features.Home.Queries.GetProductsLaboratory;
@@ -359,6 +360,31 @@ namespace MediSearch.WebApi.Controllers.v1
                 UserDataAccess userData = new(_serviceScopeFactory);
                 var user = await userData.GetUserSession();
                 var result = await Mediator.Send(new GetAllFavoriteProductsQuery() { UserId = user.CompanyId != "Client" ? user.CompanyId : user.Id });
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
+        }
+
+        [Authorize(Roles = "Client")]
+        [HttpGet("get-data-client")]
+        [SwaggerOperation(
+           Summary = "Obtener datos relacionados al cliente logueado.",
+            Description = "Nos permite obtener datos para que el cliente esté al tanto de la plataforma."
+        )]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<GetDataClientQueryResponse>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetDataClient()
+        {
+            try
+            {
+                UserDataAccess userData = new(_serviceScopeFactory);
+                var user = await userData.GetUserSession();
+                var result = await Mediator.Send(new GetDataClientQuery() { User = user });
 
                 return Ok(result);
             }
