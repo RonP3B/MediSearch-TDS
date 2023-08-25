@@ -13,6 +13,7 @@ using MediSearch.Core.Application.Features.Home.Queries.GetAllLaboratory;
 using MediSearch.Core.Application.Features.Home.Queries.GetCompanyByName;
 using MediSearch.Core.Application.Features.Home.Queries.GetCompanyDetails;
 using MediSearch.Core.Application.Features.Home.Queries.GetDataClient;
+using MediSearch.Core.Application.Features.Home.Queries.GetLastData;
 using MediSearch.Core.Application.Features.Home.Queries.GetProduct;
 using MediSearch.Core.Application.Features.Home.Queries.GetProductsFarmacy;
 using MediSearch.Core.Application.Features.Home.Queries.GetProductsLaboratory;
@@ -385,6 +386,28 @@ namespace MediSearch.WebApi.Controllers.v1
                 UserDataAccess userData = new(_serviceScopeFactory);
                 var user = await userData.GetUserSession();
                 var result = await Mediator.Send(new GetDataClientQuery() { User = user });
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(e.Message) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+
+        }
+
+        [HttpGet("get-last-data")]
+        [SwaggerOperation(
+           Summary = "Obtener ultimas actualizaciones de la plataforma.",
+            Description = "Nos permite obtener los últimos datos registrados en la plataforma."
+        )]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<GetLastDataQueryResponse>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetLastData()
+        {
+            try
+            {
+                var result = await Mediator.Send(new GetLastDataQuery() { });
 
                 return Ok(result);
             }
