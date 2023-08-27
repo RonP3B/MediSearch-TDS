@@ -1,8 +1,7 @@
-//Agregar endpoint
-
-import { useState, useEffect } from "react";
+// Imports
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { getLoggedProfile } from "../../services/MediSearchServices/AdminServices";
+import useToast from "../../hooks/feedback/useToast";
 import { alpha } from "@mui/material/styles";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
@@ -14,97 +13,62 @@ import Logo from "../../assets/images/Logo.png";
 import CardsCarousel from "../custom/Carousel/CardsCarousel";
 import ProductCard from "../custom/Cards/ProductCard";
 import CompanyCard from "../custom/Cards/CompanyCard";
+import { getClientHome } from "../../services/MediSearchServices/HomeServices";
 import useAuth from "../../hooks/persistence/useAuth";
-import {
-  getAllPharmacies,
-  getFavoriteCompanies,
-  getFavoriteProducts,
-  getPharmacyProducts,
-} from "../../services/MediSearchServices/HomeServices";
 
+// Retrieves the asset URL from Vite's environment variables
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
 const ClientHome = () => {
+  // Retrieves authentication information using a custom hook
   const { auth } = useAuth();
-  const [pharmProducts, setPharmProducts] = useState([]);
-  const [pharmacies, setPharmacies] = useState([]);
-  const [favPharmacies, setFavPharmacies] = useState([]);
-  const [favProducts, setFavProducts] = useState([]);
 
+  // Defines states to hold various data
+  const [lastPharmProducts, setLastPharmProducts] = useState([]);
+  const [lastFavProducts, setLastFavProducts] = useState([]);
+  const [lastFavCompanies, setLastFavCompanies] = useState([]);
+  const [nearbyPharmacies, setNearbyPharmacies] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Access the toast function using a custom hook
+  const showToast = useToast();
+  const showToastRef = useRef(showToast);
+
+  // Fetches data when the component mounts
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const pharmProductsRes = await getPharmacyProducts();
-        const pharmProductsData = pharmProductsRes.data.$values.slice(0, 10);
-        setPharmProducts(pharmProductsData);
+        // Calls the API function to get client home data
+        const res = await getClientHome();
+
+        // Updating states with fetched data
+        setLastPharmProducts(res.data.lastProducts.$values);
+        setLastFavProducts(res.data.favoriteProducts.$values);
+        setLastFavCompanies(res.data.favoriteCompanies.$values);
+        setNearbyPharmacies(res.data.sameProvinceFarmacies.$values);
       } catch (error) {
-        setPharmProducts(null);
+        // Handle errors, showing a toast if necessary
+        if (error.response?.data?.Error === "ERR_JWT") return;
+        showToastRef.current(
+          "Ocurrió un error al obtener la información del inicio, informelo al equipo técnico",
+          { type: "error" }
+        );
+      } finally {
+        setLoading(false); // Regardless of success or failure, set loading to false
       }
     };
 
     fetchData();
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const loggedUser = await getLoggedProfile();
-        const pharmaciesRes = await getAllPharmacies();
-
-        const filteredCompanies = pharmaciesRes.data.$values.filter(
-          (company) => company.province === loggedUser.data.province
-        );
-
-        const pharmaciesData =
-          filteredCompanies.length === 0
-            ? null
-            : filteredCompanies.slice(0, 10);
-
-        setPharmacies(pharmaciesData);
-      } catch (error) {
-        setPharmacies(null);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await getFavoriteProducts();
-        const favProductsData = res.data.$values.slice(0, 10);
-        setFavProducts(favProductsData.length > 0 ? favProductsData : null);
-      } catch (error) {
-        setFavProducts(null);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  useEffect(() => {
-    const fetchPharmacies = async () => {
-      try {
-        const res = await getFavoriteCompanies();
-        const favPharmaciesData = res.data.$values.slice(0, 10);
-        setFavPharmacies(
-          favPharmaciesData.length > 0 ? favPharmaciesData : null
-        );
-      } catch (error) {
-        setFavPharmacies(null);
-      }
-    };
-
-    fetchPharmacies();
-  }, []);
-
+  // Defines a loading skeleton component
   const LoadingSkeleton = () => {
     return <Skeleton variant="rectangular" width="100%" height={200} />;
   };
 
   return (
     <Box>
+      {/* Profile header section */}
       <Grid
         container
         alignItems="center"
@@ -124,6 +88,7 @@ const ClientHome = () => {
               flexDirection: { xs: "column", sm: "row" },
             }}
           >
+            {/* User's profile image */}
             <Box
               component="img"
               sx={{
@@ -137,6 +102,8 @@ const ClientHome = () => {
               alt={auth.payload.sub}
               src={`${ASSETS}${auth.payload.UrlImage}`}
             />
+
+            {/* User's profile information */}
             <Box
               sx={{
                 border: "2px solid",
@@ -172,6 +139,8 @@ const ClientHome = () => {
             </Box>
           </Box>
         </Grid>
+
+        {/* Logo section */}
         <Grid item xs={12} sm={4} md={6} sx={{ maxHeight: "100%" }}>
           <Box
             component="img"
@@ -187,7 +156,9 @@ const ClientHome = () => {
           />
         </Grid>
       </Grid>
+
       <Container maxWidth="xl" sx={{ py: 3 }}>
+        {/* Welcome message section */}
         <Box component="section" sx={{ mb: 4 }}>
           <Typography
             variant="h4"
@@ -202,6 +173,8 @@ const ClientHome = () => {
             siguiente nivel.
           </Typography>
         </Box>
+
+        {/* Section for displaying recently added pharmaceutical products */}
         <Box component="section" sx={{ mb: 4 }}>
           <Typography
             variant="h5"
@@ -209,11 +182,11 @@ const ClientHome = () => {
           >
             Últimos productos farmacéuticos agregados
           </Typography>
-          {pharmProducts?.length === 0 ? (
+          {loading ? (
             <LoadingSkeleton />
-          ) : pharmProducts ? (
+          ) : lastPharmProducts.length > 0 ? (
             <CardsCarousel>
-              {pharmProducts.map((product) => (
+              {lastPharmProducts.map((product) => (
                 <ProductCard
                   favorite={false}
                   key={product.id}
@@ -235,6 +208,8 @@ const ClientHome = () => {
             </Typography>
           )}
         </Box>
+
+        {/* Section for displaying user's recently marked favorite products */}
         <Box component="section" sx={{ mb: 4 }}>
           <Typography
             variant="h5"
@@ -242,11 +217,11 @@ const ClientHome = () => {
           >
             Tus últimos productos favoritos
           </Typography>
-          {favProducts?.length === 0 ? (
+          {loading ? (
             <LoadingSkeleton />
-          ) : favProducts ? (
+          ) : lastFavProducts.length > 0 ? (
             <CardsCarousel>
-              {favProducts.map((product) => (
+              {lastFavProducts.map((product) => (
                 <ProductCard
                   favorite={false}
                   key={product.id}
@@ -268,6 +243,8 @@ const ClientHome = () => {
             </Typography>
           )}
         </Box>
+
+        {/* Section for displaying user's recently marked favorite pharmacies */}
         <Box component="section" sx={{ mb: 4 }}>
           <Typography
             variant="h5"
@@ -275,11 +252,11 @@ const ClientHome = () => {
           >
             Tus últimas farmacias favoritas
           </Typography>
-          {favPharmacies?.length === 0 ? (
+          {loading ? (
             <LoadingSkeleton />
-          ) : favPharmacies ? (
+          ) : lastFavCompanies.length > 0 ? (
             <CardsCarousel>
-              {favPharmacies.map((pharmacy) => (
+              {lastFavCompanies.map((pharmacy) => (
                 <CompanyCard
                   favorite={false}
                   key={pharmacy.id}
@@ -298,6 +275,8 @@ const ClientHome = () => {
             </Typography>
           )}
         </Box>
+
+        {/* Section for displaying pharmacies in the user's province */}
         <Box component="section" sx={{ mb: 4 }}>
           <Typography
             variant="h5"
@@ -305,11 +284,11 @@ const ClientHome = () => {
           >
             Farmacias en tu provincia
           </Typography>
-          {pharmacies?.length === 0 ? (
+          {loading ? (
             <LoadingSkeleton />
-          ) : pharmacies ? (
+          ) : nearbyPharmacies.length > 0 ? (
             <CardsCarousel>
-              {pharmacies.map((pharmacy) => (
+              {nearbyPharmacies.map((pharmacy) => (
                 <CompanyCard
                   favorite={false}
                   key={pharmacy.id}

@@ -1,3 +1,4 @@
+// Imports
 import CustomTabs from "../custom/Tabs/CustomTabs";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
@@ -13,6 +14,7 @@ const HomeProducts = () => {
         tabs={[
           {
             label: "de farmacias",
+            // Displaying products with specific attributes for pharmacies
             content: (
               <Products
                 isCompany={false}
@@ -23,6 +25,7 @@ const HomeProducts = () => {
           },
           {
             label: "de laboratorios",
+            // Displaying products with specific attributes for laboratories
             content: (
               <Products
                 isCompany={false}

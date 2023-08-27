@@ -1,3 +1,4 @@
+// Imports
 import { useState } from "react";
 import { Formik, Form } from "formik";
 import { telMask } from "../../utils/masks";
@@ -13,11 +14,14 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 
 const SaveUser = () => {
+  // Define a state for loading state management
   const [loading, setLoading] = useState(false);
 
+  // Retrieve formik-related data from a custom hook
   const { initialValues, validationSchema, onSubmit } =
     useEmployeeRegisterFormik(setLoading);
 
+  // Retrieve territorial data and related functions from another custom hook
   const {
     provinces,
     municipalities,

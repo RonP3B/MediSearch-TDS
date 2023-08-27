@@ -1,3 +1,4 @@
+// Imports
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { useTheme } from "@mui/material/styles";
@@ -11,18 +12,26 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 const ImageSlider = ({ images, width, height, elevation }) => {
+  // Access the current MUI theme
   const theme = useTheme();
+
+  // State to track the active step in the image slider
   const [activeStep, setActiveStep] = useState(0);
+
+  // Calculate the maximum number of steps (images)
   const maxSteps = images.length;
 
+  // Function to move to the next image
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
+  // Function to move to the previous image
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
+  // Function to handle step changes
   const handleStepChange = (step) => {
     setActiveStep(step);
   };
@@ -100,6 +109,7 @@ const ImageSlider = ({ images, width, height, elevation }) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 ImageSlider.propTypes = {
   images: PropTypes.array.isRequired,
   width: PropTypes.string.isRequired,

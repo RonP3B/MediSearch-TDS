@@ -1,3 +1,4 @@
+// Imports
 import { useState } from "react";
 import { Formik, Form } from "formik";
 import usePassRecoveryFormik from "../../hooks/formiks/usePassRecoveryFormik";
@@ -11,6 +12,7 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 
+// Component for the email input field
 const EmailInput = () => {
   return (
     <InputField
@@ -22,6 +24,7 @@ const EmailInput = () => {
   );
 };
 
+// Component for the validation code input field
 const CodeInput = () => {
   return (
     <InputField
@@ -33,6 +36,7 @@ const CodeInput = () => {
   );
 };
 
+// Component for the new password input fields
 const NewPasswordInputs = () => {
   return (
     <>
@@ -52,6 +56,7 @@ const NewPasswordInputs = () => {
   );
 };
 
+// Labels for the different steps in the password recovery process
 const stepLabels = [
   "Encontrar usuario",
   "Confirmar código",
@@ -59,10 +64,13 @@ const stepLabels = [
 ];
 
 const PasswordRecovery = () => {
+  // State variables to manage the state of password recovery process
   const [loading, setLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [codeValidated, setCodeValidated] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
+
+  // Destructure methods and values from a custom hook (usePassRecoveryFormik)
   const {
     initialValues,
     findUserValidation,
@@ -78,6 +86,7 @@ const PasswordRecovery = () => {
     setActiveStep
   );
 
+  // Determine the current state of the form based on recovery process state
   const getFormState = () => {
     if (codeValidated) {
       return {
@@ -105,6 +114,7 @@ const PasswordRecovery = () => {
     };
   };
 
+  // Get the current form state based on the recovery process
   const { component, buttonText, loadingText, onSubmit, validationSchema } =
     getFormState();
 
@@ -128,6 +138,7 @@ const PasswordRecovery = () => {
         >
           {() => (
             <Form>
+              {/* Render the appropriate input fields based on form state */}
               {component}
               <SubmitButton
                 loading={loading}

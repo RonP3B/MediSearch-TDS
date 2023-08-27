@@ -1,8 +1,10 @@
+// Imports
 import PropTypes from "prop-types";
 import { alpha, styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 
+// Creates a styled div named 'StyledIcon' using the 'styled' function
 const StyledIcon = styled("div")(({ theme }) => ({
   margin: "auto",
   display: "flex",
@@ -14,6 +16,7 @@ const StyledIcon = styled("div")(({ theme }) => ({
   marginBottom: theme.spacing(3),
 }));
 
+// Defines a functional component named 'WidgetSummary'
 const WidgetSummary = ({
   title,
   total,
@@ -60,6 +63,7 @@ const WidgetSummary = ({
   );
 };
 
+// Define PropTypes to specify expected props and their types
 WidgetSummary.propTypes = {
   color: PropTypes.string,
   Icon: PropTypes.elementType.isRequired,

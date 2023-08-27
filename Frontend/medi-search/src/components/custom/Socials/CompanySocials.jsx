@@ -1,3 +1,4 @@
+// Imports
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -27,6 +28,7 @@ const CompanySocials = ({ webSite, facebook, instagram, twitter }) => {
           },
         }}
       >
+        {/* Conditionally render webSite section */}
         {webSite && (
           <Box
             sx={{
@@ -41,6 +43,8 @@ const CompanySocials = ({ webSite, facebook, instagram, twitter }) => {
             <Typography variant="body2">Página Web</Typography>
           </Box>
         )}
+
+        {/* Conditionally render facebook section */}
         {facebook && (
           <Box
             sx={{
@@ -55,6 +59,8 @@ const CompanySocials = ({ webSite, facebook, instagram, twitter }) => {
             <Typography variant="body2">Facebook</Typography>
           </Box>
         )}
+
+        {/* Conditionally render facebook section */}
         {instagram && (
           <Box
             sx={{
@@ -69,6 +75,8 @@ const CompanySocials = ({ webSite, facebook, instagram, twitter }) => {
             <Typography variant="body2">Instagram</Typography>
           </Box>
         )}
+
+        {/* Conditionally render twitter section */}
         {twitter && (
           <Box
             sx={{
@@ -88,6 +96,7 @@ const CompanySocials = ({ webSite, facebook, instagram, twitter }) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 CompanySocials.propTypes = {
   webSite: PropTypes.string,
   facebook: PropTypes.string,

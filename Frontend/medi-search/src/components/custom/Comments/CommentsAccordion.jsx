@@ -1,3 +1,4 @@
+// Imports
 import { useState } from "react";
 import PropTypes from "prop-types";
 import Accordion from "@mui/material/Accordion";
@@ -8,13 +9,14 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CommentIcon from "@mui/icons-material/Comment";
 
 const CommentsAccordion = ({ children }) => {
+  // State to manage the expanded state of the Accordion
   const [expanded, setExpanded] = useState(true);
 
   return (
     <Accordion
       sx={{ boxShadow: 2 }}
       expanded={expanded}
-      onChange={() => setExpanded((prev) => !prev)}
+      onChange={() => setExpanded((prev) => !prev)} // Toggles the 'expanded' state on change
     >
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
@@ -40,12 +42,13 @@ const CommentsAccordion = ({ children }) => {
           },
         }}
       >
-        {children}
+        {children} {/* Renders the content passed as children */}
       </AccordionDetails>
     </Accordion>
   );
 };
 
+// Define PropTypes to specify expected props and their types
 CommentsAccordion.propTypes = {
   children: PropTypes.node.isRequired,
 };

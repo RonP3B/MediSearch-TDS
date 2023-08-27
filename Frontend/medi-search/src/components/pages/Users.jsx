@@ -1,11 +1,8 @@
+// Imports
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useConfirm } from "material-ui-confirm";
 import { getComparator, applySortFilter } from "../../utils/tableHelpers";
-import {
-  deleteEmployee,
-  getAllEmployees,
-} from "../../services/MediSearchServices/AdminServices";
 import useToast from "../../hooks/feedback/useToast";
 import useAuth from "../../hooks/persistence/useAuth";
 import UserListHead from "../custom/UserLists/UserListHead";
@@ -30,9 +27,15 @@ import TablePagination from "@mui/material/TablePagination";
 import AddIcon from "@mui/icons-material/Add";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/Delete";
+import {
+  deleteEmployee,
+  getAllEmployees,
+} from "../../services/MediSearchServices/AdminServices";
 
+// Define the ASSETS constant to hold a reference to the VITE_MEDISEARCH environment variable
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
+// Define TABLE_HEAD, an array describing the columns of the table to be displayed
 const TABLE_HEAD = [
   { id: "name", label: "Nombre", alignRight: false },
   { id: "email", label: "Correo", alignRight: false },
@@ -44,21 +47,28 @@ const TABLE_HEAD = [
   { id: "" },
 ];
 
+// Define the Users component
 const Users = () => {
-  const [users, setUsers] = useState([]);
-  const [userID, setUserID] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [open, setOpen] = useState(null);
-  const [page, setPage] = useState(0);
-  const [order, setOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState("name");
-  const [filterName, setFilterName] = useState("");
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  // State variables to manage various aspects of the component
+  const [users, setUsers] = useState([]); // Holds user data
+  const [userID, setUserID] = useState(""); // Holds the ID of the selected user
+  const [loading, setLoading] = useState(true); // Indicates whether data is loading
+  const [open, setOpen] = useState(null); // Holds anchor element for menu
+  const [page, setPage] = useState(0); // Holds the current page number
+  const [order, setOrder] = useState("asc"); // Holds the sorting order ("asc" or "desc")
+  const [orderBy, setOrderBy] = useState("name"); // Holds the property to be sorted by
+  const [filterName, setFilterName] = useState(""); // Holds the filter value for user names
+  const [rowsPerPage, setRowsPerPage] = useState(5); // Holds the number of rows per page
+
+  // Toast functionality
   const showToast = useToast();
   const showToastRef = useRef(showToast);
+
+  // custom hooks
   const { auth } = useAuth();
   const confirm = useConfirm();
 
+  // Fetch employees data from the server
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
@@ -79,11 +89,13 @@ const Users = () => {
     };
 
     fetchEmployees();
-  }, [showToastRef]);
+  }, []);
 
+  // Function to delete a user
   const deleteUser = async () => {
-    setOpen(null);
+    setOpen(null); // Close the menu
 
+    // Check user's role before proceeding with deletion
     if (auth.payload.roles !== "SuperAdmin") {
       return showToast("No tienes permiso para realizar esta acción", {
         type: "warning",
@@ -91,14 +103,20 @@ const Users = () => {
     }
 
     try {
+      // Show confirmation dialog before deleting
       await confirm({
         title: "Confirmación",
         description: "¿Estás seguro que deseas eliminar a este usuario?",
         cancellationText: "Cancelar",
       });
 
+      // Delete user from the server
       await deleteEmployee(userID);
+
+      // Remove the deleted user from the local state
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userID));
+
+      // Feedback
       showToast("Usuario eliminado con éxito", { type: "success" });
     } catch (error) {
       if (error?.response)
@@ -109,6 +127,7 @@ const Users = () => {
     }
   };
 
+  // Functions to handle UI interactions and state changes
   const handleOpenMenu = (event, id) => {
     setOpen(event.currentTarget);
     setUserID(id);
@@ -138,15 +157,18 @@ const Users = () => {
     setFilterName(event.target.value);
   };
 
+  // Calculate the number of empty rows for pagination
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - users.length) : 0;
 
+  // Apply sorting and filtering to the user list
   const filteredUsers = applySortFilter(
     users,
     getComparator(order, orderBy),
     filterName
   );
 
+  // Check if no users are found after applying filters
   const isNotFound = !filteredUsers.length && !!filterName;
 
   return (
@@ -160,6 +182,7 @@ const Users = () => {
         <Typography variant="h5" sx={{ fontWeight: "bold" }}>
           Usuarios
         </Typography>
+        {/* Display "Nuevo Usuario" button for SuperAdmin */}
         {auth.payload.roles === "SuperAdmin" && (
           <Button
             component={Link}
@@ -185,6 +208,7 @@ const Users = () => {
               onRequestSort={handleRequestSort}
             />
             <TableBody>
+              {/* Show loading indicator during loading */}
               {loading ? (
                 <TableRow>
                   <TableCell align="center" colSpan={8} sx={{ py: 3 }}>
@@ -199,9 +223,11 @@ const Users = () => {
                   </TableCell>
                 </TableRow>
               ) : (
+                // Display user rows
                 filteredUsers
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => {
+                    // Destructure user data
                     const {
                       id,
                       firstName,
@@ -215,10 +241,13 @@ const Users = () => {
                       urlImage,
                     } = row;
 
+                    // Skip rendering the current user's data
                     if (id === auth.payload.uid) return null;
 
+                    // Render user row
                     return (
                       <TableRow hover key={id} tabIndex={-1} role="checkbox">
+                        {/* User data cells */}
                         <TableCell component="th" scope="row" padding="none">
                           <Stack
                             direction="row"
@@ -241,6 +270,8 @@ const Users = () => {
                         <TableCell align="left">{province}</TableCell>
                         <TableCell align="left">{municipality}</TableCell>
                         <TableCell align="left">{address}</TableCell>
+
+                        {/* Action cell with "More" button */}
                         <TableCell align="right">
                           <IconButton
                             size="large"
@@ -254,12 +285,16 @@ const Users = () => {
                     );
                   })
               )}
+
+              {/* Show empty rows if necessary */}
               {emptyRows > 0 && (
                 <TableRow style={{ height: 53 * emptyRows }}>
                   <TableCell colSpan={8} />
                 </TableRow>
               )}
             </TableBody>
+
+            {/* Display "Usuario no encontrado" message */}
             {isNotFound && (
               <TableBody>
                 <TableRow>
@@ -282,6 +317,8 @@ const Users = () => {
                 </TableRow>
               </TableBody>
             )}
+
+            {/* Display "No hay ningún usuario registrado" message */}
             {users.length === 1 &&
               users[0].id === auth.payload.uid &&
               !isNotFound &&
@@ -324,6 +361,8 @@ const Users = () => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Card>
+
+      {/* Popover for user menu */}
       <Popover
         open={Boolean(open)}
         anchorEl={open}

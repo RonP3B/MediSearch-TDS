@@ -1,15 +1,18 @@
+// Imports
 import SimpleBar from "simplebar-react";
 import "simplebar-react/dist/simplebar.min.css";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import { alpha, styled } from "@mui/material/styles";
 
+// Create a styled component for the root container of the scrollbar
 const StyledRootScrollbar = styled("div")(() => ({
   flexGrow: 1,
   height: "100%",
   overflow: "hidden",
 }));
 
+// Create a styled component for the scrollbar itself using SimpleBar
 const StyledScrollbar = styled(SimpleBar)(({ theme }) => ({
   maxHeight: "100%",
   "& .simplebar-scrollbar": {
@@ -34,7 +37,9 @@ const StyledScrollbar = styled(SimpleBar)(({ theme }) => ({
   },
 }));
 
+// Define a ScrollBar component
 const ScrollBar = ({ children, sx, customRef, ...props }) => {
+  // Determine if the user agent is from a mobile device
   const userAgent =
     typeof navigator === "undefined" ? "SSR" : navigator.userAgent;
 
@@ -43,6 +48,7 @@ const ScrollBar = ({ children, sx, customRef, ...props }) => {
       userAgent
     );
 
+  // If the device is mobile, render a basic scrollable container
   if (isMobile) {
     return (
       <Box
@@ -66,6 +72,7 @@ const ScrollBar = ({ children, sx, customRef, ...props }) => {
     );
   }
 
+  // If not on a mobile device, render a styled scrollbar using SimpleBar
   return (
     <StyledRootScrollbar>
       <StyledScrollbar
@@ -81,6 +88,7 @@ const ScrollBar = ({ children, sx, customRef, ...props }) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 ScrollBar.propTypes = {
   sx: PropTypes.object,
   children: PropTypes.node,

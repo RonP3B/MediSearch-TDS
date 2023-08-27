@@ -1,3 +1,4 @@
+// Imports
 import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { Formik, Form } from "formik";
@@ -13,7 +14,10 @@ import InputField from "../custom/InputFields/InputField";
 import PasswordInputField from "../custom/InputFields/PasswordInputField";
 
 const Login = () => {
+  // Loading state
   const [loading, setLoading] = useState(false);
+
+  // Using a custom hook to manage formik configuration and submission logic
   const { initialValues, validationSchema, onSubmit } =
     useLoginFormik(setLoading);
 

@@ -1,3 +1,4 @@
+// Imports
 import PropTypes from "prop-types";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -15,10 +16,15 @@ const NoChats = ({ msg, chatSection, Icon, handleButton }) => {
         height: "60vh",
       }}
     >
+      {/* Display the provided Icon with appropriate styling */}
       <Icon sx={{ fontSize: 80, color: "primary.main" }} />
+
+      {/* Display the provided message */}
       <Typography variant="h6" sx={{ mt: 2 }}>
         {msg}
       </Typography>
+
+      {/* Conditionally display additional message based on chatSection */}
       {chatSection && (
         <Typography variant="subtitle1">
           Selecciona de tus conversaciones existentes o crea una nueva
@@ -36,6 +42,7 @@ const NoChats = ({ msg, chatSection, Icon, handleButton }) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 NoChats.propTypes = {
   msg: PropTypes.string.isRequired,
   chatSection: PropTypes.bool.isRequired,

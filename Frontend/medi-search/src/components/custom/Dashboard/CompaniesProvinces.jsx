@@ -1,3 +1,4 @@
+// Imports
 import PropTypes from "prop-types";
 import ReactApexChart from "react-apexcharts";
 import { useTheme } from "@mui/material/styles";
@@ -13,10 +14,14 @@ const CompaniesProvinces = ({
   chartData,
   ...props
 }) => {
+  // Gets the current MUI theme using the useTheme hook
   const theme = useTheme();
+
+  // Extracts province labels and quantity values from chartData
   const chartLabels = chartData.map((data) => data.province);
   const chartSeries = chartData.map((data) => data.quantity);
 
+  // Defines chart options using a custom hook
   const chartOptions = useChart({
     colors: chartColors,
     labels: chartLabels,
@@ -52,6 +57,7 @@ const CompaniesProvinces = ({
   );
 };
 
+// Define PropTypes to specify expected props and their types
 CompaniesProvinces.propTypes = {
   title: PropTypes.string.isRequired,
   subheader: PropTypes.string.isRequired,

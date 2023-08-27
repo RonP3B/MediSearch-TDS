@@ -1,3 +1,4 @@
+// Imports
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import useToast from "../feedback/useToast";
@@ -7,15 +8,18 @@ import {
   findUserReset,
 } from "../../services/MediSearchServices/AccountServices";
 
+// Custom hook for handling password recovery form using Formik
 const usePassRecoveryFormik = (
-  setLoading,
-  setEmailSent,
-  setCodeValidated,
-  setActiveStep
+  setLoading, // Function to set loading state
+  setEmailSent, // Function to set email sent state
+  setCodeValidated, // Function to set code validation state
+  setActiveStep // Function to set active step state
 ) => {
-  const navigate = useNavigate();
-  const showToast = useToast();
+  // Import necessary hooks
+  const navigate = useNavigate(); // React Router hook for navigation
+  const showToast = useToast(); // Custom toast notification hook
 
+  // Initial values for the form fields
   const initialValues = {
     email: "",
     code: "",
@@ -23,6 +27,7 @@ const usePassRecoveryFormik = (
     confirmNewPassword: "",
   };
 
+  // Form validation schema for finding user by email
   const findUserValidation = Yup.object({
     email: Yup.string()
       .trim()
@@ -30,10 +35,12 @@ const usePassRecoveryFormik = (
       .matches(/^\S+@\S+\.\S+$/, "Formato de correo electrónico inválido"),
   });
 
+  // Form validation schema for validating the received code
   const codeValidation = Yup.object({
     code: Yup.string().trim().required("Código requerido"),
   });
 
+  // Form validation schema for setting a new password
   const newPassValidation = Yup.object({
     newPassword: Yup.string()
       .required("Nueva contraseña requerida")
@@ -59,6 +66,7 @@ const usePassRecoveryFormik = (
       .oneOf([Yup.ref("newPassword"), null], "Las contraseñas deben coincidir"),
   });
 
+  // Function to handle submission when finding a user
   const onSubmitFindUser = async (values) => {
     try {
       setLoading(true);
@@ -75,6 +83,7 @@ const usePassRecoveryFormik = (
     }
   };
 
+  // Function to handle submission of the validation code
   const onSubmitCode = async (values) => {
     try {
       setLoading(true);
@@ -88,6 +97,7 @@ const usePassRecoveryFormik = (
     }
   };
 
+  // Function to handle submission of the new password
   const onSubmitNewPassword = async (values) => {
     try {
       setLoading(true);
@@ -104,6 +114,7 @@ const usePassRecoveryFormik = (
     }
   };
 
+  // Return all the necessary values and functions as an object
   return {
     initialValues,
     findUserValidation,

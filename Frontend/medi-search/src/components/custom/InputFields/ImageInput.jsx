@@ -1,9 +1,11 @@
+// Imports
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import DefaultAvatar from "../../../assets/images/DefaultAvatar.jpg";
 import FileInputField from "./FileInputField";
 
 const ImageInput = (props) => {
+  // Destructuring the props for ease of use
   const {
     name,
     label,
@@ -14,9 +16,15 @@ const ImageInput = (props) => {
     variant,
   } = props;
 
+  // Defines a function to handle changes when a file is selected
   const handleFileChange = (file) => {
+    // Creates a FileReader to read the contents of the selected file
     const reader = new FileReader();
+
+    // When the reader finishes loading, set the avatar image with the loaded data URL
     reader.onload = (e) => setAvatarImage(e.target.result);
+
+    // Reads the selected file as a data URL
     reader.readAsDataURL(file);
   };
 
@@ -48,7 +56,7 @@ const ImageInput = (props) => {
             mr: 1,
           }}
           alt="Avatar"
-          src={avatarImage || DefaultAvatar}
+          src={avatarImage || DefaultAvatar} // Display the avatarImage if available, otherwise use DefaultAvatar
         />
       </Box>
       <FileInputField
@@ -64,6 +72,7 @@ const ImageInput = (props) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 ImageInput.propTypes = {
   name: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,

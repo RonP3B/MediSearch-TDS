@@ -1,12 +1,14 @@
+// Imports
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import useToast from "../feedback/useToast";
 import { registerEmployee } from "../../services/MediSearchServices/AdminServices";
 
 const useEmployeeRegisterFormik = (setLoading) => {
-  const navigate = useNavigate();
-  const showToast = useToast();
+  const navigate = useNavigate(); // Hook for navigation between routes
+  const showToast = useToast(); // Hook for displaying toasts
 
+  // Initial values for the registration form fields
   const initialValues = {
     firstName: "",
     lastName: "",
@@ -18,6 +20,7 @@ const useEmployeeRegisterFormik = (setLoading) => {
     role: "",
   };
 
+  // Validation schema for the registration form fields
   const validationSchema = Yup.object({
     firstName: Yup.string().trim().required("Nombre requerido"),
     lastName: Yup.string().trim().required("Apellido requerido"),
@@ -38,18 +41,19 @@ const useEmployeeRegisterFormik = (setLoading) => {
       .matches(/^\S+@\S+\.\S+$/, "Formato de correo electrónico inválido"),
   });
 
+  // Function to handle form submission
   const onSubmit = async (values) => {
     try {
-      setLoading(true);
-      await registerEmployee(values);
-      navigate("/company/users");
+      setLoading(true); // Set loading state
+      await registerEmployee(values); // Call the function to register the employee
+      navigate("/company/users"); // Navigate to the specified route on success
       showToast("Usuario registrado", {
-        type: "success",
+        type: "success", // Show a success toast message
       });
     } catch (error) {
-      showToast(error.response.data, { type: "error" });
+      showToast(error.response.data, { type: "error" }); // Show an error toast message with the response data
     } finally {
-      setLoading(false);
+      setLoading(false); // Reset loading state
     }
   };
 

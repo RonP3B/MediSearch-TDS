@@ -1,3 +1,4 @@
+// Imports
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useConfirm } from "material-ui-confirm";
@@ -22,48 +23,66 @@ import {
 } from "../../services/MediSearchServices/ProductServices";
 
 const MyProducts = () => {
-  const [products, setProducts] = useState([]);
-  const [filterTerm, setFilterTerm] = useState("");
-  const [showFilter, setShowFilter] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const showToast = useToast();
-  const showToastRef = useRef(showToast);
+  const [products, setProducts] = useState([]); // State to hold the list of products
+  const [filterTerm, setFilterTerm] = useState(""); // State to hold the filter term for searching products
+  const [showFilter, setShowFilter] = useState(false); // State to control whether the filter is shown
+  const [loading, setLoading] = useState(true); // State to manage loading state while fetching products
+
+  const showToast = useToast(); // Access the toast function using a custom hook
+  const showToastRef = useRef(showToast); // Create a reference to the showToast function using a ref
+
+  // Access the confirm function using a custom hook
   const confirm = useConfirm();
 
+  // Fetch products from a data source when the component mounts
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        // Fetch products using an API call (getAllProducts)
         const res = await getAllProducts();
+
+        // Update the products state with the fetched data
         setProducts(res.data.$values);
       } catch (error) {
+        // Ignored errors
         if (error.response?.data?.Error === "ERR_JWT") return;
         if (error.response.status === 404) return;
+
+        // Show an error toast if fetching products fails
         showToastRef.current(
           "Ocurrió un error al obtener los productos, informelo al equipo técnico",
           { type: "error" }
         );
       } finally {
+        // Set loading to false regardless of success or failure
         setLoading(false);
       }
     };
 
     fetchProducts();
-  }, [showToastRef]);
+  }, []);
 
   const handleDelete = async (id) => {
     try {
+      // Show a confirmation dialog using the confirm function
       await confirm({
         title: "Confirmación",
         description: "¿Estás seguro que deseas eliminar este producto?",
         cancellationText: "Cancelar",
       });
+
+      // Delete the product using an API call (deleteProduct)
       await deleteProduct(id);
 
+      // Update the products state by removing the deleted product
       setProducts((prevProducts) =>
         prevProducts.filter((product) => product.id !== id)
       );
+
+      // Show a success toast after successful deletion
       showToast("Producto eliminado con éxito", { type: "success" });
     } catch (error) {
+      // Handle errors during product deletion
       if (error?.response)
         showToast(
           "Ocurrió un error al intentar eliminar un producto, informelo al equipo técnico",
@@ -72,12 +91,14 @@ const MyProducts = () => {
     }
   };
 
+  // Filter the products based on the filter term
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(filterTerm.toLowerCase())
   );
 
   return (
     <Container maxWidth="xl" sx={{ mb: 2 }}>
+      {/* Title and "Nuevo producto" button */}
       <Stack
         direction="row"
         alignItems="center"
@@ -96,6 +117,8 @@ const MyProducts = () => {
           Nuevo producto
         </Button>
       </Stack>
+
+      {/* Loading spinner */}
       {loading && (
         <Box
           sx={{
@@ -108,6 +131,8 @@ const MyProducts = () => {
           <CircularProgress />
         </Box>
       )}
+
+      {/* Filtering and search */}
       {!loading && products.length > 0 && (
         <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
           <IconButton
@@ -140,6 +165,8 @@ const MyProducts = () => {
           />
         </Box>
       )}
+
+      {/* No products found */}
       {products.length === 0 && !loading && (
         <Box
           sx={{
@@ -167,6 +194,8 @@ const MyProducts = () => {
           </Button>
         </Box>
       )}
+
+      {/* Display filtered or no-match products */}
       {products.length > 0 &&
         (filteredProducts.length > 0 ? (
           <Grid container spacing={2}>
@@ -184,6 +213,7 @@ const MyProducts = () => {
             ))}
           </Grid>
         ) : (
+          /* No products match filter */
           <Box
             sx={{
               display: "flex",

@@ -1,3 +1,4 @@
+// Imports
 import PropTypes from "prop-types";
 import ReactApexChart from "react-apexcharts";
 import Box from "@mui/material/Box";
@@ -11,9 +12,13 @@ const ClassificationsQuantities = ({
   subheader,
   ...props
 }) => {
+  // Extracts 'classification' values from the 'chartData' array to create chart labels
   const chartLabels = chartData.map((data) => data.classification);
+
+  // Extracts 'quantity' values from the 'chartData' array to create chart series data
   const chartSeries = chartData.map((data) => data.quantity);
 
+  // Define chart options using a custom hook
   const chartOptions = useChart({
     chart: {
       type: "bar",
@@ -73,6 +78,7 @@ const ClassificationsQuantities = ({
   );
 };
 
+// Define PropTypes to specify expected props and their types
 ClassificationsQuantities.propTypes = {
   title: PropTypes.string.isRequired,
   subheader: PropTypes.string.isRequired,

@@ -1,3 +1,4 @@
+// Imports
 import PropTypes from "prop-types";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -8,6 +9,7 @@ const FormNavigation = (props) => {
     <Box
       sx={{ display: "flex", marginTop: "2", justifyContent: "space-between" }}
     >
+      {/* Button for going back, visibility depends on 'hasPrevious' */}
       <Button
         type="button"
         onClick={props.onBackClick}
@@ -25,6 +27,7 @@ const FormNavigation = (props) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 FormNavigation.propTypes = {
   hasPrevious: PropTypes.bool.isRequired,
   onBackClick: PropTypes.func.isRequired,

@@ -1,8 +1,11 @@
+// Imports the 'styled' function from the "@mui/material/styles" package
 import { styled } from "@mui/material/styles";
 
+// Defines constants for chart and legend heights
 const CHART_HEIGHT = 372;
 const LEGEND_HEIGHT = 72;
 
+// Defines a styled component using the 'styled' function
 const StyledChartWrapper = styled("div")(({ theme }) => ({
   height: CHART_HEIGHT,
   marginTop: theme.spacing(5),

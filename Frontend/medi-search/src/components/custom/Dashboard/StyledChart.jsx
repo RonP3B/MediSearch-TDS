@@ -1,12 +1,15 @@
+// Imports
 import { alpha, useTheme } from "@mui/material/styles";
 import { GlobalStyles } from "@mui/material";
 
 const bgBlur = (props) => {
+  // Properties from 'props' object with default values
   const color = props?.color || "#000000";
   const blur = props?.blur || 6;
   const opacity = props?.opacity || 0.8;
   const imgUrl = props?.imgUrl;
 
+  // If 'imgUrl' is provided, create a background with blur
   if (imgUrl) {
     return {
       position: "relative",
@@ -21,11 +24,12 @@ const bgBlur = (props) => {
         height: "100%",
         backdropFilter: `blur(${blur}px)`,
         WebkitBackdropFilter: `blur(${blur}px)`,
-        backgroundColor: alpha(color, opacity),
+        backgroundColor: alpha(color, opacity), // 'alpha' function to set color opacity
       },
     };
   }
 
+  // If 'imgUrl' is not provided, create a backdrop blur effect
   return {
     backdropFilter: `blur(${blur}px)`,
     WebkitBackdropFilter: `blur(${blur}px)`,
@@ -34,8 +38,9 @@ const bgBlur = (props) => {
 };
 
 const StyledChart = () => {
-  const theme = useTheme();
+  const theme = useTheme(); // Gets the current MUI theme using 'useTheme' hook
 
+  // Create global styles using 'GlobalStyles' component
   const inputGlobalStyles = (
     <GlobalStyles
       styles={{

@@ -1,3 +1,4 @@
+// Imports
 import { useState, useEffect, useRef } from "react";
 import { Formik, Form } from "formik";
 import useProfileFormik from "../../../hooks/formiks/useProfileFormik";
@@ -18,6 +19,7 @@ import { telMask } from "../../../utils/masks";
 import SubmitButton from "../Buttons/SubmitButton";
 import ScrollBar from "../Scrollbar/ScrollBar";
 
+// Gets the ASSETS URL from environment variables for images
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
 const EditProfileForm = ({
@@ -27,15 +29,21 @@ const EditProfileForm = ({
   setEdited,
   profileType,
 }) => {
+  // States for the avatar image URL and user image name
   const [avatarImage, setAvatarImage] = useState(
     `${ASSETS}${profile.urlImage}`
   );
   const [userImgName, setUserImgName] = useState(
     profile.urlImage.split("/").pop()
   );
+
+  // State for tracking loading status
   const [loading, setLoading] = useState(false);
+
+  // Reference to the form
   const formRef = useRef(null);
 
+  // Gets Formik configurations
   const userFormik = useProfileFormik(setLoading, handleClose, setEdited);
   const companyFormik = useCompanyProfileFormik(
     setLoading,
@@ -43,9 +51,11 @@ const EditProfileForm = ({
     setEdited
   );
 
+  // Determines the appropriate Formik configurations based on profileType
   const { getInitialValues, validationSchema, onSubmit } =
     profileType === "perfil" ? userFormik : companyFormik;
 
+  // States and functions related to territorial data from useTerritorial custom hook
   const {
     provinces,
     municipalities,
@@ -56,10 +66,12 @@ const EditProfileForm = ({
     loadingMunicipalities,
   } = useTerritorial();
 
+  // Sets the selected province when provinces are available and profile's province changes
   useEffect(() => {
     provinces.length > 0 && setSelectedProvince(profile.province);
   }, [profile.province, provinces, setSelectedProvince]);
 
+  // Function to programmatically submit the form
   const submitForm = () => {
     formRef.current.dispatchEvent(
       new Event("submit", { cancelable: true, bubbles: true })
@@ -81,6 +93,7 @@ const EditProfileForm = ({
       <Divider />
       <ScrollBar>
         <DialogContent>
+          {/* Formik handles form state, validation, and submission */}
           <Formik
             initialValues={getInitialValues(profile)}
             onSubmit={onSubmit}
@@ -88,6 +101,7 @@ const EditProfileForm = ({
           >
             {() => (
               <Form ref={formRef}>
+                {/* Input fields for user profile or company details */}
                 <ImageInput
                   name={profileType === "perfil" ? "image" : "logo"}
                   label={
@@ -101,6 +115,7 @@ const EditProfileForm = ({
                   setAvatarImage={setAvatarImage}
                   variant="standard"
                 />
+                {/* Conditionally render user profile or company details */}
                 {profileType === "perfil" ? (
                   <>
                     <InputField
@@ -250,6 +265,7 @@ const EditProfileForm = ({
   );
 };
 
+// Define PropTypes to specify expected props and their types
 EditProfileForm.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,

@@ -1,3 +1,4 @@
+// Imports
 import FilterDrawerContainer from "./FilterDrawerContainer";
 import PropTypes from "prop-types";
 import Stack from "@mui/material/Stack";
@@ -5,6 +6,7 @@ import Box from "@mui/material/Box";
 import CompanyFilterContent from "./CompanyFilterContent";
 
 const CompanyFilterDrawer = (props) => {
+  // Destructures the necessary props: openFilter, onCloseFilter, onClear, and filters
   const { openFilter, onCloseFilter, onClear, filters } = props;
 
   return (
@@ -22,6 +24,7 @@ const CompanyFilterDrawer = (props) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 CompanyFilterDrawer.propTypes = {
   openFilter: PropTypes.bool.isRequired,
   onCloseFilter: PropTypes.func.isRequired,

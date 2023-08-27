@@ -1,3 +1,4 @@
+// Imports
 import CompanyFilterContent from "./CompanyFilterContent";
 import FilterDrawerContainer from "./FilterDrawerContainer";
 import Stack from "@mui/material/Stack";
@@ -16,6 +17,7 @@ import handleSelectedCheckboxes from "../../../utils/handleSelectedCheckboxes";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 
 const ProductFilterDrawer = (props) => {
+  // Destructuring props
   const { openFilter, onCloseFilter, onClear, filters, companyFilters } = props;
 
   return (
@@ -26,6 +28,7 @@ const ProductFilterDrawer = (props) => {
     >
       <Box sx={{ flex: 1, overflowY: "auto", overflowX: "hidden", p: 3 }}>
         <Stack spacing={3}>
+          {/* Section for Clasificaciones */}
           <Box>
             <Typography variant="subtitle1" gutterBottom>
               Clasificaciones:
@@ -52,12 +55,16 @@ const ProductFilterDrawer = (props) => {
               </ScrollBar>
             </FilterOptionsFormGroup>
           </Box>
+
+          {/* Section for Categorías */}
           <Box>
             <Typography variant="subtitle1" gutterBottom>
               Categorías:
             </Typography>
             <FilterOptionsFormGroup>
+              {/* Conditional rendering based on selected categories */}
               {filters.categories.values.length === 0 ? (
+                // Message displayed when there are not any classifications selected
                 <Box
                   sx={{
                     minHeight: "100%",
@@ -73,6 +80,7 @@ const ProductFilterDrawer = (props) => {
                   </Typography>
                 </Box>
               ) : (
+                // Scrollable checkboxes for selecting categories
                 <ScrollBar sx={{ display: "flex", flexDirection: "column" }}>
                   {filters.categories.values.map((name, index) => (
                     <FormControlLabel
@@ -97,7 +105,11 @@ const ProductFilterDrawer = (props) => {
               )}
             </FilterOptionsFormGroup>
           </Box>
+
+          {/* Conditional rendering of CompanyFilterContent component */}
           {companyFilters && <CompanyFilterContent filters={filters} />}
+
+          {/* Section for Nombre del producto */}
           <Box>
             <TextField
               label="Nombre del producto"
@@ -107,6 +119,8 @@ const ProductFilterDrawer = (props) => {
               fullWidth
             />
           </Box>
+
+          {/* Section for Rango de precio */}
           <Box>
             <Typography variant="subtitle1" gutterBottom>
               Rango de precio:
@@ -121,6 +135,8 @@ const ProductFilterDrawer = (props) => {
               min={1}
             />
           </Box>
+
+          {/* Section for Con cantidades a partir de */}
           <Box>
             <Typography variant="subtitle1" gutterBottom>
               Con cantidades a partir de:
@@ -140,6 +156,7 @@ const ProductFilterDrawer = (props) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 ProductFilterDrawer.propTypes = {
   openFilter: PropTypes.bool.isRequired,
   onCloseFilter: PropTypes.func.isRequired,

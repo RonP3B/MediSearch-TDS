@@ -1,3 +1,4 @@
+// Imports
 import PropTypes from "prop-types";
 import ReactApexChart from "react-apexcharts";
 import Box from "@mui/material/Box";
@@ -11,9 +12,11 @@ const FavoriteProductsQuantity = ({
   subheader,
   ...props
 }) => {
+  // Extracts labels and quantity values from chartData
   const chartLabels = chartData.map((data) => data.product);
   const chartSeries = chartData.map((data) => data.quantity);
 
+  // Defines chart options using a custom hook
   const chartOptions = useChart({
     chart: {
       type: "donut",
@@ -36,6 +39,7 @@ const FavoriteProductsQuantity = ({
   );
 };
 
+// Define PropTypes to specify expected props and their types
 FavoriteProductsQuantity.propTypes = {
   title: PropTypes.string.isRequired,
   subheader: PropTypes.string.isRequired,

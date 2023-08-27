@@ -1,3 +1,4 @@
+// Imports
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import useToast from "../../hooks/feedback/useToast";
@@ -20,19 +21,28 @@ import { getProduct } from "../../services/MediSearchServices/ProductServices";
 import ImageSlider from "../custom/ImageSlider/ImageSlider";
 import useClassificationCategories from "../../hooks/useClassificationCategories";
 
+// Retrieves the asset URL from Vite's environment variables
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
 const SaveProduct = ({ edit }) => {
+  // Extract parameters and navigation function
   const { id } = useParams();
   const navigate = useNavigate();
+
+  // State management
   const [product, setProduct] = useState(null);
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(edit);
   const [submitLoading, setSubmitLoading] = useState(false);
+
+  // Toast notification
   const showToast = useToast();
   const showToastRef = useRef(showToast);
+
+  // Formik form reference
   const formikRef = useRef(null);
 
+  // Custom hooks for classification and categories
   const {
     classifications,
     categories,
@@ -41,26 +51,30 @@ const SaveProduct = ({ edit }) => {
     classificationsSelect,
   } = useClassificationCategories();
 
+  // Custom hooks for form handling
   const { getInitialValues, getEditInitialValues, validationSchema, onSubmit } =
     useProductFormik(setSubmitLoading, edit);
 
+  // Function to reset form values
   const resetFormValues = () => {
     formikRef.current.resetForm();
   };
 
+  // Fetch product data when in edit mode
   useEffect(() => {
     const fetchProduct = async () => {
       try {
+        // Get data
         const res = await getProduct(id);
         const productRes = res.data;
 
+        // Update product and images state based on fetched data
         setProduct(productRes);
         setImages(productRes.urlImages.$values.map((url) => ASSETS + url));
       } catch (error) {
+        // Handle errors related to product retrieval
         if (error.response?.data?.Error === "ERR_JWT") return;
-
         if (error.response.status === 404) return navigate(-1);
-
         showToastRef.current(
           "Ocurrió un error al obtener la información del producto, informelo al equipo técnico",
           { type: "error" }
@@ -70,15 +84,18 @@ const SaveProduct = ({ edit }) => {
       }
     };
 
+    // Fetch product data when in edit mode
     edit && fetchProduct();
-  }, [showToastRef, edit, id, navigate, setSelectedClassification]);
+  }, [edit, id, navigate, setSelectedClassification]);
 
+  // Update selected classification if product data change
   useEffect(() => {
     if (product && edit) {
       setSelectedClassification(product.classification);
     }
   }, [product, setSelectedClassification, edit]);
 
+  // Reset form values and images when switching between edit and create mode
   useEffect(() => {
     if (!edit) {
       resetFormValues();
@@ -88,9 +105,12 @@ const SaveProduct = ({ edit }) => {
 
   return (
     <Container maxWidth="xl" sx={{ mb: 2 }}>
+      {/* Display title based on edit mode */}
       <Typography variant="h5" sx={{ mb: 5, fontWeight: "bold" }}>
         {edit ? "Editar" : "Crear"} producto
       </Typography>
+
+      {/* Display "Volver" button when in edit mode */}
       {edit && (
         <Button
           startIcon={<KeyboardBackspaceIcon />}
@@ -99,6 +119,8 @@ const SaveProduct = ({ edit }) => {
           Volver
         </Button>
       )}
+
+      {/* Show loading spinner if data is being loaded */}
       {loading ? (
         <Box
           sx={{
@@ -112,6 +134,7 @@ const SaveProduct = ({ edit }) => {
         </Box>
       ) : (
         <>
+          {/* Display selected images with optional image slider */}
           {images.length > 0 && (
             <Box
               sx={{
@@ -120,6 +143,7 @@ const SaveProduct = ({ edit }) => {
                 flexDirection: "column",
               }}
             >
+              {/* Show image slider if multiple images are selected */}
               {images.length > 1 ? (
                 <>
                   <Typography sx={{ fontWeight: "bold" }}>
@@ -133,6 +157,7 @@ const SaveProduct = ({ edit }) => {
                   />
                 </>
               ) : (
+                // * Show single selected image *
                 <>
                   <Typography sx={{ fontWeight: "bold" }}>
                     Imagen seleccionada:
@@ -151,6 +176,8 @@ const SaveProduct = ({ edit }) => {
               )}
             </Box>
           )}
+
+          {/* Formik form for creating/editing product */}
           <Formik
             enableReinitialize={true}
             initialValues={
@@ -257,6 +284,7 @@ const SaveProduct = ({ edit }) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 SaveProduct.propTypes = {
   edit: PropTypes.bool.isRequired,
 };

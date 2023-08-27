@@ -1,9 +1,12 @@
+// Imports
 import PropTypes from "prop-types";
 import CustomCard from "./CustomCard";
 
+// Gets the ASSETS URL from environment variables for images
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
 const ProductCard = (props) => {
+  // Destructures  properties from the 'props' object
   const {
     product,
     maintenance,
@@ -15,16 +18,20 @@ const ProductCard = (props) => {
     favoritesManager,
   } = props;
 
+  // Destructures specific properties from the 'product' object
   const { name, price, quantity, id, urlImages, nameCompany, province } =
     product;
 
+  // Gets the URL for the first image of the product
   const firstImageUrl = `${ASSETS}${urlImages.$values[0]}`;
 
+  // Prepares an array of objects containing label and value for card information
   const cardInfo = [
     { label: "Precio", val: `$${price}` },
     { label: "Cantidad disponible", val: quantity },
   ];
 
+  // If 'showCompanyInfo' is true, add company-related information to cardInfo
   if (showCompanyInfo) {
     cardInfo.push({ label: companyType, val: nameCompany });
     cardInfo.push({ label: "Provincia", val: province });
@@ -45,6 +52,7 @@ const ProductCard = (props) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 ProductCard.propTypes = {
   product: PropTypes.object.isRequired,
   handleDelete: PropTypes.func,

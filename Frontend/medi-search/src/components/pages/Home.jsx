@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
+// Imports
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import useToast from "../../hooks/feedback/useToast";
 import { alpha } from "@mui/material/styles";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-//Agregar endpoint
-
 import Skeleton from "@mui/material/Skeleton";
 import Button from "@mui/material/Button";
 import Logo from "../../assets/images/Logo.png";
@@ -15,89 +15,47 @@ import Pharm from "../../assets/images/farmacia.png";
 import Client from "../../assets/images/cliente.png";
 import CardsCarousel from "../custom/Carousel/CardsCarousel";
 import ProductCard from "../custom/Cards/ProductCard";
-
-import {
-  getAllLabs,
-  getAllPharmacies,
-  getLabProducts,
-  getPharmacyProducts,
-} from "../../services/MediSearchServices/HomeServices";
 import CompanyCard from "../custom/Cards/CompanyCard";
+import { getHome } from "../../services/MediSearchServices/HomeServices";
 
 const Home = () => {
+  // Initialize state variables using the useState hook
   const [pharmacies, setPharmacies] = useState([]);
-  const [loadingPharmacies, setLoadingPharmacies] = useState(true);
-  const [labs, setLabs] = useState([]);
-  const [loadingLabs, setLoadingLabs] = useState(true);
+  const [laboratories, setLaboratories] = useState([]);
   const [pharmProducts, setPharmProducts] = useState([]);
-  const [loadingPharmProducts, setLoadingPharmProducts] = useState(true);
   const [labProducts, setLabProducts] = useState([]);
-  const [loadingLabProducts, setLoadingLabProducts] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const showToast = useToast();
+  const showToastRef = useRef(showToast);
 
+  // Use the useEffect hook to fetch data when the component mounts
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const pharmaciesRes = await getAllPharmacies();
-        const pharmaciesData = pharmaciesRes.data.$values.slice(0, 10);
-        setPharmacies(pharmaciesData);
+        // Fetch data from an API using the getHome function
+        const res = await getHome();
+
+        // Update state variables with fetched data
+        setPharmacies(res.data.lastFarmacies.$values);
+        setLaboratories(res.data.lastLaboratories.$values);
+        setPharmProducts(res.data.lastProductsFarmacies.$values);
+        setLabProducts(res.data.lastProductsLaboratories.$values);
       } catch (error) {
-        console.log(error);
+        // If an error occurs during data fetching, display an error toast
+        showToastRef.current(
+          "Ocurrió un error al obtener la información del inicio, informelo al equipo técnico",
+          { type: "error" }
+        );
       } finally {
-        setLoadingPharmacies(false);
+        // Regardless of success or failure, mark data loading as complete
+        setLoading(false);
       }
     };
 
     fetchData();
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const labsRes = await getAllLabs();
-        const labsData = labsRes.data.$values.slice(0, 10);
-        setLabs(labsData);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoadingLabs(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const pharmProductsRes = await getPharmacyProducts();
-        const pharmProductsData = pharmProductsRes.data.$values.slice(0, 5);
-        setPharmProducts(pharmProductsData);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoadingPharmProducts(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const labProductsRes = await getLabProducts();
-        const labProductsData = labProductsRes.data.$values.slice(0, 5);
-        setLabProducts(labProductsData);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoadingLabProducts(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
+  // Styling object for a role widget
   const roleWidgetSx = {
     margin: "0 auto",
     width: "fit-content",
@@ -107,12 +65,14 @@ const Home = () => {
     p: 5,
   };
 
+  // Component for rendering a loading skeleton
   const LoadingSkeleton = () => {
     return <Skeleton variant="rectangular" width="100%" height={200} />;
   };
 
   return (
     <Box>
+      {/* Home header */}
       <Grid
         container
         sx={{
@@ -122,6 +82,7 @@ const Home = () => {
         }}
         alignItems="center"
       >
+        {/* Home header text content */}
         <Grid item xs={12} sm={8} md={6} p={2} sx={{ maxHeight: "100%" }}>
           <Box
             sx={{
@@ -159,6 +120,8 @@ const Home = () => {
             </Box>
           </Box>
         </Grid>
+
+        {/* Home header icon */}
         <Grid item xs={12} sm={4} md={6} sx={{ maxHeight: "100%" }}>
           <Box
             component="img"
@@ -174,7 +137,9 @@ const Home = () => {
           />
         </Grid>
       </Grid>
+
       <Container maxWidth="xl" sx={{ py: 3 }}>
+        {/* Section: Introduction */}
         <Box component="section" sx={{ mb: 4 }}>
           <Typography
             variant="h4"
@@ -187,6 +152,8 @@ const Home = () => {
             búsqueda, 80% resultados.
           </Typography>
         </Box>
+
+        {/* Section: User Roles */}
         <Box
           component="section"
           sx={{
@@ -195,6 +162,7 @@ const Home = () => {
             justifyContent: "space-evenly",
           }}
         >
+          {/* User Role: Cliente */}
           <Box sx={{ textAlign: "center", margin: 1 }}>
             <Box sx={roleWidgetSx}>
               <Box
@@ -212,6 +180,8 @@ const Home = () => {
               necesidades y mejora tu bienestar con MediSearch.
             </Typography>
           </Box>
+
+          {/* User Role: Farmacia */}
           <Box sx={{ textAlign: "center", margin: 1 }}>
             <Box sx={roleWidgetSx}>
               <Box
@@ -229,6 +199,8 @@ const Home = () => {
               optimiza operaciones y ofrece atención farmacéutica excepcional.
             </Typography>
           </Box>
+
+          {/* User Role: Laboratorio */}
           <Box sx={{ textAlign: "center", margin: 1 }}>
             <Box sx={roleWidgetSx}>
               <Box
@@ -247,6 +219,8 @@ const Home = () => {
             </Typography>
           </Box>
         </Box>
+
+        {/* Section: Latest Registered Pharmacies */}
         <Box component="section" sx={{ mb: 4 }}>
           <Typography
             variant="h5"
@@ -254,9 +228,10 @@ const Home = () => {
           >
             Últimas farmacias registradas en nuestra plataforma
           </Typography>
-          {loadingPharmacies ? (
+          {/* Display loading or pharmacies */}
+          {loading ? (
             <LoadingSkeleton />
-          ) : pharmacies ? (
+          ) : pharmacies.length > 0 ? (
             <CardsCarousel>
               {pharmacies.map((pharmacy) => (
                 <CompanyCard
@@ -268,6 +243,7 @@ const Home = () => {
               ))}
             </CardsCarousel>
           ) : (
+            // No data render
             <Typography
               variant="h4"
               color="GrayText"
@@ -277,6 +253,8 @@ const Home = () => {
             </Typography>
           )}
         </Box>
+
+        {/* Section: Latest Registered Laboratories */}
         <Box component="section" sx={{ mb: 4 }}>
           <Typography
             variant="h5"
@@ -284,11 +262,12 @@ const Home = () => {
           >
             Últimos laboratorios registrados en nuestra plataforma
           </Typography>
-          {loadingLabs ? (
+          {/* Display loading or laboratories */}
+          {loading ? (
             <LoadingSkeleton />
-          ) : labs ? (
+          ) : laboratories.length > 0 ? (
             <CardsCarousel>
-              {labs.map((lab) => (
+              {laboratories.map((lab) => (
                 <CompanyCard
                   key={lab.id}
                   favorite={false}
@@ -298,6 +277,7 @@ const Home = () => {
               ))}
             </CardsCarousel>
           ) : (
+            // No data render
             <Typography
               variant="h4"
               color="GrayText"
@@ -307,6 +287,8 @@ const Home = () => {
             </Typography>
           )}
         </Box>
+
+        {/* Section: Latest Added Products */}
         <Box component="section" sx={{ mb: 4 }}>
           <Typography
             variant="h5"
@@ -314,9 +296,10 @@ const Home = () => {
           >
             Últimos productos agregados en nuestra plataforma
           </Typography>
-          {loadingPharmProducts || loadingLabProducts ? (
+          {/* Display loading or lab and pharmacy products */}
+          {loading ? (
             <LoadingSkeleton />
-          ) : labProducts || pharmProducts ? (
+          ) : labProducts.length > 0 || pharmProducts.length > 0 ? (
             <CardsCarousel>
               {labProducts?.map((product) => (
                 <ProductCard
@@ -340,6 +323,7 @@ const Home = () => {
               ))}
             </CardsCarousel>
           ) : (
+            // No data render
             <Typography
               variant="h4"
               color="GrayText"

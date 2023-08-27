@@ -1,3 +1,4 @@
+// Imports
 import PropTypes from "prop-types";
 import ScrollBar from "../Scrollbar/ScrollBar";
 import Drawer from "@mui/material/Drawer";
@@ -60,6 +61,7 @@ const FilterDrawerContainer = ({
   );
 };
 
+// Define PropTypes to specify expected props and their types
 FilterDrawerContainer.propTypes = {
   children: PropTypes.node.isRequired,
   openFilter: PropTypes.bool.isRequired,

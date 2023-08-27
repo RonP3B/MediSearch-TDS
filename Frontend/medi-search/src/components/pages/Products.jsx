@@ -1,3 +1,4 @@
+// Imports
 import { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import useToast from "../../hooks/feedback/useToast";
@@ -10,14 +11,14 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Button from "@mui/material/Button";
 import TuneIcon from "@mui/icons-material/Tune";
 import ProductFilterDrawer from "../custom/FilterDrawers/ProductFilterDrawer";
-import {
-  getLabProducts,
-  getPharmacyProducts,
-} from "../../services/MediSearchServices/HomeServices";
 import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantityLimits";
 import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 import ProductCard from "../custom/Cards/ProductCard";
 import useFilters from "../../hooks/filters/useFilters";
+import {
+  getLabProducts,
+  getPharmacyProducts,
+} from "../../services/MediSearchServices/HomeServices";
 
 const Products = ({
   isCompany,
@@ -27,9 +28,16 @@ const Products = ({
   initialValues,
   initialHighestPrice,
 }) => {
+  // State variables for managing component behavior
   const [openFilter, setOpenFilter] = useState(false);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Toast notification function and ref
+  const showToast = useToast();
+  const showToastRef = useRef(showToast);
+
+  // Custom filters and data management from useFilters hook
   const {
     filters,
     clearFilters,
@@ -38,28 +46,32 @@ const Products = ({
     setMaxPrice,
   } = useFilters(products, true);
 
-  const showToast = useToast();
-  const showToastRef = useRef(showToast);
-
+  // Fetch and set products on component mount or when values change
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        // Fetch products based on the company type
         const res = await (companyType === "Laboratorio"
           ? getLabProducts()
           : getPharmacyProducts());
 
         const productsArr = res.data.$values;
 
+        // Calculate the highest price among fetched products
         const highestPrice = productsArr.reduce((max, product) => {
           return product.price > max ? product.price : max;
         }, 0);
 
+        // Update state with fetched products and filter parameters
         setProducts(productsArr);
         setPriceFilter([1, highestPrice]);
         setMaxPrice(highestPrice);
       } catch (error) {
+        // Ignored errors
         if (error.response?.data?.Error === "ERR_JWT") return;
         if (error.response.status === 404) return;
+
+        // Show error toast for failed product fetch
         showToastRef.current(
           "Ocurrió un error al obtener las productos, informelo al equipo técnico",
           { type: "error" }
@@ -69,6 +81,7 @@ const Products = ({
       }
     };
 
+    // If initial values are provided, use them; otherwise, fetch products
     if (initialValues) {
       setProducts(initialValues.values);
       setPriceFilter([1, initialHighestPrice]);
@@ -85,16 +98,19 @@ const Products = ({
     setPriceFilter,
   ]);
 
+  // Function to open the filter options
   const handleOpenFilter = () => {
     setOpenFilter(true);
   };
 
+  // Function to close the filter options
   const handleCloseFilter = () => {
     setOpenFilter(false);
   };
 
   return (
     <Container maxWidth="xl" sx={{ mb: 2, mt: isCompany ? 0 : 3 }}>
+      {/* Drawer for product filters */}
       <ProductFilterDrawer
         openFilter={openFilter}
         onCloseFilter={handleCloseFilter}
@@ -102,6 +118,8 @@ const Products = ({
         filters={filters}
         companyFilters={true}
       />
+
+      {/* Stack for arranging title and filter button */}
       <Stack
         direction="row"
         alignItems="center"
@@ -127,6 +145,8 @@ const Products = ({
           </Button>
         )}
       </Stack>
+
+      {/* Loading state */}
       {loading && (
         <Box
           sx={{
@@ -139,6 +159,8 @@ const Products = ({
           <CircularProgress />
         </Box>
       )}
+
+      {/* No products state */}
       {!loading && products.length === 0 && (
         <Box
           sx={{
@@ -158,6 +180,8 @@ const Products = ({
           </Typography>
         </Box>
       )}
+
+      {/* Display products */}
       {products.length > 0 &&
         (filteredProducts.length > 0 ? (
           <Grid container spacing={2}>
@@ -183,6 +207,7 @@ const Products = ({
             ))}
           </Grid>
         ) : (
+          // No products match filter criteria
           <Box
             sx={{
               display: "flex",
@@ -202,6 +227,7 @@ const Products = ({
   );
 };
 
+// Define PropTypes to specify expected props and their types
 Products.propTypes = {
   logged: PropTypes.bool.isRequired,
   isCompany: PropTypes.bool.isRequired,

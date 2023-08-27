@@ -1,3 +1,4 @@
+// Imports
 import { useState, useEffect, useRef } from "react";
 import { alpha } from "@mui/material/styles";
 import { useSearchParams } from "react-router-dom";
@@ -33,18 +34,24 @@ import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import MessageBox from "../custom/Chat/MessageBox";
 import NoChats from "../custom/Chat/NoChat";
+import NewChatForm from "../custom/Forms/NewChatForm";
 import {
   getChat,
   getChats,
   sendMessage,
 } from "../../services/MediSearchServices/ChatServices";
-import NewChatForm from "../custom/Forms/NewChatForm";
 
+// Retrieves the asset URL from Vite's environment variables
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
 const Chat = ({ isCompany }) => {
+  // Extracts the 'auth' object from the custom hook 'useAuth', which likely provides authentication-related data
   const { auth } = useAuth();
+
+  // Retrieves the search parameters from the current URL
   const [searchParams] = useSearchParams();
+
+  // States
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -55,18 +62,36 @@ const Chat = ({ isCompany }) => {
   const [filterChat, setFilterChat] = useState("");
   const [pollingId, setPollingId] = useState("");
   const [modalOpened, setModalOpened] = useState(false);
+
+  // Retrieves a function 'showToast' to display toast notifications
   const showToast = useToast();
+
+  // Creates a reference to the 'showToast' function using useRef
   const showToastRef = useRef(showToast);
+
+  // Creates a reference to a scroll bar element, likely for scrolling purposes
   const scrollBarRef = useRef(null);
+
+  // Creates a reference to a file input element, likely for file uploading
   const fileInputRef = useRef(null);
+
+  // Checks if the screen width is below 900px using a media query
   const isScreenBelow900px = useMediaQuery("(max-width:899px)");
+
+  // Retrieves the 'receiverId' from the search parameters in the URL
   const receiverId = searchParams.get("receiverId");
+
+  // Retrieves the 'product' from the search parameters in the URL
   const product = searchParams.get("product");
+
+  // Sets 'defaultMessage' to 'true' if both 'receiverId' and 'product' are available, otherwise 'false'
   const defaultMessage = receiverId && product;
 
   useEffect(() => {
+    // Define an asynchronous function to fetch chat data
     const fetchChats = async () => {
       try {
+        // If there's a defaultMessage, send a predefined message
         if (defaultMessage) {
           await sendMessage({
             idReceiver: receiverId,
@@ -74,22 +99,30 @@ const Chat = ({ isCompany }) => {
           });
         }
 
+        // Fetch the chats data from the server
         const res = await getChats();
         const chatsArr = res.data.$values;
+
+        // Update the state with the fetched chat data
         setChats(chatsArr);
 
+        // If there's a defaultMessage, select the chat associated with the receiverId
         defaultMessage &&
           setSelectedChat(
             chatsArr.find((chat) => chat.receiverId === receiverId)
           );
       } catch (error) {
+        // Ignored errors
         if (error.response?.data?.Error === "ERR_JWT") return;
         if (error.response.status === 404) return;
+
+        // Show an error toast if there's any other error
         showToastRef.current(
           "Ocurrió un error al cargar la sección de chats, informelo al equipo técnico",
           { type: "error" }
         );
       } finally {
+        // Set loading state to false regardless of success or error
         setLoadingChats(false);
       }
     };
@@ -97,17 +130,22 @@ const Chat = ({ isCompany }) => {
     fetchChats();
   }, [defaultMessage, product, receiverId]);
 
+  // This useEffect block is responsible for fetching chat messages and setting up polling when a new chat is selected.
   useEffect(() => {
     const handleChatSelection = async () => {
       try {
         setLoadingChatMessages(true);
+
+        // Fetch chat messages for the selected chat
         const res = await getChat(selectedChat.id);
         setMessages(res.data.messages.$values);
 
+        // Set up polling to fetch new messages at regular intervals
         const pollingId = setInterval(async () => {
           await getMessagesByPolling(selectedChat);
         }, 10000);
 
+        // Store the polling ID to clear it later
         setPollingId(pollingId);
       } catch (error) {
         showToastRef(
@@ -119,52 +157,71 @@ const Chat = ({ isCompany }) => {
       }
     };
 
+    // If a selected chat exists, trigger the chat selection handler
     selectedChat && handleChatSelection();
   }, [selectedChat]);
 
+  // This useEffect block is responsible for scrolling the chat window to the latest message.
   useEffect(() => {
     const current = scrollBarRef.current;
 
     if (current) {
+      // Scroll to the bottom of the chat window to display the latest message
       const scrollElement = current?.contentWrapperEl || current;
       scrollElement.scrollTop = scrollElement.scrollHeight;
     }
   }, [messages]);
 
+  // This useEffect block cleans up the polling interval when the component unmounts.
   useEffect(() => {
     return () => {
+      // Clear the polling interval when the component unmounts
       clearInterval(pollingId);
     };
   }, [pollingId]);
 
+  // Filter chats based on a filter criteria
   const filteredChats = chats.filter((chat) =>
     chat.name.toLowerCase().includes(filterChat.toLowerCase())
   );
 
+  // Filter chats based on a filter criteria
   const openNewChatModal = () => {
     setModalOpened(true);
   };
 
+  // Function to handle going back from a chat view
   const handleArrowBack = () => {
     setSelectedChat(null);
     clearInterval(pollingId);
   };
 
+  // Get the hour in 'hh:mm' format from a given date
   const getHour = (dateVal) => {
     const date = new Date(dateVal);
     return `${date.toISOString().substring(11, 16)}`;
   };
 
+  // Function to send a message
   const sendMsg = async (msg) => {
     try {
+      // Determine if the message is a file or text
       const isFile = typeof msg === "object";
+
+      // Prepare the message payload
       const values = { idReceiver: selectedChat.receiverId };
       values[isFile ? "file" : "content"] = msg;
 
+      // Set sending message state to true
       setSendingMsg(true);
+
+      // Send the message and receive a response
       const res = await sendMessage(values);
 
+      // Update the messages state with the new message
       setMessages((currArr) => [res.data, ...currArr]);
+
+      // Clear the message input if it's not a file
       !isFile && setMsgToSend("");
     } catch (error) {
       showToast(
@@ -176,10 +233,16 @@ const Chat = ({ isCompany }) => {
     }
   };
 
+  // Function to fetch messages through polling
   const getMessagesByPolling = async (chat) => {
     try {
+      // Fetch messages for the given chat
       const res = await getChat(chat.id);
+
+      // Extract new messages from the response
       const newMessages = res.data.messages.$values;
+
+      // Update the messages state if there are new messages
       setMessages((prevMessages) => {
         if (newMessages.length > prevMessages.length) {
           return newMessages;
@@ -490,6 +553,7 @@ const Chat = ({ isCompany }) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 Chat.propTypes = {
   isCompany: PropTypes.bool.isRequired,
 };

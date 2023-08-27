@@ -1,3 +1,4 @@
+// Imports
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { getStats } from "../../services/MediSearchServices/AdminServices";
@@ -20,23 +21,36 @@ import FavoriteProductsQuantity from "../custom/Dashboard/FavoriteProductsQuanti
 import useToast from "../../hooks/feedback/useToast";
 
 const Dashboard = () => {
+  // Initialize state for holding statistical data and loading status
   const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Get the current theme using a custom hook
   const theme = useTheme();
+
+  // Get authentication data from the AuthContext using a custom hook
   const { auth } = useAuth();
+
+  // Extract company-related information from the authentication payload
   const companyType = auth.payload.RoleType;
   const companyName = auth.payload.Company;
+
+  // Get a reference to the toast function from useToast custom hook
   const showToast = useToast();
   const showToastRef = useRef(showToast);
 
+  // Use an effect to fetch statistical data and handle errors
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const res = await getStats();
         setStats(res.data);
       } catch (error) {
+        // Ignored errors
         if (error.response?.data?.Error === "ERR_JWT") return;
         if (error.response.status === 404) return;
+
+        // Shows toast
         showToastRef.current(
           "Ocurrió un error al obtener las estadisticas, informelo al equipo técnico",
           { type: "error" }
@@ -47,17 +61,21 @@ const Dashboard = () => {
     };
 
     fetchStats();
-  }, [showToastRef]);
+  }, []);
 
   return (
     <Container maxWidth="xl" sx={{ mb: 2 }}>
+      {/* Title and introductory text */}
       <Typography variant="h5" sx={{ fontWeight: "bold" }}>
         Bienvenido a MediSearch
       </Typography>
       <Typography variant="subtitle2" sx={{ mb: 5 }}>
         Manejo de &apos;{companyName}&apos;
       </Typography>
+
+      {/* Grid layout with various data widgets */}
       <Grid container spacing={3} alignItems="center">
+        {/* Widget for displaying 'Mis productos' */}
         <Grid
           item
           xs={12}
@@ -67,6 +85,7 @@ const Dashboard = () => {
           to={!loading ? "/company/my-products" : ""}
           sx={{ textDecoration: "none" }}
         >
+          {/* Display My Products widget if not loading and stats available */}
           {!loading && stats.myProducts !== undefined ? (
             <WidgetSummary
               title="Mis productos"
@@ -74,6 +93,7 @@ const Dashboard = () => {
               Icon={ShoppingCartIcon}
             />
           ) : (
+            // Display a skeleton loading animation
             <Skeleton
               variant="rectangular"
               height={262}
@@ -81,6 +101,8 @@ const Dashboard = () => {
             />
           )}
         </Grid>
+
+        {/* Widget for displaying 'Mis usuarios' */}
         <Grid
           item
           xs={12}
@@ -90,6 +112,7 @@ const Dashboard = () => {
           to={!loading ? "/company/users" : ""}
           sx={{ textDecoration: "none" }}
         >
+          {/* Display My Users widget if not loading and stats available */}
           {!loading && stats.myUsers ? (
             <WidgetSummary
               title="Mis usuarios"
@@ -98,6 +121,7 @@ const Dashboard = () => {
               Icon={GroupIcon}
             />
           ) : (
+            // Display a skeleton loading animation
             <Skeleton
               variant="rectangular"
               height={262}
@@ -105,6 +129,8 @@ const Dashboard = () => {
             />
           )}
         </Grid>
+
+        {/* Widget for displaying 'Laboratorios' or 'Farmacias' */}
         <Grid
           item
           xs={12}
@@ -118,6 +144,7 @@ const Dashboard = () => {
           }
           sx={{ textDecoration: "none" }}
         >
+          {/* Display Labs or Pharmacies widget if not loading and stats available */}
           {!loading && stats.opposingCompanies !== undefined ? (
             <WidgetSummary
               title={companyType === "Farmacia" ? "Laboratorios" : "Farmacias"}
@@ -126,6 +153,7 @@ const Dashboard = () => {
               Icon={BusinessIcon}
             />
           ) : (
+            // Display a skeleton loading animation
             <Skeleton
               variant="rectangular"
               height={262}
@@ -133,6 +161,8 @@ const Dashboard = () => {
             />
           )}
         </Grid>
+
+        {/* Widget for displaying 'Chats activos' */}
         <Grid
           item
           xs={12}
@@ -142,6 +172,7 @@ const Dashboard = () => {
           to={!loading ? "/company/chat" : ""}
           sx={{ textDecoration: "none" }}
         >
+          {/* Display Active Chats widget if not loading and stats available */}
           {!loading && stats.myChats !== undefined ? (
             <WidgetSummary
               title="Chats activos"
@@ -150,6 +181,7 @@ const Dashboard = () => {
               Icon={MarkUnreadChatAltIcon}
             />
           ) : (
+            // Display a skeleton loading animation
             <Skeleton
               variant="rectangular"
               height={262}
@@ -157,7 +189,10 @@ const Dashboard = () => {
             />
           )}
         </Grid>
+
+        {/* Widget for displaying 'Provincias destacadas' */}
         <Grid item xs={12} md={6} lg={4}>
+          {/* Display Provinces with Most Companies widget if not loading and stats available */}
           {!loading && stats.provinceCompanies ? (
             <CompaniesProvinces
               sx={{ boxShadow: 3 }}
@@ -174,6 +209,7 @@ const Dashboard = () => {
               ]}
             />
           ) : (
+            // Display a skeleton loading animation
             <Skeleton
               variant="rectangular"
               height={500}
@@ -181,7 +217,10 @@ const Dashboard = () => {
             />
           )}
         </Grid>
+
+        {/* Widget for displaying 'Mis productos destacados' */}
         <Grid item xs={12} md={6} lg={8}>
+          {/* Display My Top Products widget if not loading and stats available */}
           {!loading && stats.maxProducts ? (
             <ProductsQuantities
               sx={{ boxShadow: 3 }}
@@ -190,6 +229,7 @@ const Dashboard = () => {
               chartData={stats.maxProducts.$values}
             />
           ) : (
+            // Display a skeleton loading animation
             <Skeleton
               variant="rectangular"
               height={467}
@@ -197,7 +237,10 @@ const Dashboard = () => {
             />
           )}
         </Grid>
+
+        {/* Widget for displaying 'Mis productos populares' */}
         <Grid item xs={12} md={6} lg={8}>
+          {/* Display My Popular Products widget if not loading and stats available */}
           {!loading && stats.productFavorites ? (
             <FavoriteProductsQuantity
               sx={{ boxShadow: 3 }}
@@ -206,6 +249,7 @@ const Dashboard = () => {
               chartData={stats.productFavorites.$values}
             />
           ) : (
+            // Display a skeleton loading animation
             <Skeleton
               variant="rectangular"
               height={350}
@@ -213,7 +257,10 @@ const Dashboard = () => {
             />
           )}
         </Grid>
+
+        {/* Widget for displaying 'Mis productos con mayor interacción' */}
         <Grid item xs={12} md={6} lg={4}>
+          {/* Display My Products with Most Interactions widget if not loading and stats available */}
           {!loading && stats.maxInteractions ? (
             <PopularProducts
               sx={{ boxShadow: 3 }}
@@ -222,6 +269,7 @@ const Dashboard = () => {
               chartData={stats.maxInteractions.$values}
             />
           ) : (
+            // Display a skeleton loading animation
             <Skeleton
               variant="rectangular"
               height={398}
@@ -229,7 +277,10 @@ const Dashboard = () => {
             />
           )}
         </Grid>
+
+        {/* Widget for displaying 'Mis clasificaciones destacadas' */}
         <Grid item xs={12}>
+          {/* Display My Top Classifications widget if not loading and stats available */}
           {!loading && stats.maxClassifications ? (
             <ClassificationsQuantities
               sx={{ boxShadow: 3 }}
@@ -238,6 +289,7 @@ const Dashboard = () => {
               chartData={stats.maxClassifications.$values}
             />
           ) : (
+            // Display a skeleton loading
             <Skeleton
               variant="rectangular"
               height={453}

@@ -1,5 +1,4 @@
-//Agregar endpoint
-
+// Imports
 import { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
@@ -9,31 +8,38 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Products from "./Products";
 import Companies from "./Companies";
+import useToast from "../../hooks/feedback/useToast";
 import {
   getFavoriteCompanies,
   getFavoriteProducts,
 } from "../../services/MediSearchServices/HomeServices";
-import useToast from "../../hooks/feedback/useToast";
 
 const Favorites = ({ isPharmacy, isLab }) => {
+  // State hooks to hold various data and loading indicators
   const [products, setProducts] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [highestPrice, setHighestPrice] = useState(0);
   const [loadingProducts, setLoadingPropducts] = useState(!isLab);
   const [loadingCompanies, setLoadingCompanies] = useState(true);
+
+  // Access to the toast notification function
   const showToast = useToast();
   const showToastRef = useRef(showToast);
 
+  // Effect to fetch and set favorite products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        // Fetch favorite products
         const res = await getFavoriteProducts();
         const productsArr = res.data.$values;
 
+        // Find the highest price among favorite products
         const highestPrice = productsArr.reduce((max, product) => {
           return product.price > max ? product.price : max;
         }, 0);
 
+        // Modify the array of products to include an 'id' property
         const modifiedArray = productsArr.map((item) => {
           const { productId, ...rest } = item;
           return {
@@ -42,27 +48,36 @@ const Favorites = ({ isPharmacy, isLab }) => {
           };
         });
 
+        // Set the highest price and the modified product array
         setHighestPrice(highestPrice);
         setProducts(modifiedArray);
       } catch (error) {
+        // Ignored error
         if (error.response?.data?.Error === "ERR_JWT") return;
+
+        // Show toast
         showToastRef.current(
           "Ocurrió un error al obtener tus productos favoritos, informelo al equipo técnico",
           { type: "error" }
         );
       } finally {
+        // Regardless of success or failure, indicate that loading is complete
         setLoadingPropducts(false);
       }
     };
 
+    // Fetch products if not in lab mode
     !isLab && fetchProducts();
   }, [isLab]);
 
+  // Effect to fetch and set favorite companies
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
+        // Fetch favorite companies
         const res = await getFavoriteCompanies();
 
+        // Modify the array of companies to include an 'id' property
         const modifiedArray = res.data.$values.map((item) => {
           const { companyId, ...rest } = item;
           return {
@@ -71,14 +86,19 @@ const Favorites = ({ isPharmacy, isLab }) => {
           };
         });
 
+        // Set the modified company array
         setCompanies(modifiedArray);
       } catch (error) {
+        // Ignored error
         if (error.response?.data?.Error === "ERR_JWT") return;
+
+        // Show toast
         showToastRef.current(
           "Ocurrió un error al obtener tus farmacias favoritas, informelo al equipo técnico",
           { type: "error" }
         );
       } finally {
+        // Regardless of success or failure, indicate that loading is complete
         setLoadingCompanies(false);
       }
     };
@@ -145,6 +165,7 @@ const Favorites = ({ isPharmacy, isLab }) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 Favorites.propTypes = {
   isPharmacy: PropTypes.bool.isRequired,
   isLab: PropTypes.bool.isRequired,

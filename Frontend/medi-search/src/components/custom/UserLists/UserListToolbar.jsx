@@ -1,3 +1,4 @@
+// Imports
 import PropTypes from "prop-types";
 import { styled } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
@@ -5,6 +6,7 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
 
+// Define a styled component for the root toolbar
 const StyledRoot = styled(Toolbar)(({ theme }) => ({
   height: 96,
   display: "flex",
@@ -12,6 +14,7 @@ const StyledRoot = styled(Toolbar)(({ theme }) => ({
   padding: theme.spacing(0, 1, 0, 3),
 }));
 
+// Define a styled component for the search input
 const StyledSearch = styled(OutlinedInput)(({ theme }) => ({
   width: 240,
   transition: theme.transitions.create(["box-shadow", "width"], {
@@ -27,6 +30,7 @@ const StyledSearch = styled(OutlinedInput)(({ theme }) => ({
   },
 }));
 
+// Functional component for the user list toolbar
 const UserListToolbar = ({ filterName, onFilterName }) => {
   return (
     <StyledRoot>
@@ -46,6 +50,7 @@ const UserListToolbar = ({ filterName, onFilterName }) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 UserListToolbar.propTypes = {
   filterName: PropTypes.string,
   onFilterName: PropTypes.func,

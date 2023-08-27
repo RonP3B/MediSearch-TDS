@@ -1,7 +1,9 @@
+// Imports
 import Carousel from "react-multi-carousel";
 import PropTypes from "prop-types";
 
 const CardsCarousel = ({ children }) => {
+  // Returns the Carousel component with various configuration options
   return (
     <Carousel
       css={{
@@ -66,6 +68,7 @@ const CardsCarousel = ({ children }) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 CardsCarousel.propTypes = {
   children: PropTypes.node.isRequired,
 };

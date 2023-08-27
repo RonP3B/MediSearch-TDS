@@ -1,3 +1,4 @@
+// Imports
 import { useState } from "react";
 import useUserSignupFormik from "../../../hooks/formiks/useUserSignupFormik";
 import { Formik, Form } from "formik";
@@ -12,9 +13,12 @@ import MaskedInputField from "../InputFields/MaskedInputField";
 import useTerritorial from "../../../hooks/useTerritorial";
 
 const UserForm = () => {
+  // State variables to manage loading state, avatar image, and user image name
   const [loading, setLoading] = useState(false);
   const [avatarImage, setAvatarImage] = useState(null);
   const [userImgName, setUserImgName] = useState("");
+
+  // Custom hook 'useUserSignupFormik' returns necessary values for Formik setup
   const { initialUserValues, validationUserSchema, onSubmitUser } =
     useUserSignupFormik(setLoading);
 
@@ -26,6 +30,7 @@ const UserForm = () => {
     >
       {() => (
         <Form>
+          {/* Custom component for uploading user images */}
           <ImageInput
             name="image"
             label="Imagen del usuario"
@@ -34,7 +39,9 @@ const UserForm = () => {
             avatarImage={avatarImage}
             setAvatarImage={setAvatarImage}
           />
+          {/* Custom component containing other user form fields */}
           <UserFormContent />
+          {/* Submit button with loading state and customization */}
           <SubmitButton
             loading={loading}
             text="Registrar"
@@ -49,6 +56,7 @@ const UserForm = () => {
 };
 
 export const UserFormContent = () => {
+  // Use the custom hook to get territorial data and related functions
   const {
     provinces,
     municipalities,

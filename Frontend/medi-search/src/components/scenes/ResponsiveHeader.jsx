@@ -1,3 +1,4 @@
+// Imports
 import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
@@ -23,25 +24,39 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import useAuth from "../../hooks/persistence/useAuth";
 import useLogout from "../../hooks/persistence/useLogout";
 
+// Define the ASSETS constant using Vite's environment variable for media search
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
 const ResponsiveHeader = ({ pages, settings, logged }) => {
+  // Get the current color mode from the context
   const colorMode = useContext(ColorModeContext);
+
+  // Set up state variables for navigation and user menus
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+
+  // Access authentication data from the custom useAuth hook
   const { auth } = useAuth();
+
+  // Access the logout function from the useLogout hook
   const logoutUser = useLogout();
 
+  // Event handlers to open navigation and user menus
   const handleOpenNavMenu = (event) => setAnchorElNav(event.currentTarget);
   const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
+
+  // Event handlers to close navigation and user menus
   const handleCloseNavMenu = () => setAnchorElNav(null);
   const handleCloseUserMenu = () => setAnchorElUser(null);
+
+  // Event handler to toggle color mode
   const handleToggleColorMode = () => colorMode.toggleColorMode();
 
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
+          {/* Logo and title */}
           <Typography
             variant="h6"
             noWrap
@@ -60,7 +75,9 @@ const ResponsiveHeader = ({ pages, settings, logged }) => {
             MediSearch
           </Typography>
 
+          {/* Navigation menu for small screens */}
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+            {/* Hamburger icon to toggle navigation menu */}
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -71,6 +88,8 @@ const ResponsiveHeader = ({ pages, settings, logged }) => {
             >
               <MenuIcon />
             </IconButton>
+
+            {/* Navigation menu */}
             <Menu
               id="menu-appbar"
               anchorEl={anchorElNav}
@@ -89,6 +108,7 @@ const ResponsiveHeader = ({ pages, settings, logged }) => {
                 display: { xs: "block", md: "none" },
               }}
             >
+              {/* Mapping over pages to create menu items */}
               {pages.map(({ page, route }) => (
                 <MenuItem
                   key={page}
@@ -102,6 +122,8 @@ const ResponsiveHeader = ({ pages, settings, logged }) => {
               ))}
             </Menu>
           </Box>
+
+          {/* Logo and title (small screens) */}
           <Typography
             variant="h5"
             noWrap
@@ -120,7 +142,10 @@ const ResponsiveHeader = ({ pages, settings, logged }) => {
           >
             MediSearch
           </Typography>
+
+          {/* Navigation buttons (large screens) */}
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+            {/* Mapping over pages to create navigation buttons */}
             {pages.map(({ page, route }) => (
               <Button
                 key={page}
@@ -134,7 +159,9 @@ const ResponsiveHeader = ({ pages, settings, logged }) => {
             ))}
           </Box>
 
+          {/* Color mode toggle button and user account section */}
           <Box sx={{ flexGrow: 0 }}>
+            {/* Toggle color mode button */}
             <IconButton onClick={handleToggleColorMode} color="inherit">
               {colorMode.mode === "light" ? (
                 <Brightness4Icon />
@@ -143,16 +170,20 @@ const ResponsiveHeader = ({ pages, settings, logged }) => {
               )}
             </IconButton>
 
+            {/* User account section */}
             {settings && (
               <>
+                {/* Tooltip and user menu */}
                 <Tooltip title="Abrir opciones">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     {logged ? (
+                      // Display user avatar if logged in
                       <Avatar
                         alt="Foto del usuario"
                         src={`${ASSETS}${auth.payload.UrlImage}`}
                       />
                     ) : (
+                      // Display account icon if not logged in
                       <AccountCircleIcon />
                     )}
                   </IconButton>
@@ -173,6 +204,7 @@ const ResponsiveHeader = ({ pages, settings, logged }) => {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
+                  {/* Display user information if logged in */}
                   {logged && (
                     <Box sx={{ my: 1.5, px: 2.5 }}>
                       <Typography variant="subtitle2" noWrap>
@@ -187,8 +219,15 @@ const ResponsiveHeader = ({ pages, settings, logged }) => {
                       </Typography>
                     </Box>
                   )}
-                  {logged && <Divider sx={{ borderStyle: "dashed" }} />}
+
+                  {
+                    // Conditionally render a Divider component if 'logged' is true
+                    logged && <Divider sx={{ borderStyle: "dashed" }} />
+                  }
+
+                  {/* Mapping over the 'settings' array */}
                   {settings.map(({ option, route, Icon }) => (
+                    // Create a MenuItem for each item in 'settings'
                     <MenuItem
                       key={option}
                       onClick={handleCloseUserMenu}
@@ -196,18 +235,26 @@ const ResponsiveHeader = ({ pages, settings, logged }) => {
                       to={route}
                       sx={{ textDecoration: "none", color: "inherit" }}
                     >
+                      {/* Display an icon related to the option */}
                       <ListItemIcon>
                         <Icon fontSize="small" />
                       </ListItemIcon>
+                      {/* Display the option text */}
                       <Typography textAlign="center">{option}</Typography>
                     </MenuItem>
                   ))}
+
+                  {/* Conditionally render a Divider component if 'logged' is true */}
                   {logged && <Divider />}
+
+                  {/* Conditionally render a MenuItem for logging out if 'logged' is true */}
                   {logged && (
                     <MenuItem onClick={logoutUser}>
+                      {/* Display a logout icon */}
                       <ListItemIcon>
                         <LogoutIcon fontSize="small" />
                       </ListItemIcon>
+                      {/* Display the logout option text */}
                       <Typography textAlign="center">Cerrar sesión</Typography>
                     </MenuItem>
                   )}
@@ -221,6 +268,7 @@ const ResponsiveHeader = ({ pages, settings, logged }) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 ResponsiveHeader.propTypes = {
   pages: PropTypes.array.isRequired,
   settings: PropTypes.array,

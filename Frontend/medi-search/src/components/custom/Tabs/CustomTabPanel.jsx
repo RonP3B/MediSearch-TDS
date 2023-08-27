@@ -1,3 +1,4 @@
+// Imports
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 
@@ -7,16 +8,18 @@ const CustomTabPanel = (props) => {
   return (
     <div
       role="tabpanel"
-      hidden={value !== index}
+      hidden={value !== index} // Hide the panel if its value doesn't match the index
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
-      {...other}
+      {...other} // Spread any additional props
     >
+      {/* Render children only if the value matches the index */}
       {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
 };
 
+// Define PropTypes to specify expected props and their types
 CustomTabPanel.propTypes = {
   children: PropTypes.node,
   index: PropTypes.number.isRequired,

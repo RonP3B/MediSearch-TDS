@@ -1,3 +1,4 @@
+// Imports
 import { useRef } from "react";
 import PropTypes from "prop-types";
 import { useField, useFormikContext } from "formik";
@@ -8,25 +9,33 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 
 const FileInputField = (props) => {
+  // Destructuring props
   const { onChange, accept, label, name, fileName, setFileName, variant } =
     props;
 
+  // Create a reference to the input element
   const inputRef = useRef(null);
+
+  // useField and useFormikContext  from formik library
   const [field, meta] = useField(name);
   const formik = useFormikContext();
 
+  // Handler for when a file is selected
   const handleFileChange = (event) => {
+    // Gets the selected file from the input event
     const file = event.target.files[0];
 
+    // Checks if a file was selected
     if (file) {
-      onChange(file);
-      formik.setFieldValue(name, file);
-      setFileName(file.name);
+      onChange(file); // Calls the 'onChange' function and pass the selected file
+      formik.setFieldValue(name, file); // Uses Formik's 'setFieldValue' to update the value of 'name' field with the selected file
+      setFileName(file.name); // Updates the state to display the selected file's name
     }
   };
 
   return (
     <>
+      {/* Hidden input element for file selection */}
       <input
         id={name}
         type="file"
@@ -37,6 +46,8 @@ const FileInputField = (props) => {
         onBlur={field.onBlur}
         onChange={(event) => handleFileChange(event)}
       />
+
+      {/* Box element that triggers the hidden input on click */}
       <Box onClick={() => inputRef.current.click()}>
         <TextField
           value={fileName}
@@ -61,6 +72,7 @@ const FileInputField = (props) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 FileInputField.propTypes = {
   onChange: PropTypes.func.isRequired,
   accept: PropTypes.string,

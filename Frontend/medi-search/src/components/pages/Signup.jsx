@@ -1,3 +1,4 @@
+// Imports
 import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import UserForm from "../custom/Forms/UserForm";
@@ -15,8 +16,10 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import CompanyForm from "../custom/Forms/CompanyForm";
 
 const Signup = () => {
+  // State to keep track of the selected registration type
   const [registrationType, setRegistrationType] = useState("");
 
+  // Function to dynamically set the title of the form
   const setFormTitle = () => {
     let title = "Tipo de Registro";
 

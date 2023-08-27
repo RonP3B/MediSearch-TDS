@@ -1,12 +1,14 @@
 import MediSearchApi from "../../APIs/MediSearchApi";
 
-const ADD_PRODUCT_ENDPOINT = import.meta.env.VITE_MEDISEARCH_ADD_PRODUCT;
-const GET_PRODUCTS_ENDPOINT = import.meta.env.VITE_MEDISEARCH_GET_PRODUCTS;
-const GET_PRODUCT_ENDPOINT = import.meta.env.VITE_MEDISEARCH_GET_PRODUCT;
-const EDIT_PRODUCT_ENDPOINT = import.meta.env.VITE_MEDISEARCH_EDIT_PRODUCT;
-const DELETE_PRODUCT_ENDPOINT = import.meta.env.VITE_MEDISEARCH_DELETE_PRODUCT;
-const ADD_COMMENT_ENDPOINT = import.meta.env.VITE_MEDISEARCH_ADD_COMMENT;
-const ADD_REPLY_ENDPOINT = import.meta.env.VITE_MEDISEARCH_ADD_REPLY;
+const API_ENDPOINTS = {
+  ADD_PRODUCT: import.meta.env.VITE_MEDISEARCH_ADD_PRODUCT,
+  GET_PRODUCTS: import.meta.env.VITE_MEDISEARCH_GET_PRODUCTS,
+  GET_PRODUCT: import.meta.env.VITE_MEDISEARCH_GET_PRODUCT,
+  EDIT_PRODUCT: import.meta.env.VITE_MEDISEARCH_EDIT_PRODUCT,
+  DELETE_PRODUCT: import.meta.env.VITE_MEDISEARCH_DELETE_PRODUCT,
+  ADD_COMMENT: import.meta.env.VITE_MEDISEARCH_ADD_COMMENT,
+  ADD_REPLY: import.meta.env.VITE_MEDISEARCH_ADD_REPLY,
+};
 
 export const createProduct = (values) => {
   const formData = new FormData();
@@ -19,17 +21,17 @@ export const createProduct = (values) => {
     }
   });
 
-  return MediSearchApi.post(ADD_PRODUCT_ENDPOINT, formData, {
+  return MediSearchApi.post(API_ENDPOINTS.ADD_COMMENT, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };
 
 export const getAllProducts = () => {
-  return MediSearchApi.get(GET_PRODUCTS_ENDPOINT);
+  return MediSearchApi.get(API_ENDPOINTS.GET_PRODUCTS);
 };
 
 export const getProduct = (productId) => {
-  return MediSearchApi.get(`${GET_PRODUCT_ENDPOINT}/${productId}`);
+  return MediSearchApi.get(`${API_ENDPOINTS.GET_PRODUCT}/${productId}`);
 };
 
 export const editProduct = (values) => {
@@ -43,23 +45,23 @@ export const editProduct = (values) => {
     }
   });
 
-  return MediSearchApi.put(EDIT_PRODUCT_ENDPOINT, formData, {
+  return MediSearchApi.put(API_ENDPOINTS.EDIT_PRODUCT, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };
 
 export const deleteProduct = (productId) => {
-  return MediSearchApi.delete(`${DELETE_PRODUCT_ENDPOINT}/${productId}`);
+  return MediSearchApi.delete(`${API_ENDPOINTS.DELETE_PRODUCT}/${productId}`);
 };
 
 export const addComment = (values) => {
-  return MediSearchApi.post(ADD_COMMENT_ENDPOINT, JSON.stringify(values), {
+  return MediSearchApi.post(API_ENDPOINTS.ADD_COMMENT, JSON.stringify(values), {
     headers: { "Content-Type": "application/json" },
   });
 };
 
 export const addReply = (values) => {
-  return MediSearchApi.post(ADD_REPLY_ENDPOINT, JSON.stringify(values), {
+  return MediSearchApi.post(API_ENDPOINTS.ADD_REPLY, JSON.stringify(values), {
     headers: { "Content-Type": "application/json" },
   });
 };

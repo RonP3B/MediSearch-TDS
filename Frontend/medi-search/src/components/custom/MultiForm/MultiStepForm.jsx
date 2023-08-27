@@ -1,3 +1,4 @@
+// Imports
 import { useState } from "react";
 import { Formik, Form } from "formik";
 import React from "react";
@@ -8,35 +9,44 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 
+// Functional component to encapsulate a single step within the multi-step form
 export const FormStep = ({ children }) => children;
 
+// Main component for the multi-step form
 const MultiStepForm = ({ children, initialValues, onSubmit, loading }) => {
+  // State to manage the current step number and form data snapshot
   const [stepNumber, setStepNumber] = useState(0);
   const [snapshot, setSnapshot] = useState(initialValues);
 
+  // Convert 'children' to an array of steps
   const steps = React.Children.toArray(children);
   const step = steps[stepNumber];
   const totalSteps = steps.length;
   const isLastStep = stepNumber === totalSteps - 1;
 
+  // Function to move to the next step and update the form data snapshot
   const next = (values) => {
     setSnapshot(values);
     setStepNumber((prev) => prev + 1);
   };
 
+  // Function to move to the next step and update the form data snapshot
   const previous = (values) => {
     setSnapshot(values);
     setStepNumber((prev) => prev - 1);
   };
 
+  // Handle form submission logic
   const handleSubmit = async (values, actions) => {
-    if (step.props.onSubmit) {
-      await step.props.onSubmit(values);
-    }
+    // Check if the current step has an 'onSubmit' prop and call the 'onSubmit' function from the current step's props with 'values'
+    if (step.props.onSubmit) await step.props.onSubmit(values);
 
+    // Check if it is the last step of the form
     if (isLastStep) {
+      // If it's the last step, call the 'onSubmit' function provided to the form with 'values' and 'actions'
       return onSubmit(values, actions);
     } else {
+      // If not the last step, reset the touched state and move to the next step
       actions.setTouched({});
       next(values);
     }
@@ -75,11 +85,13 @@ const MultiStepForm = ({ children, initialValues, onSubmit, loading }) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 FormStep.propTypes = {
   stepName: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
 };
 
+// Define PropTypes to specify expected props and their types
 MultiStepForm.propTypes = {
   children: PropTypes.node.isRequired,
   initialValues: PropTypes.object.isRequired,

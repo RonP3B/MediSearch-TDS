@@ -1,8 +1,5 @@
+// Imports
 import { useState, useEffect, useRef } from "react";
-import {
-  getAllLabs,
-  getAllPharmacies,
-} from "../../services/MediSearchServices/HomeServices";
 import PropTypes from "prop-types";
 import useToast from "../../hooks/feedback/useToast";
 import Container from "@mui/material/Container";
@@ -18,6 +15,10 @@ import CompanyCard from "../custom/Cards/CompanyCard";
 import CompanyFilterDrawer from "../custom/FilterDrawers/CompanyFilterDrawer";
 import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 import useFilters from "../../hooks/filters/useFilters";
+import {
+  getAllLabs,
+  getAllPharmacies,
+} from "../../services/MediSearchServices/HomeServices";
 
 const Companies = ({
   companyType,
@@ -26,51 +27,59 @@ const Companies = ({
   hideTitle,
   initialValues,
 }) => {
+  // State variables
   const [openFilter, setOpenFilter] = useState(false);
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Reference to the toast notification function
   const showToast = useToast();
   const showToastRef = useRef(showToast);
+
+  // Custom hook for handling filters
   const {
     filters,
     clearFilters,
     filteredData: filteredCompanies,
   } = useFilters(companies, false);
 
+  // Fetch companies data from API or use initial values
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
+        // Fetch data based on company type
         const res = await (companyType === "farmacia"
           ? getAllPharmacies()
           : getAllLabs());
+
+        // Update the companies state with fetched data
         setCompanies(res.data.$values);
       } catch (error) {
+        // Ignored errors
         if (error.response?.data?.Error === "ERR_JWT") return;
         if (error.response.status === 404) return;
+
+        // Show error toast
         showToastRef.current(
           "Ocurrió un error al obtener las empresas, informelo al equipo técnico",
           { type: "error" }
         );
       } finally {
-        setLoading(false);
+        setLoading(false); // Set loading to false after fetching
       }
     };
 
     if (initialValues) {
-      setCompanies(initialValues.values);
+      setCompanies(initialValues.values); // Use initial values if provided
       setLoading(false);
     } else {
-      fetchCompanies();
+      fetchCompanies(); // Fetch companies if no initial values
     }
   }, [companyType, initialValues]);
 
-  const handleOpenFilter = () => {
-    setOpenFilter(true);
-  };
-
-  const handleCloseFilter = () => {
-    setOpenFilter(false);
-  };
+  // Handlers for opening and closing the filter modal
+  const handleOpenFilter = () => setOpenFilter(true);
+  const handleCloseFilter = () => setOpenFilter(false);
 
   return (
     <Container maxWidth="xl" sx={{ mb: 2, mt: isCompany ? 0 : 3 }}>
@@ -80,16 +89,21 @@ const Companies = ({
         filters={filters}
         onClear={clearFilters}
       />
+
+      {/* Stack component for header */}
       <Stack
         direction="row"
         alignItems="center"
         justifyContent="space-between"
         mb={5}
       >
+        {/* Title of the section */}
         <Typography variant="h5" sx={{ fontWeight: "bold" }}>
           {!hideTitle &&
             `${companyType.charAt(0).toUpperCase() + companyType.slice(1)}s`}
         </Typography>
+
+        {/* Button for opening the filters */}
         {!loading && companies.length > 0 && (
           <Button
             variant="contained"
@@ -100,6 +114,8 @@ const Companies = ({
           </Button>
         )}
       </Stack>
+
+      {/* Loading state */}
       {loading && (
         <Box
           sx={{
@@ -112,6 +128,8 @@ const Companies = ({
           <CircularProgress />
         </Box>
       )}
+
+      {/* No companies found */}
       {!loading && companies.length === 0 && (
         <Box
           sx={{
@@ -129,6 +147,8 @@ const Companies = ({
           </Typography>
         </Box>
       )}
+
+      {/* Display companies */}
       {companies.length > 0 &&
         (filteredCompanies.length > 0 ? (
           <Grid container spacing={2}>
@@ -155,6 +175,7 @@ const Companies = ({
             ))}
           </Grid>
         ) : (
+          // No companies matching filters
           <Box
             sx={{
               display: "flex",
@@ -174,6 +195,7 @@ const Companies = ({
   );
 };
 
+// Define PropTypes to specify expected props and their types
 Companies.propTypes = {
   companyType: PropTypes.string.isRequired,
   logged: PropTypes.bool.isRequired,

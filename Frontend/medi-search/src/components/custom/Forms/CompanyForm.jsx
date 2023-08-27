@@ -1,3 +1,4 @@
+// Imports
 import { useState } from "react";
 import MultiStepForm, { FormStep } from "../MultiForm/MultiStepForm";
 import InputField from "../InputFields/InputField";
@@ -12,13 +13,17 @@ import { telMask } from "../../../utils/masks";
 import useTerritorial from "../../../hooks/useTerritorial";
 
 const CompanyForm = () => {
+  // States
   const [loading, setLoading] = useState(false);
   const [companyImage, setCompanyImage] = useState(null);
   const [companyImgName, setCompanyImgName] = useState("");
   const [userImage, setUserImage] = useState(null);
   const [userImgName, setUserImgName] = useState("");
 
+  // Destructures values from useUserSignupFormik custom hook
   const { validationUserSchema, initialUserValues } = useUserSignupFormik();
+
+  // Destructures values from useCompanyFormik custom hook and pass setLoading function as parameter
   const {
     validationCompanySchema,
     validationCompanySocialsSchema,
@@ -26,6 +31,7 @@ const CompanyForm = () => {
     onSubmit,
   } = useCompanyFormik(setLoading);
 
+  // Destructures values from useTerritorial custom hook for location-related data
   const {
     provinces,
     municipalities,

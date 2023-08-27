@@ -1,3 +1,4 @@
+// Imports
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
@@ -23,6 +24,7 @@ import {
 } from "../../../services/MediSearchServices/HomeServices";
 
 const CustomCard = (props) => {
+  // Destructuring props
   const {
     to,
     maintenance,
@@ -35,39 +37,54 @@ const CustomCard = (props) => {
     favoritesManager,
   } = props;
 
-  const [loading, setLoading] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  const [loading, setLoading] = useState(false); // State to manage loading state
+  const [isChecked, setIsChecked] = useState(false); // State to manage checkbox state
 
+  // Effect to update isChecked state based on the favorite prop
   useEffect(() => {
+    // Updates 'isChecked' to be true if 'favorite.isFavorite' is true, otherwise false
     setIsChecked(favorite?.isFavorite ?? false);
   }, [favorite]);
 
+  // Function to handle checkbox change (adding/removing favorites)
   const handleCheckboxChange = async () => {
     try {
+      // Determines if the favorite type is a company or a product
       const isFavCompany = favorite.favoriteType === "company";
+
+      // Determines the property name based on the favorite type
       const idProp = isFavCompany ? "companyId" : "productId";
+
+      // Chooses the appropriate function for adding favorites based on type
       const addFavFunction = isFavCompany ? addCompanyFav : addProductFav;
 
+      // Chooses the appropriate function for removing favorites based on type
       const removeFavFunction = isFavCompany
         ? removeCompanyFav
         : removeProductFav;
 
+      // Sets loading state to indicate a pending operation
       setLoading(true);
 
+      // Invokes the corresponding add or remove function based on isChecked state
       const res = await (isChecked
         ? removeFavFunction(id)
         : addFavFunction({ [idProp]: id }));
 
+      // If the response contains the updated ID and favoritesManager is available
       if (res.data?.[idProp] && favoritesManager) {
+        // Updates the favorites list in favoritesManager by removing the ID
         favoritesManager.setter((prev) =>
           prev.filter((val) => val.id !== res.data?.[idProp])
         );
       }
 
+      // Toggles the isChecked state (checkbox state)
       setIsChecked(!isChecked);
     } catch (error) {
       console.error(error);
     } finally {
+      // Regardless of success or failure, set loading state back to false
       setLoading(false);
     }
   };
@@ -98,6 +115,7 @@ const CustomCard = (props) => {
             alignItems: "center",
           }}
         >
+          {/* Displays maintenance options if 'maintenance' is true */}
           {maintenance && (
             <Box>
               <IconButton
@@ -118,9 +136,11 @@ const CustomCard = (props) => {
             </Box>
           )}
           {loading ? (
+            // Displays loading spinner if 'loading' is true
             <CircularProgress size={24} />
           ) : (
             favorite && (
+              // Displays a heart shaped checkbox if 'favorite' is true
               <Checkbox
                 icon={<FavoriteBorder />}
                 checkedIcon={<Favorite />}
@@ -145,6 +165,7 @@ const CustomCard = (props) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 CustomCard.propTypes = {
   to: PropTypes.string.isRequired,
   image: PropTypes.string.isRequired,

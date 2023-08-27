@@ -1,3 +1,4 @@
+// Imports
 import React from "react";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
@@ -5,6 +6,7 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import CustomTabPanel from "./CustomTabPanel";
 
+// Function to generate accessibility properties for tabs
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
@@ -12,13 +14,16 @@ function a11yProps(index) {
   };
 }
 
+// CustomTabs component definition
 const CustomTabs = (props) => {
+  // Destructure tabs from props
   const { tabs } = props;
+
+  // State to keep track of the currently active tab
   const [value, setValue] = React.useState(0);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+  // Event handler for tab change
+  const handleChange = (event, newValue) => setValue(newValue);
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -38,6 +43,7 @@ const CustomTabs = (props) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 CustomTabs.propTypes = {
   tabs: PropTypes.array.isRequired,
 };

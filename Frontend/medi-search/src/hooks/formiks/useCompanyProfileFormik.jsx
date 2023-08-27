@@ -1,10 +1,13 @@
+// Imports
 import * as Yup from "yup";
 import useToast from "../feedback/useToast";
 import { editCompanyLoggedProfile } from "../../services/MediSearchServices/AdminServices";
 
 const useCompanyProfileFormik = (setLoading, handleClose, setEdited) => {
+  // Import the useToast hook for displaying toast messages
   const showToast = useToast();
 
+  // Function to initialize form values based on a profile
   const getInitialValues = (profile) => {
     return {
       logo: null,
@@ -15,13 +18,14 @@ const useCompanyProfileFormik = (setLoading, handleClose, setEdited) => {
       province: profile.province,
       municipality: profile.municipality,
       address: profile.address,
-      webSite: profile.webSite || "",
-      facebook: profile.facebook || "",
-      instagram: profile.instagram || "",
-      twitter: profile.twitter || "",
+      webSite: profile.webSite || "", // Set to provided website or empty string if not available
+      facebook: profile.facebook || "", // Set to provided Facebook link or empty string if not available
+      instagram: profile.instagram || "", // Set to provided Instagram link or empty string if not available
+      twitter: profile.twitter || "", // Set to provided Twitter link or empty string if not available
     };
   };
 
+  // Validation schema for the form fields using Yup
   const validationSchema = Yup.object({
     ceo: Yup.string().trim().required("CEO requerido"),
     name: Yup.string().trim().required("Nombre requerido"),
@@ -45,16 +49,28 @@ const useCompanyProfileFormik = (setLoading, handleClose, setEdited) => {
     twitter: Yup.string().trim().url("URL de Twitter inválida").nullable(),
   });
 
+  // Define an asynchronous function to handle form submission
   const onSubmit = async (values) => {
     try {
+      // Set loading state to indicate processing
       setLoading(true);
+
+      // Call the 'editCompanyLoggedProfile' function to update company information
       await editCompanyLoggedProfile(values);
+
+      // Display a success toast message after successful profile edit
       showToast("Informacion de la empresa editada", { type: "success" });
+
+      // Increment the 'edited' state to trigger a re-render of relevant components
       setEdited((prev) => prev + 1);
+
+      // Close the modal or form after successful submission
       handleClose();
     } catch (error) {
+      // If an error occurs during submission, show an error toast with the error message
       showToast(error.response.data, { type: "error" });
     } finally {
+      // Regardless of success or failure, reset the loading state to 'false'
       setLoading(false);
     }
   };

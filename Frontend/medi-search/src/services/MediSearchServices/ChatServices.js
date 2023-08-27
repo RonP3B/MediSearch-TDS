@@ -1,25 +1,24 @@
 import MediSearchApi from "../../APIs/MediSearchApi";
 
-const CHAT_ENDPOINT = import.meta.env.VITE_MEDISEARCH_CHAT;
-const CHATS_ENDPOINT = import.meta.env.VITE_MEDISEARCH_CHATS;
-const SEND_MSG_ENDPOINT = import.meta.env.VITE_MEDISEARCH_SEND_MSG;
+const API_ENDPOINTS = {
+  CHAT: import.meta.env.VITE_MEDISEARCH_CHAT,
+  CHATS: import.meta.env.VITE_MEDISEARCH_CHATS,
+  SEND_MSG: import.meta.env.VITE_MEDISEARCH_SEND_MSG,
+};
 
 export const getChat = (id) => {
-  return MediSearchApi.get(`${CHAT_ENDPOINT}/${id}`);
+  return MediSearchApi.get(`${API_ENDPOINTS.CHAT}/${id}`);
 };
 
 export const getChats = () => {
-  return MediSearchApi.get(CHATS_ENDPOINT);
+  return MediSearchApi.get(API_ENDPOINTS.CHATS);
 };
 
 export const sendMessage = (values) => {
   const formData = new FormData();
+  Object.keys(values).forEach((key) => formData.append(key, values[key]));
 
-  Object.keys(values).forEach((key) => {
-    formData.append(key, values[key]);
-  });
-
-  return MediSearchApi.post(SEND_MSG_ENDPOINT, formData, {
+  return MediSearchApi.post(API_ENDPOINTS.SEND_MSG, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };

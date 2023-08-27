@@ -1,3 +1,4 @@
+// Imports
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
@@ -23,9 +24,11 @@ import useFilters from "../../hooks/filters/useFilters";
 import TuneIcon from "@mui/icons-material/Tune";
 import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 
+// Define a constant named ASSETS and assign it the value from a specific environment variable
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
 const CompanyInfo = ({ company }) => {
+  // Destructure properties from the 'company' object
   const {
     webSite,
     facebook,
@@ -41,11 +44,13 @@ const CompanyInfo = ({ company }) => {
     municipality,
   } = company;
 
+  // Check if the company has any social media links
   const hasSocial = webSite || facebook || twitter || instagram;
 
   return (
     <>
       <Grid container spacing={2} alignItems="center" sx={{ mb: 3 }}>
+        {/* Display company image */}
         <Grid item xs={12} md={6}>
           <Box
             component="img"
@@ -62,6 +67,8 @@ const CompanyInfo = ({ company }) => {
             }}
           />
         </Grid>
+
+        {/* Display company information */}
         <Grid item xs={12} md={6} sx={{ overflowWrap: "anywhere" }}>
           <Divider sx={{ my: 1, display: { md: "none" } }} />
           <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 1.5 }}>
@@ -129,6 +136,8 @@ const CompanyInfo = ({ company }) => {
           {hasSocial && <Divider sx={{ my: 1, display: { md: "none" } }} />}
         </Grid>
       </Grid>
+
+      {/* Display company social media links */}
       {hasSocial && (
         <CompanySocials
           webSite={webSite}
@@ -150,16 +159,20 @@ const CompanyProducts = ({
   isLogged,
   isCompany,
 }) => {
+  // State to control whether the filter drawer is open or not
   const [openFilter, setOpenFilter] = useState(false);
 
+  // Function to open the filter drawer
   const handleOpenFilter = () => {
     setOpenFilter(true);
   };
 
+  // Function to close the filter drawer
   const handleCloseFilter = () => {
     setOpenFilter(false);
   };
 
+  // If no products are available, display a message
   if (products.length === 0) {
     return (
       <Box
@@ -183,6 +196,7 @@ const CompanyProducts = ({
 
   return (
     <Box>
+      {/* Filter drawer */}
       <ProductFilterDrawer
         openFilter={openFilter}
         onCloseFilter={handleCloseFilter}
@@ -190,6 +204,8 @@ const CompanyProducts = ({
         filters={filters}
         companyFilters={false}
       />
+
+      {/* Button to open the filter drawer */}
       <Stack
         direction="row"
         alignItems="center"
@@ -204,6 +220,8 @@ const CompanyProducts = ({
           Filtros
         </Button>
       </Stack>
+
+      {/* Display products */}
       {filteredData.length > 0 ? (
         <Grid container spacing={2}>
           {filteredData.map((product) => (
@@ -226,6 +244,7 @@ const CompanyProducts = ({
           ))}
         </Grid>
       ) : (
+        // If no products match the filters, display a message
         <Box
           sx={{
             display: "flex",
@@ -246,36 +265,58 @@ const CompanyProducts = ({
 };
 
 const CompanyDetails = ({ isCompany }) => {
+  // State to manage company data
   const [company, setCompany] = useState([]);
+
+  // Access authentication data from the context
   const { auth } = useAuth();
+
+  // State to manage loading status
   const [loading, setLoading] = useState(true);
+
+  // Get URL parameter
   const { id } = useParams();
+
+  // Navigation function
   const navigate = useNavigate();
+
+  // Show toast notifications
   const showToast = useToast();
   const showToastRef = useRef(showToast);
+
+  // Check if user is logged in
   const isLogged = !!auth?.payload;
+
+  // Check if user has the role of "Laboratorio"
   const isLaboratory = isLogged && auth.payload.RoleType === "Laboratorio";
 
+  // Custom hook for managing filters
   const { filters, clearFilters, filteredData, setPriceFilter, setMaxPrice } =
     useFilters(company, true);
 
+  // Fetch company data when the component mounts
   useEffect(() => {
     const fetchCompany = async () => {
       try {
+        // Fetch company details by ID
         const res = await getCompanyById(id);
         const productsArr = res.data.products.$values;
 
+        // Find the highest price among products
         const highestPrice = productsArr.reduce((max, product) => {
           return product.price > max ? product.price : max;
         }, 0);
 
+        // Set company data and price filters
         setCompany(res.data);
         setPriceFilter([1, highestPrice]);
         setMaxPrice(highestPrice);
       } catch (error) {
+        // Ignored errors
         if (error.response?.data?.Error === "ERR_JWT") return;
         if (error.response.status === 404) return navigate(-1);
 
+        // Show error notification
         showToastRef.current(
           "Ocurrió un error al obtener la información de la empresa, informelo al equipo técnico",
           { type: "error" }
@@ -286,7 +327,7 @@ const CompanyDetails = ({ isCompany }) => {
     };
 
     fetchCompany();
-  }, [showToastRef, id, navigate, setPriceFilter, setMaxPrice]);
+  }, [id, navigate, setPriceFilter, setMaxPrice]);
 
   return (
     <Container maxWidth="xl" sx={{ mb: 2, mt: isCompany ? 0 : 3 }}>
@@ -302,6 +343,7 @@ const CompanyDetails = ({ isCompany }) => {
         </Typography>
       </Box>
       {loading ? (
+        // Loading spinner
         <Box
           sx={{
             display: "flex",
@@ -313,8 +355,10 @@ const CompanyDetails = ({ isCompany }) => {
           <CircularProgress />
         </Box>
       ) : isLaboratory ? (
+        // Display company info for laboratory users
         <CompanyInfo company={company} />
       ) : (
+        // Display tabs with different content for non-laboratory users
         <CustomTabs
           tabs={[
             {
@@ -342,6 +386,7 @@ const CompanyDetails = ({ isCompany }) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 CompanyDetails.propTypes = {
   isCompany: PropTypes.bool.isRequired,
 };
@@ -360,4 +405,5 @@ CompanyProducts.propTypes = {
   isLogged: PropTypes.bool.isRequired,
 };
 
+// Exports
 export default CompanyDetails;

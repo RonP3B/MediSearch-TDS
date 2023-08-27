@@ -1,3 +1,4 @@
+// Imports
 import PropTypes from "prop-types";
 import ScrollBar from "../Scrollbar/ScrollBar";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -15,6 +16,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 const CompanyFilterContent = ({ filters }) => {
   return (
     <>
+      {/* Provincias Filter */}
       <Box>
         <Typography variant="subtitle1" gutterBottom>
           Provincias:
@@ -41,11 +43,14 @@ const CompanyFilterContent = ({ filters }) => {
           </ScrollBar>
         </FilterOptionsFormGroup>
       </Box>
+
+      {/* Municipios Filter */}
       <Box>
         <Typography variant="subtitle1" gutterBottom>
           Municipios:
         </Typography>
         <FilterOptionsFormGroup>
+          {/* Checks if there are municipality values */}
           {filters.municipalities.values.length === 0 ? (
             <Box
               sx={{
@@ -56,6 +61,7 @@ const CompanyFilterContent = ({ filters }) => {
                 alignItems: "center",
               }}
             >
+              {/* Displays loading or instructions based on the state */}
               {filters.municipalities.loading ? (
                 <CircularProgress />
               ) : (
@@ -92,6 +98,8 @@ const CompanyFilterContent = ({ filters }) => {
           )}
         </FilterOptionsFormGroup>
       </Box>
+
+      {/* Nombre de la empresa Filter */}
       <Box>
         <TextField
           label="Nombre de la empresa"
@@ -101,6 +109,8 @@ const CompanyFilterContent = ({ filters }) => {
           fullWidth
         />
       </Box>
+
+      {/* Dirección de la empresa Filter */}
       <Box>
         <TextField
           label="Dirección de la empresa"
@@ -114,6 +124,7 @@ const CompanyFilterContent = ({ filters }) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 CompanyFilterContent.propTypes = {
   filters: PropTypes.object.isRequired,
 };

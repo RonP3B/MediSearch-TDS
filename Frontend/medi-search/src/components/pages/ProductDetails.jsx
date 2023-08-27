@@ -1,13 +1,10 @@
+// Imports
 import { useState, useEffect, useRef } from "react";
 import { alpha } from "@mui/material/styles";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import ImageGallery from "react-image-gallery";
 import PropTypes from "prop-types";
 import useToast from "../../hooks/feedback/useToast";
-import {
-  addComment,
-  addReply,
-} from "../../services/MediSearchServices/ProductServices";
 import { getCompanyProduct } from "../../services/MediSearchServices/HomeServices";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
@@ -25,11 +22,20 @@ import Comment from "../custom/Comments/Comment";
 import CommentTextbox from "../custom/Comments/CommentTextbox";
 import MarkUnreadChatAltIcon from "@mui/icons-material/MarkUnreadChatAlt";
 import BusinessIcon from "@mui/icons-material/Business";
+import {
+  addComment,
+  addReply,
+} from "../../services/MediSearchServices/ProductServices";
 
+// Store the asset URL from Vite environment variables
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
+// Functional component to display product details
 const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
+  // Get the 'id' parameter from the route
   const { id } = useParams();
+
+  // Hooks to manage component state
   const navigate = useNavigate();
   const [product, setProduct] = useState({});
   const [images, setImages] = useState([]);
@@ -38,20 +44,25 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
   const [loading, setLoading] = useState(true);
   const [sendingComment, setSendingComment] = useState(false);
   const [sendingReply, setSendingReply] = useState(false);
+
+  // Notification toast functionality
   const showToast = useToast();
   const showToastRef = useRef(showToast);
 
+  // Fetch product details and related data on component mount
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const res = await getCompanyProduct(id);
-
         setProduct(res.data);
-        setImages(res.data.images.$values.map((url) => ASSETS + url));
+        setImages(res.data.images.$values.map((url) => ASSETS + url)); // Prepend ASSETS to image URLs
         setComments(res.data.comments.$values);
       } catch (error) {
+        // Ignored errors
         if (error.response?.data?.Error === "ERR_JWT") return;
         if (error.response.status === 404) return navigate(-1);
+
+        // Show error toast
         showToastRef.current(
           "Ocurrió un error al obtener la información del producto, informelo al equipo técnico",
           { type: "error" }
@@ -62,55 +73,78 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
     };
 
     fetchProduct();
-  }, [showToastRef, id, navigate]);
+  }, [id, navigate]);
 
   const sendComment = async (content, setTextboxVal) => {
     try {
+      // Indicate that a comment is being sent
       setSendingComment(true);
+
+      // Call an API to add the comment with provided content and product ID
       const res = await addComment({ content, productId: id });
+
+      // Update the comments with the new comment from the API response
       setComments((prevComments) => [...prevComments, res.data]);
+
+      // Show a success toast notification for adding a comment
       showToast("Comentario agregado", { type: "success" });
+
+      // Clear the input textbox after submitting the comment
       setTextboxVal("");
     } catch (error) {
+      // Show an error toast notification if adding a comment fails
       showToast(
         "Ocurrió un error al intentar comentar, informelo al equipo técnico",
         { type: "error" }
       );
     } finally {
+      // Whether successful or not, reset the comment sending status
       setSendingComment(false);
     }
   };
 
   const sendReply = async (content, setTextboxVal, commentId) => {
     try {
+      // Indicate that a reply is being sent
       setSendingReply(true);
+
+      // Call an API to add a reply with provided content and comment ID
       const res = await addReply({ content, commentId });
 
+      // Update the comments by adding the new reply to the corresponding comment
       setComments((prevComments) => {
         return prevComments.map((comment) => {
           if (comment.id === commentId) {
+            // Add the new reply to the list of replies for the specific comment
             comment.replies.$values.push(res.data);
           }
           return comment;
         });
       });
 
+      // Show a success toast notification for adding a reply
       showToast("Respuesta agregada", { type: "success" });
+
+      // Clear the input textbox after submitting the reply
       setTextboxVal("");
     } catch (error) {
+      // Show an error toast notification if adding a reply fails
       showToast(
         "Ocurrió un error al intentar responder, informelo al equipo técnico",
         { type: "error" }
       );
     } finally {
+      // Whether successful or not, reset the reply sending status
       setSendingReply(false);
     }
   };
 
+  // Transform images for use with a gallery component
   const imagesArr = images.map((image) => {
     return { original: image, thumbnail: image };
   });
 
+  // Information about the product to display
   const productInfo = [
     { label: "Nombre:", value: product.name },
     { label: "Precio:", value: `RD$ ${product.price}` },
@@ -125,18 +159,23 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
 
   return (
     <Container maxWidth="xl" sx={{ mb: 2, mt: isCompany ? 0 : 3 }}>
+      {/* Back button */}
       <Button
         startIcon={<KeyboardBackspaceIcon />}
         onClick={() => navigate(-1)}
       >
         Volver
       </Button>
+
+      {/* Product title */}
       <Box sx={{ textAlign: "center" }}>
         <Typography variant="h4" sx={{ fontWeight: "bold", mb: 3 }}>
           {product.name}
         </Typography>
       </Box>
+
       {loading ? (
+        // Loading indicator
         <Box
           sx={{
             display: "flex",
@@ -151,11 +190,14 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
         <>
           <Grid container spacing={2} alignItems="center" sx={{ mb: 3 }}>
             <Grid item xs={12} md={6}>
+              {/* Checks if the product has more the one image */}
               {images.length > 1 ? (
+                // Displays multiple images
                 <Box className="custom-gallery-container">
                   <ImageGallery items={imagesArr} />
                 </Box>
               ) : (
+                // Displays a single image
                 <Box
                   component="img"
                   src={images[0]}
@@ -173,9 +215,12 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
               )}
             </Grid>
             <Grid item xs={12} md={6} sx={{ overflowWrap: "anywhere" }}>
+              {/* Divider when company info is hidden */}
               {!showCompanyInfo && (
                 <Divider sx={{ my: 1, display: { md: "none" } }} />
               )}
+
+              {/* Company information */}
               {showCompanyInfo && (
                 <>
                   <Box
@@ -190,6 +235,7 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
                       padding: 1.5,
                     }}
                   >
+                    {/* Company details */}
                     <Box display="flex">
                       <Avatar
                         alt="Foto de la empresa"
@@ -210,6 +256,8 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
                         </Typography>
                       </Box>
                     </Box>
+
+                    {/* Button to start a chat */}
                     {logged && (
                       <Button
                         component={Link}
@@ -226,6 +274,8 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
                         Chatear con el vendedor
                       </Button>
                     )}
+
+                    {/* Button to view seller's profile */}
                     <Button
                       component={Link}
                       to={`/${
@@ -246,6 +296,8 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
                   <Divider sx={{ my: 1 }} />
                 </>
               )}
+
+              {/* Display product information */}
               {productInfo.map((info, index) => {
                 const lastIndex = productInfo.length - 1;
 
@@ -275,10 +327,15 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
                   </Box>
                 );
               })}
+
+              {/* Divider when screen is smaller */}
               <Divider sx={{ my: 1, display: { md: "none" } }} />
             </Grid>
           </Grid>
+
+          {/* Comments section */}
           <CommentsAccordion>
+            {/* Comment input box */}
             {logged && (
               <CommentTextbox
                 label="Escribe un comentario"
@@ -288,6 +345,8 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
                 sendingComment={sendingComment}
               />
             )}
+
+            {/* Display comments */}
             {comments.length > 0 ? (
               comments.map((comment, index) => {
                 const replies = comment.replies.$values;
@@ -308,6 +367,7 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
                       logged={logged}
                     />
                     <Box sx={{ ml: "2rem" }}>
+                      {/* Reply input box */}
                       {logged && (
                         <CommentTextbox
                           label="Escribe una respuesta"
@@ -318,6 +378,8 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
                           parentCommentId={comment.id}
                         />
                       )}
+
+                      {/* Display replies */}
                       {replies.length > 0 &&
                         replies.map((reply) => (
                           <Comment
@@ -334,6 +396,7 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
                 );
               })
             ) : (
+              // No comments message
               <Box
                 sx={{
                   display: "flex",
@@ -355,6 +418,7 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 ProductDetails.propTypes = {
   logged: PropTypes.bool.isRequired,
   showCompanyInfo: PropTypes.bool.isRequired,

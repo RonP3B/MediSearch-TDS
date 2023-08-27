@@ -1,3 +1,4 @@
+// Imports
 import { useState, useContext, useEffect } from "react";
 import ColorModeContext from "../contexts/ColorModeContext";
 import PropTypes from "prop-types";
@@ -29,36 +30,60 @@ import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import LogoutIcon from "@mui/icons-material/Logout";
 
+// Define the ASSETS constant using Vite's environment variable for media search
 const ASSETS = import.meta.env.VITE_MEDISEARCH;
 
+// Define the width of the drawer for the responsive layout
 const drawerWidth = 280;
 
+// Define the ResponsiveDrawer component
 const ResponsiveDrawer = (props) => {
+  // Destructure props to access specific values
   const { window, main, nav, settings } = props;
+
+  // State for controlling mobile drawer open/close
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Access the color mode context
   const colorMode = useContext(ColorModeContext);
+
+  // State for controlling the user menu anchor element
   const [anchorElUser, setAnchorElUser] = useState(null);
+
+  // Access authentication data using a custom hook
   const { auth } = useAuth();
+
+  // Access the logout function using a custom hook
   const logoutUser = useLogout();
+
+  // Access the current location using React Router's useLocation hook
   const location = useLocation();
   const { pathname } = useLocation();
 
+  // Effect to close the mobile drawer when the pathname changes
   useEffect(() => {
     if (mobileOpen) setMobileOpen(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
+  // Event handler to open the user menu
   const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
+
+  // Event handler to close the user menu
   const handleCloseUserMenu = () => setAnchorElUser(null);
 
+  // Event handler to toggle mobile drawer open/close state
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
+  // Event handler to toggle color mode
   const handleToggleColorMode = () => colorMode.toggleColorMode();
 
   const drawer = (
+    // A sidebar with scrollable content
     <ScrollBar>
+      {/* Toolbar with application logo */}
       <Toolbar>
         <Box
           component="img"
@@ -71,6 +96,8 @@ const ResponsiveDrawer = (props) => {
           }}
         />
       </Toolbar>
+
+      {/* User information panel */}
       <Paper
         sx={{
           display: "flex",
@@ -80,6 +107,7 @@ const ResponsiveDrawer = (props) => {
           margin: 2,
         }}
       >
+        {/* User avatar */}
         <Avatar
           alt="Foto del usuario"
           src={`${ASSETS}${auth.payload.UrlImage}`}
@@ -88,14 +116,20 @@ const ResponsiveDrawer = (props) => {
             border: (theme) => `1px solid ${theme.palette.primary.main}`,
           }}
         />
+        {/* User name */}
         <Typography sx={{ fontWeight: "bold" }}>{auth.payload.sub}</Typography>
       </Paper>
+
+      {/* Navigation list */}
       <List>
+        {/* Mapping through navigation items */}
         {nav.map(({ item, icon, to }) => {
+          // Conditionally exclude "Farmacias" item for "Farmacia" role
           if (auth.payload.RoleType === "Farmacia" && item === "Farmacias") {
             return null;
           }
 
+          // Conditionally exclude "Laboratorios" and "Provisiones" items for "Laboratorio" role
           if (
             auth.payload.RoleType === "Laboratorio" &&
             (item === "Laboratorios" || item === "Provisiones")
@@ -103,6 +137,7 @@ const ResponsiveDrawer = (props) => {
             return null;
           }
 
+          // Conditionally exclude "Crear Usuario" and "Mi empresa" items for non-"SuperAdmin" roles
           if (
             auth.payload.roles !== "SuperAdmin" &&
             (item === "Crear Usuario" || item === "Mi empresa")
@@ -110,6 +145,7 @@ const ResponsiveDrawer = (props) => {
             return null;
           }
 
+          // Render a navigation list item
           return (
             <ListItem key={item} disablePadding>
               <ListItemButton
@@ -127,11 +163,13 @@ const ResponsiveDrawer = (props) => {
     </ScrollBar>
   );
 
+  // Check if the window object is defined, then set the 'container' accordingly
   const container =
     window !== undefined ? () => window().document.body : undefined;
 
   return (
     <Box sx={{ display: "flex" }}>
+      {/* Top AppBar */}
       <AppBar
         position="fixed"
         sx={{
@@ -146,6 +184,7 @@ const ResponsiveDrawer = (props) => {
         }}
       >
         <Toolbar>
+          {/* Menu Icon */}
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -161,6 +200,7 @@ const ResponsiveDrawer = (props) => {
           </IconButton>
 
           <Box sx={{ flexGrow: 0, marginLeft: "auto" }}>
+            {/* Color Mode Toggle */}
             <IconButton onClick={handleToggleColorMode} color="inherit">
               {colorMode.mode === "light" ? (
                 <Brightness4Icon style={{ color: "#637381" }} />
@@ -169,6 +209,7 @@ const ResponsiveDrawer = (props) => {
               )}
             </IconButton>
 
+            {/* User Menu */}
             <>
               <Tooltip title="Abrir opciones">
                 <IconButton
@@ -201,6 +242,7 @@ const ResponsiveDrawer = (props) => {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
+                {/* User Information */}
                 <Box sx={{ my: 1.5, px: 2.5 }}>
                   <Typography variant="subtitle2" noWrap>
                     {auth.payload.sub}
@@ -214,6 +256,8 @@ const ResponsiveDrawer = (props) => {
                   </Typography>
                 </Box>
                 <Divider sx={{ borderStyle: "dashed" }} />
+
+                {/* User Settings */}
                 {settings.map(({ option, route, Icon }) => (
                   <MenuItem
                     key={option}
@@ -229,6 +273,8 @@ const ResponsiveDrawer = (props) => {
                   </MenuItem>
                 ))}
                 <Divider />
+
+                {/* Logout Option */}
                 <MenuItem onClick={logoutUser}>
                   <ListItemIcon>
                     <LogoutIcon fontSize="small" />
@@ -240,11 +286,14 @@ const ResponsiveDrawer = (props) => {
           </Box>
         </Toolbar>
       </AppBar>
+
+      {/* Sidebar Drawer */}
       <Box
         component="nav"
         sx={{ width: { lg: drawerWidth }, flexShrink: { lg: 0 } }}
         aria-label="mailbox folders"
       >
+        {/* Mobile Drawer */}
         <Drawer
           container={container}
           variant="temporary"
@@ -263,6 +312,8 @@ const ResponsiveDrawer = (props) => {
         >
           {drawer}
         </Drawer>
+
+        {/* Permanent Drawer */}
         <Drawer
           variant="permanent"
           sx={{
@@ -277,11 +328,14 @@ const ResponsiveDrawer = (props) => {
           {drawer}
         </Drawer>
       </Box>
+
+      {/* Main Content */}
       <Box sx={{ marginTop: "94px", flexGrow: 1 }}>{main}</Box>
     </Box>
   );
 };
 
+// Define PropTypes to specify expected props and their types
 ResponsiveDrawer.propTypes = {
   window: PropTypes.func,
   main: PropTypes.any,

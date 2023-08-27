@@ -1,3 +1,4 @@
+// Imports
 import PropTypes from "prop-types";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
@@ -22,12 +23,14 @@ const Comment = ({
         padding: 1,
       }}
     >
+      {/* Avatar of the user who posted the comment */}
       <Avatar
         src={userAvatar}
         alt={userName}
         sx={{ border: (theme) => `1px solid ${theme.palette.primary.main}` }}
       />
       <Box sx={{ ml: 1, width: "100%" }}>
+        {/* Displays user's name and reply button (if not a reply and user is logged in) */}
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Typography variant="subtitle2">{userName}</Typography>
           {!isReply && logged && (
@@ -36,12 +39,14 @@ const Comment = ({
             </IconButton>
           )}
         </Box>
+        {/* Displays the comment text */}
         <Typography variant="body2">{comment}</Typography>
       </Box>
     </Paper>
   );
 };
 
+// Define PropTypes to specify expected props and their types
 Comment.propTypes = {
   isReply: PropTypes.bool.isRequired,
   userName: PropTypes.string.isRequired,

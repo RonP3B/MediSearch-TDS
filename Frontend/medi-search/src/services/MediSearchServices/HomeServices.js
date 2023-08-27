@@ -1,75 +1,91 @@
 import MediSearchApi from "../../APIs/MediSearchApi";
 
-const GET_LABORATORIES_ENDPOINT = import.meta.env.VITE_MEDISEARCH_LABORATORIES;
-const GET_PHARMACIES_ENDPOINT = import.meta.env.VITE_MEDISEARCH_PHARMACIES;
-const GET_COMPANIES_ENDPOINT = import.meta.env.VITE_MEDISEARCH_COMPANIES;
-const GET_COMPANY_ENDPOINT = import.meta.env.VITE_MEDISEARCH_COMPANY;
-const GET_PRODUCT_ENDPOINT = import.meta.env.VITE_MEDISEARCH_PRODUCT;
-const GET_LAB_PRODUCTS_ENDPOINT = import.meta.env.VITE_MEDISEARCH_LAB_PRODUCTS;
-const GET_FAV_PRODUCTS_ENDPOINT = import.meta.env.VITE_MEDISEARCH_FAV_PRODUCTS;
-const POST_FAV_PRODUCT_ENDPOINT = import.meta.env.VITE_MEDISEARCH_FAV_PRODUCT;
-const POST_FAV_COMPANY_ENDPOINT = import.meta.env.VITE_MEDISEARCH_FAV_COMPANY;
-const UNFAV_PRODUCT_ENDPOINT = import.meta.env.VITE_MEDISEARCH_UNFAV_PRODUCT;
-const UNFAV_COMPANY_ENDPOINT = import.meta.env.VITE_MEDISEARCH_UNFAV_COMPANY;
+const API_ENDPOINTS = {
+  GET_HOME: import.meta.env.VITE_MEDISEARCH_HOME,
+  GET_CLIENT_HOME: import.meta.env.VITE_MEDISEARCH_CLIENT_HOME,
+  GET_LABORATORIES: import.meta.env.VITE_MEDISEARCH_LABORATORIES,
+  GET_PHARMACIES: import.meta.env.VITE_MEDISEARCH_PHARMACIES,
+  GET_COMPANIES: import.meta.env.VITE_MEDISEARCH_COMPANIES,
+  GET_COMPANY: import.meta.env.VITE_MEDISEARCH_COMPANY,
+  GET_PRODUCT: import.meta.env.VITE_MEDISEARCH_PRODUCT,
+  GET_LAB_PRODUCTS: import.meta.env.VITE_MEDISEARCH_LAB_PRODUCTS,
+  GET_FAV_PRODUCTS: import.meta.env.VITE_MEDISEARCH_FAV_PRODUCTS,
+  POST_FAV_PRODUCT: import.meta.env.VITE_MEDISEARCH_FAV_PRODUCT,
+  POST_FAV_COMPANY: import.meta.env.VITE_MEDISEARCH_FAV_COMPANY,
+  UNFAV_PRODUCT: import.meta.env.VITE_MEDISEARCH_UNFAV_PRODUCT,
+  UNFAV_COMPANY: import.meta.env.VITE_MEDISEARCH_UNFAV_COMPANY,
+  GET_FAV_COMPANIES: import.meta.env.VITE_MEDISEARCH_FAV_COMPANIES,
+  GET_PHARMACY_PRODUCTS: import.meta.env.VITE_MEDISEARCH_PHARMACY_PRODUCTS,
+};
 
-const GET_FAV_COMPANIES_ENDPOINT = import.meta.env
-  .VITE_MEDISEARCH_FAV_COMPANIES;
+export const getHome = () => {
+  return MediSearchApi.get(API_ENDPOINTS.GET_HOME);
+};
 
-const GET_PHARMACY_PRODUCTS_ENDPOINT = import.meta.env
-  .VITE_MEDISEARCH_PHARMACY_PRODUCTS;
+export const getClientHome = () => {
+  return MediSearchApi.get(API_ENDPOINTS.GET_CLIENT_HOME);
+};
 
 export const getAllLabs = () => {
-  return MediSearchApi.get(GET_LABORATORIES_ENDPOINT);
+  return MediSearchApi.get(API_ENDPOINTS.GET_LABORATORIES);
 };
 
 export const getAllPharmacies = () => {
-  return MediSearchApi.get(GET_PHARMACIES_ENDPOINT);
+  return MediSearchApi.get(API_ENDPOINTS.GET_PHARMACIES);
 };
 
 export const getAllCompanies = () => {
-  return MediSearchApi.get(GET_COMPANIES_ENDPOINT);
+  return MediSearchApi.get(API_ENDPOINTS.GET_COMPANIES);
 };
 
 export const getLabProducts = () => {
-  return MediSearchApi.get(GET_LAB_PRODUCTS_ENDPOINT);
+  return MediSearchApi.get(API_ENDPOINTS.GET_LAB_PRODUCTS);
 };
 
 export const getPharmacyProducts = () => {
-  return MediSearchApi.get(GET_PHARMACY_PRODUCTS_ENDPOINT);
+  return MediSearchApi.get(API_ENDPOINTS.GET_PHARMACY_PRODUCTS);
 };
 
 export const getFavoriteProducts = () => {
-  return MediSearchApi.get(GET_FAV_PRODUCTS_ENDPOINT);
+  return MediSearchApi.get(API_ENDPOINTS.GET_FAV_PRODUCTS);
 };
 
 export const getFavoriteCompanies = () => {
-  return MediSearchApi.get(GET_FAV_COMPANIES_ENDPOINT);
+  return MediSearchApi.get(API_ENDPOINTS.GET_FAV_COMPANIES);
 };
 
 export const getCompanyById = (id) => {
-  return MediSearchApi.get(`${GET_COMPANY_ENDPOINT}/${id}`);
+  return MediSearchApi.get(`${API_ENDPOINTS.GET_COMPANY}/${id}`);
 };
 
 export const getCompanyProduct = (id) => {
-  return MediSearchApi.get(`${GET_PRODUCT_ENDPOINT}/${id}`);
+  return MediSearchApi.get(`${API_ENDPOINTS.GET_PRODUCT}/${id}`);
 };
 
 export const addProductFav = (values) => {
-  return MediSearchApi.post(POST_FAV_PRODUCT_ENDPOINT, JSON.stringify(values), {
-    headers: { "Content-Type": "application/json" },
-  });
+  return MediSearchApi.post(
+    API_ENDPOINTS.POST_FAV_PRODUCT,
+    JSON.stringify(values),
+    {
+      headers: { "Content-Type": "application/json" },
+    }
+  );
 };
 
 export const addCompanyFav = (values) => {
-  return MediSearchApi.post(POST_FAV_COMPANY_ENDPOINT, JSON.stringify(values), {
-    headers: { "Content-Type": "application/json" },
-  });
+  return MediSearchApi.post(
+    API_ENDPOINTS.POST_FAV_COMPANY,
+    JSON.stringify(values),
+    {
+      headers: { "Content-Type": "application/json" },
+    }
+  );
 };
 
 export const removeProductFav = (id) => {
-  return MediSearchApi.delete(`${UNFAV_PRODUCT_ENDPOINT}/${id}`);
+  return MediSearchApi.delete(`${API_ENDPOINTS.UNFAV_PRODUCT}/${id}`);
 };
 
 export const removeCompanyFav = (id) => {
-  return MediSearchApi.delete(`${UNFAV_COMPANY_ENDPOINT}/${id}`);
+  return MediSearchApi.delete(`${API_ENDPOINTS.UNFAV_COMPANY}/${id}`);
 };

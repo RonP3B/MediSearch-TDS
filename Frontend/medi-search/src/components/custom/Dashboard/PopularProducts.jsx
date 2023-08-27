@@ -1,3 +1,4 @@
+// Imports
 import { useTheme } from "@mui/material/styles";
 import PropTypes from "prop-types";
 import ReactApexChart from "react-apexcharts";
@@ -7,10 +8,14 @@ import CardHeader from "@mui/material/CardHeader";
 import useChart from "../../../hooks/chart/useChart";
 
 const CategoriesQuantities = ({ title, chartData, subheader, ...props }) => {
+  // Gets the current MUI theme using the useTheme hook
   const theme = useTheme();
+
+  // Extracts  labels and quantity values from chartData
   const chartSeries = chartData.map((data) => data.quantity);
   const chartLabels = chartData.map((data) => data.product);
 
+  // Defines chart options using a custom hook
   const polarOptions = useChart({
     chart: {
       type: "polarArea",
@@ -64,6 +69,7 @@ const CategoriesQuantities = ({ title, chartData, subheader, ...props }) => {
   );
 };
 
+// Define PropTypes to specify expected props and their types
 CategoriesQuantities.propTypes = {
   title: PropTypes.string.isRequired,
   subheader: PropTypes.string.isRequired,
