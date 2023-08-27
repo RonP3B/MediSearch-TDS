@@ -5,6 +5,7 @@ using MediSearch.Infrastructure.Shared;
 using MediSearch.WebApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters.Xml;
+using Newtonsoft.Json;
 using System.Text.Json.Serialization;
 
 namespace MediSearch.WebApi
@@ -48,7 +49,10 @@ namespace MediSearch.WebApi
 				options.SuppressMapClientErrors = true;
 			})
 			.AddJsonOptions(x =>
-					  x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
+			{
+				x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+				x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            });
 
 			services.AddHealthChecks();
 			services.AddSwaggerExtension();
