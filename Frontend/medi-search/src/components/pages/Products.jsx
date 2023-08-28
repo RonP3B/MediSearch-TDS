@@ -55,7 +55,7 @@ const Products = ({
           ? getLabProducts()
           : getPharmacyProducts());
 
-        const productsArr = res.data.$values;
+        const productsArr = res.data;
 
         // Calculate the highest price among fetched products
         const highestPrice = productsArr.reduce((max, product) => {

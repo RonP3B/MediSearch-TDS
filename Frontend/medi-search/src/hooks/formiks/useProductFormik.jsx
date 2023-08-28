@@ -32,7 +32,7 @@ const useProductFormik = (setLoading, edit) => {
       name: product.name,
       description: product.description,
       classification: product.classification,
-      categories: product.categories.$values,
+      categories: product.categories,
       price: product.price,
       quantity: product.quantity,
       images: [],

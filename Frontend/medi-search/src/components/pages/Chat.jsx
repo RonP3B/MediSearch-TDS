@@ -101,7 +101,7 @@ const Chat = ({ isCompany }) => {
 
         // Fetch the chats data from the server
         const res = await getChats();
-        const chatsArr = res.data.$values;
+        const chatsArr = res.data;
 
         // Update the state with the fetched chat data
         setChats(chatsArr);
@@ -138,7 +138,7 @@ const Chat = ({ isCompany }) => {
 
         // Fetch chat messages for the selected chat
         const res = await getChat(selectedChat.id);
-        setMessages(res.data.messages.$values);
+        setMessages(res.data.messages);
 
         // Set up polling to fetch new messages at regular intervals
         const pollingId = setInterval(async () => {
@@ -240,7 +240,7 @@ const Chat = ({ isCompany }) => {
       const res = await getChat(chat.id);
 
       // Extract new messages from the response
-      const newMessages = res.data.messages.$values;
+      const newMessages = res.data.messages;
 
       // Update the messages state if there are new messages
       setMessages((prevMessages) => {

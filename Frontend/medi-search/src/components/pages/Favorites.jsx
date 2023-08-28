@@ -32,7 +32,7 @@ const Favorites = ({ isPharmacy, isLab }) => {
       try {
         // Fetch favorite products
         const res = await getFavoriteProducts();
-        const productsArr = res.data.$values;
+        const productsArr = res.data;
 
         // Find the highest price among favorite products
         const highestPrice = productsArr.reduce((max, product) => {
@@ -78,7 +78,7 @@ const Favorites = ({ isPharmacy, isLab }) => {
         const res = await getFavoriteCompanies();
 
         // Modify the array of companies to include an 'id' property
-        const modifiedArray = res.data.$values.map((item) => {
+        const modifiedArray = res.data.map((item) => {
           const { companyId, ...rest } = item;
           return {
             ...rest,

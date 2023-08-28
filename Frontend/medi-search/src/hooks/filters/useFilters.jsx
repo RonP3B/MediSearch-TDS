@@ -34,7 +34,7 @@ const useFilters = (data, productFilters) => {
   const companyProp = productFilters ? "nameCompany" : "name";
 
   // If data is not an array, extract the products array from the data object
-  if (!Array.isArray(data)) data = data.products.$values;
+  if (!Array.isArray(data)) data = data.products;
 
   // Object that holds various filters and their corresponding values and setters
   const filters = {
@@ -152,7 +152,7 @@ const useFilters = (data, productFilters) => {
 
     // Check if 'selectedCategories' array has values and filter by categories
     if (selectedCategories.length > 0) {
-      const dataCategories = data.categories.$values;
+      const dataCategories = data.categories;
 
       // Check if data has at least one category that matches a selected category
       const hasMatchingCategory = selectedCategories.some((category) =>

@@ -23,7 +23,7 @@ const ProductCard = (props) => {
     product;
 
   // Gets the URL for the first image of the product
-  const firstImageUrl = `${ASSETS}${urlImages.$values[0]}`;
+  const firstImageUrl = `${ASSETS}${urlImages[0]}`;
 
   // Prepares an array of objects containing label and value for card information
   const cardInfo = [

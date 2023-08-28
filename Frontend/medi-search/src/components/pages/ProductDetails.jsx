@@ -55,8 +55,8 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
       try {
         const res = await getCompanyProduct(id);
         setProduct(res.data);
-        setImages(res.data.images.$values.map((url) => ASSETS + url)); // Prepend ASSETS to image URLs
-        setComments(res.data.comments.$values);
+        setImages(res.data.images.map((url) => ASSETS + url)); // Prepend ASSETS to image URLs
+        setComments(res.data.comments);
       } catch (error) {
         // Ignored errors
         if (error.response?.data?.Error === "ERR_JWT") return;
@@ -116,7 +116,7 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
         return prevComments.map((comment) => {
           if (comment.id === commentId) {
             // Add the new reply to the list of replies for the specific comment
-            comment.replies.$values.push(res.data);
+            comment.replies.push(res.data);
           }
           return comment;
         });
@@ -152,7 +152,7 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
     { label: "Clasificación:", value: product.classification },
     {
       label: "Categorías:",
-      value: product.categories?.$values.map((category) => category).join(", "),
+      value: product.categories?.map((category) => category).join(", "),
     },
     { label: "Descripción:", value: product.description },
   ];
@@ -349,7 +349,7 @@ const ProductDetails = ({ logged, showCompanyInfo, isCompany }) => {
             {/* Display comments */}
             {comments.length > 0 ? (
               comments.map((comment, index) => {
-                const replies = comment.replies.$values;
+                const replies = comment.replies;
                 const showReplyTextBox = activeReplyIndex === index;
 
                 return (

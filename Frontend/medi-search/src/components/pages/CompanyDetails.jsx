@@ -300,7 +300,7 @@ const CompanyDetails = ({ isCompany }) => {
       try {
         // Fetch company details by ID
         const res = await getCompanyById(id);
-        const productsArr = res.data.products.$values;
+        const productsArr = res.data.products;
 
         // Find the highest price among products
         const highestPrice = productsArr.reduce((max, product) => {
@@ -369,7 +369,7 @@ const CompanyDetails = ({ isCompany }) => {
               label: "Productos",
               content: (
                 <CompanyProducts
-                  products={company.products.$values}
+                  products={company.products}
                   name={company.name}
                   filters={filters}
                   clearFilters={clearFilters}

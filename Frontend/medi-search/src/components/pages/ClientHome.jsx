@@ -42,10 +42,10 @@ const ClientHome = () => {
         const res = await getClientHome();
 
         // Updating states with fetched data
-        setLastPharmProducts(res.data.lastProducts.$values);
-        setLastFavProducts(res.data.favoriteProducts.$values);
-        setLastFavCompanies(res.data.favoriteCompanies.$values);
-        setNearbyPharmacies(res.data.sameProvinceFarmacies.$values);
+        setLastPharmProducts(res.data.lastProducts);
+        setLastFavProducts(res.data.favoriteProducts);
+        setLastFavCompanies(res.data.favoriteCompanies);
+        setNearbyPharmacies(res.data.sameProvinceFarmacies);
       } catch (error) {
         // Handle errors, showing a toast if necessary
         if (error.response?.data?.Error === "ERR_JWT") return;
@@ -229,7 +229,7 @@ const ClientHome = () => {
                   maintenance={false}
                   showCompanyInfo={true}
                   companyType={"Farmacia"}
-                  to={`/client/products/product-details/${product.productId}`}
+                  to={`/client/products/product-details/${product.id}`}
                 />
               ))}
             </CardsCarousel>
@@ -261,7 +261,7 @@ const ClientHome = () => {
                   favorite={false}
                   key={pharmacy.id}
                   company={pharmacy}
-                  to={`/client/companies/company-details/${pharmacy.companyId}`}
+                  to={`/client/companies/company-details/${pharmacy.id}`}
                 />
               ))}
             </CardsCarousel>

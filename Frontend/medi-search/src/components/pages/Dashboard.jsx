@@ -200,7 +200,7 @@ const Dashboard = () => {
               subheader={`Provincias con más ${
                 companyType === "Farmacia" ? "laboratorios" : "farmacias"
               }`}
-              chartData={stats.provinceCompanies.$values}
+              chartData={stats.provinceCompanies}
               chartColors={[
                 theme.palette.primary.main,
                 theme.palette.info.main,
@@ -226,7 +226,7 @@ const Dashboard = () => {
               sx={{ boxShadow: 3 }}
               title="Mis productos destacados"
               subheader="Mis productos con mayor cantidad en stock"
-              chartData={stats.maxProducts.$values}
+              chartData={stats.maxProducts}
             />
           ) : (
             // Display a skeleton loading animation
@@ -246,7 +246,7 @@ const Dashboard = () => {
               sx={{ boxShadow: 3 }}
               title="Mis productos populares"
               subheader="Mis productos con más me gustas"
-              chartData={stats.productFavorites.$values}
+              chartData={stats.productFavorites}
             />
           ) : (
             // Display a skeleton loading animation
@@ -266,7 +266,7 @@ const Dashboard = () => {
               sx={{ boxShadow: 3 }}
               title="Mis productos con mayor interacción"
               subheader="Mis productos con más comentarios"
-              chartData={stats.maxInteractions.$values}
+              chartData={stats.maxInteractions}
             />
           ) : (
             // Display a skeleton loading animation
@@ -286,7 +286,7 @@ const Dashboard = () => {
               sx={{ boxShadow: 3 }}
               title="Mis clasificaciones destacadas"
               subheader="Mis clasificaciones con más productos"
-              chartData={stats.maxClassifications.$values}
+              chartData={stats.maxClassifications}
             />
           ) : (
             // Display a skeleton loading

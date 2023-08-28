@@ -36,10 +36,10 @@ const Home = () => {
         const res = await getHome();
 
         // Update state variables with fetched data
-        setPharmacies(res.data.lastFarmacies.$values);
-        setLaboratories(res.data.lastLaboratories.$values);
-        setPharmProducts(res.data.lastProductsFarmacies.$values);
-        setLabProducts(res.data.lastProductsLaboratories.$values);
+        setPharmacies(res.data.lastFarmacies);
+        setLaboratories(res.data.lastLaboratories);
+        setPharmProducts(res.data.lastProductsFarmacies);
+        setLabProducts(res.data.lastProductsLaboratories);
       } catch (error) {
         // If an error occurs during data fetching, display an error toast
         showToastRef.current(

@@ -66,7 +66,7 @@ const NewChatForm = ({
 
         // Fetches a list of all companies
         const res = await getAllCompanies();
-        const companiesArr = res.data.$values;
+        const companiesArr = res.data;
 
         // Filters out companies based on specific conditions
         const filteredCompanies = companiesArr.filter((company) => {
@@ -130,7 +130,7 @@ const NewChatForm = ({
 
       // Fetches updated list of chats
       const res = await getChats();
-      const chatsRes = res.data.$values;
+      const chatsRes = res.data;
 
       // Finds the chat that matches the selected company
       const chat = chatsRes.find(

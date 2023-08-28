@@ -70,7 +70,7 @@ const SaveProduct = ({ edit }) => {
 
         // Update product and images state based on fetched data
         setProduct(productRes);
-        setImages(productRes.urlImages.$values.map((url) => ASSETS + url));
+        setImages(productRes.urlImages.map((url) => ASSETS + url));
       } catch (error) {
         // Handle errors related to product retrieval
         if (error.response?.data?.Error === "ERR_JWT") return;

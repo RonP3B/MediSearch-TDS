@@ -42,7 +42,7 @@ const MyProducts = () => {
         const res = await getAllProducts();
 
         // Update the products state with the fetched data
-        setProducts(res.data.$values);
+        setProducts(res.data);
       } catch (error) {
         // Ignored errors
         if (error.response?.data?.Error === "ERR_JWT") return;

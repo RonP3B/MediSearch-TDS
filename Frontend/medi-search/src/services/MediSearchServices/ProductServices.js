@@ -21,7 +21,7 @@ export const createProduct = (values) => {
     }
   });
 
-  return MediSearchApi.post(API_ENDPOINTS.ADD_COMMENT, formData, {
+  return MediSearchApi.post(API_ENDPOINTS.ADD_PRODUCT, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };

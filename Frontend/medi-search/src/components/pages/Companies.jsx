@@ -53,7 +53,7 @@ const Companies = ({
           : getAllLabs());
 
         // Update the companies state with fetched data
-        setCompanies(res.data.$values);
+        setCompanies(res.data);
       } catch (error) {
         // Ignored errors
         if (error.response?.data?.Error === "ERR_JWT") return;

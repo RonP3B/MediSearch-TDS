@@ -73,7 +73,7 @@ const Users = () => {
     const fetchEmployees = async () => {
       try {
         const res = await getAllEmployees();
-        setUsers(res.data.$values);
+        setUsers(res.data);
       } catch (error) {
         if (error.response?.data?.Error === "ERR_JWT") return;
 
